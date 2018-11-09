@@ -17,6 +17,12 @@ abstract class Person implements Loginable {
 	Person(String emailID, Connection conn){
 		// fetch from db
 	}
+	public void signup() {
+		
+	}
+	public String getUserID() {
+		return this.userID;
+	}
 	
 	Person(String emailID, int role, Connection conn) {
 		this.emailID = emailID ;
