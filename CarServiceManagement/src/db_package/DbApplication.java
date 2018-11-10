@@ -65,7 +65,7 @@ public class DbApplication {
 			System.out.println("Enter Password");
 			String password = reader.nextLine();
 			status = p.login(userid, password);
-			
+		
 			if(status == false) {
 				System.out.println(" Invalid Credentials. enter 1 to goto signup; 0 to try again");
 				String input = reader.nextLine();
@@ -81,6 +81,7 @@ public class DbApplication {
 		
 		if (signup == true) signUpPage();
 		// old user
+		System.out.println(p.my_role);
 		switch (p.my_role) {
 		case Role.MANAGER: {
 			Manager manLogIn = new Manager(p, con);
@@ -118,10 +119,9 @@ public class DbApplication {
 		String c_tel_no = reader.nextLine();
 		
 		//userid = email
-		Person cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, con);
-		
-		
-		
+		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, con);
+		System.out.println("### Customer Created. Login with new credentials");
+		loginPage();	
 	}
 	
 }

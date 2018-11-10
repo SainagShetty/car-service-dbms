@@ -7,7 +7,7 @@ class Vehicle {
 	String model;
 	String make;
 	String license_no; //PK
-	Date date_of_purchase;
+	String date_of_purchase;
 	int mileage;
 	int c_id;
 	int year;
@@ -17,7 +17,7 @@ class Vehicle {
 		// get from database;
 	}
 	
-	Vehicle(String model, String make, String license_no, Date date_of_purchase, int year, Connection conn){
+	Vehicle(String model, String make, String license_no, String date_of_purchase, int year, Connection conn){
 		this.make = make;
 		this.model = model;
 		this.license_no = license_no;
@@ -32,6 +32,7 @@ class Vehicle {
 	
 	void setCustomer(int c_id) {
 		this.c_id = c_id;
+		// update c_id in table 
 	}
 	
 	void dbCreateVehicle() {
