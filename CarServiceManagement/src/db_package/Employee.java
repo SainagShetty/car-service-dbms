@@ -1,4 +1,4 @@
-package db_package;
+package src.db_package;
 
 import java.sql.Connection;
 import java.sql.Date;

@@ -1,4 +1,4 @@
-package db_package;
+package src.db_package;
 
 interface MonthlyPayable extends Payable{
 	

@@ -1,4 +1,4 @@
-package db_package;
+package src.db_package;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +7,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
 public class DBConnection {
-	public static void main(String[] args) {
+	void testrun() {
 		try{    
 			Class.forName("oracle.jdbc.driver.OracleDriver");  
 			Connection con=DriverManager.getConnection(  

@@ -1,4 +1,4 @@
-package db_package;
+package src.db_package;
 
 public class Inventory {
  int sc_id;
