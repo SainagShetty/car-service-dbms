@@ -30,6 +30,9 @@ class Customer extends Person{
 	}
     
     void customerMenu() {
+    		System.out.println("### Customer landing page ###");
+    		System.out.println("1.  ");
+    		
     	
     }
     void createCustomer(Connection conn) {
