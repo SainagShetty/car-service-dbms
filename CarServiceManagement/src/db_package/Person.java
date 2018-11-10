@@ -50,13 +50,6 @@ class Person implements Loginable {
 		this.password = password;
 	}
 	
-	public boolean login(String userId, String password) {
-		LoggedIn = true;
-		return true;
-		
-	} //fetch from data base for the person and validate with parameters
-	
-	
 
 	
 	public void signout() {
@@ -72,6 +65,14 @@ class Person implements Loginable {
 		
 		// delete entry from Persons table. Should be called after deleting from Customer or Employee
 		return true;
+	}
+
+	@Override
+	public boolean login(String UserId, String Password) {
+		// TODO Auto-generated method stub
+		LoggedIn = true;
+		return true;
+		
 	}
 	
 	

@@ -62,7 +62,7 @@ class Manager extends Employee implements MonthlyPayable{
 	Manager(Person p, Connection conn){
 		super(p);
 		//get other details from database
-		login();
+		//login(e_address, e_address);
 	}
 	
 	Manager(int emp_id, Connection conn){
