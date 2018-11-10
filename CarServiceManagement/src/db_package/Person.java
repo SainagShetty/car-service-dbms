@@ -1,6 +1,6 @@
 package db_package;
 import java.sql.*;
-abstract class Person implements Loginable {
+class Person implements Loginable {
 	protected String userID;
 	String emailID;
     protected String password;
@@ -14,12 +14,23 @@ abstract class Person implements Loginable {
 		this.conn = conn;
 	}
 	
+	// when logged in 
+	Person(Person p){
+		this.userID = p.userID;
+		this.emailID = p.emailID;
+		this.password = p.password;
+		this.my_role = p.my_role; 
+		this.LoggedIn = true;
+	}
+	
 	Person(String emailID, Connection conn){
 		// fetch from db
 	}
+	
 	public void signup() {
 		
 	}
+	
 	public String getUserID() {
 		return this.userID;
 	}
@@ -39,8 +50,10 @@ abstract class Person implements Loginable {
 		this.password = password;
 	}
 	
-	public void login(String userId, String password) {
+	public boolean login(String userId, String password) {
 		LoggedIn = true;
+		return true;
+		
 	} //fetch from data base for the person and validate with parameters
 	
 	

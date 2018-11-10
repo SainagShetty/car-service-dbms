@@ -6,13 +6,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-abstract class Employee extends Person {
+class Employee extends Person {
 	int service_center; 
 	String e_address;
     String  e_tel_no;
 	String start_date;
 	int compensation;
 	
+	Employee(Person p){
+		super(p);
+	}
 	
 	Employee(int emp_id, Connection conn){
 		super(conn); //just updates connection 
@@ -55,7 +58,12 @@ class Manager extends Employee implements MonthlyPayable{
 	Manager(String emailID, Connection conn){
 		super(emailID, conn);
 	}
-	
+	// used during login
+	Manager(Person p, Connection conn){
+		super(p);
+		//get other details from database
+		login();
+	}
 	
 	Manager(int emp_id, Connection conn){
 		super(emp_id, conn);
@@ -106,7 +114,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 	Receptionist(String emailID, Connection conn){
 		super(emailID, conn);
 	}
-	
+	Receptionist(Person p, Connection conn){
+		super(p);
+		//get other details from database
+	}
 	
 	Receptionist(int emp_id, Connection conn){
 		super(emp_id, conn);
@@ -156,7 +167,10 @@ class Mechanic extends Employee implements HourlyPayable{
 		super(emailID, conn);
 	}
 	
-	
+	Mechanic(Person p, Connection conn){
+		super(p);
+		//get other details from database
+	}
 	Mechanic(int emp_id, Connection conn){
 		super(emp_id, conn);
 	}
