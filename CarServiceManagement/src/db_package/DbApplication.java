@@ -2,7 +2,7 @@ package db_package;
 import java.sql.*;
 import java.util.*;
 
-public class TestConnection {
+public class DbApplication {
 	static Scanner reader;
 	static Connection con;
 	public static void main(String args[]){  
