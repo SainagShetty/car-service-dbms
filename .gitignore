@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-./CarServiceManagement/.classpath
-=======
 ./CarServiceManagement/.classpath
 ./CarServiceManagement/bin/.classpath
 /CarServiceManagement/bin/ojdbc6.jar
 /CarServiceManagement/ojdbc6.jar
->>>>>>> c2a29f29f477b6b67736147de1496ab209498cfa
