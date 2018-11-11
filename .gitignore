@@ -1,4 +1,4 @@
-./CarServiceManagement/.classpath
-./CarServiceManagement/bin/.classpath
+/CarServiceManagement/.classpath
+/CarServiceManagement/bin/.classpath
 /CarServiceManagement/bin/ojdbc6.jar
 /CarServiceManagement/ojdbc6.jar
