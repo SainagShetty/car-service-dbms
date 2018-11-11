@@ -51,24 +51,25 @@ class ServicePage {
 				if (input.equals("1")) {
 					scheduleMaintenanceService(licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("2")) {
-					
+					scheduleRepairService(licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("3")) {
 					continue;
 				}
-				
 			} else if (input.equals("3")) {
+				rescheduleService(c_id);
 				
 			} else if (input.equals("4")) {
-				
-			} else if (input.equals("5")) {
+				goback = true;
+				break;
 				
 			} else {
-				
+				System.out.println("Incorrect input");
+				continue;
 			}
 		}
 		
 		if (!goback) {
-			
+			// 
 		}
 		return true;
 	}
@@ -105,11 +106,17 @@ class ServicePage {
 	}
 	
 	void scheduleMaintenanceService(String licensePlate, String currentMileage , String mechanicName) {
+	
+	}
+	
+	void scheduleRepairService(String licensePlate, String currentMileage , String mechanicName) {
+		Repair repairService = new Repair();
 		
 	}
 	
-	void scheduleRepairService() {
+	void rescheduleService(int c_id) {
 		
 	}
+	
 	
 }

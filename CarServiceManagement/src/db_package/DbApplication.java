@@ -117,9 +117,10 @@ public class DbApplication {
 		String c_add = reader.nextLine();
 		System.out.println("Enter PhoneNumber");
 		String c_tel_no = reader.nextLine();
-		
+		System.out.println("Enter ServiceCenter id");
+		String sc_id = reader.nextLine();
 		//userid = email
-		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, con);
+		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, Integer.parseInt(sc_id), con);
 		System.out.println("### Customer Created. Login with new credentials");
 		loginPage();	
 	}
