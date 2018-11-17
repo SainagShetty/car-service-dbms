@@ -1,4 +1,4 @@
-package src.db_package;
+package db_package;
 
 public class Role {
 	    private Role() { }  // Prevents instantiation
