@@ -65,17 +65,19 @@ public class DbApplication {
 		System.out.println(p.my_role);
 		switch (p.my_role) {
 		case Role.MANAGER: {
+			System.out.println("Here");
 			Manager manLogIn = new Manager(p, con);
-			manLogIn.managerMenu();
+			manLogIn.managerMenu();	
 		};
+		break;
 		case Role.CUSTOMER:
 			Customer cusLogIn = new Customer(p, con);
 			cusLogIn.customerMenu();
-			
+			break;
 		case Role.RECEPTIONIST:
 			Receptionist respLogIn = new Receptionist(p, con);
 			respLogIn.ReceptionistMenu();
-			
+			break;
 			
 		case Role.MECHANIC:
 			
