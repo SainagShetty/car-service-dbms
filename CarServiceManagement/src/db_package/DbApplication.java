@@ -1,31 +1,15 @@
-package src.db_package;
+package db_package;
 import java.sql.*;
 import java.util.*;
 
 public class DbApplication {
 	static Scanner reader;
 	static Connection con;
-	public static void main(String args[]){  
+	
+	public static void main(String args[]){ 
+		DBConnection dbConnection = DBConnection.getDBConnection();
 		try{    
-			Class.forName("oracle.jdbc.driver.OracleDriver");  
-			    
-			Connection con=DriverManager.getConnection(  
-			"jdbc:oracle:thin:@orca.csc.ncsu.edu:1521:orcl01","rdange","200259721");
-//			Connection con=DriverManager.getConnection(  
-//					"jdbc:oracle:thin:@orca.csc.ncsu.edu:1521:orcl01","sgshetty","200203904");  
-	  
-			Statement stmt=con.createStatement();  
-			ResultSet rs=stmt.executeQuery("select * from Test"); 
-
-//			ResultSetMetaData metaData = rs.getMetaData();
-//			int columnCount = metaData.getColumnCount();
-//			while(rs.next())  {
-//			    for(int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-//			        Object object = rs.getObject(columnIndex);
-//			        System.out.printf("%s, ", object == null ? "NULL" : object.toString());
-//			    }
-//			    System.out.printf("%n");
-//			}
+			con = dbConnection.createConnection();
 			reader = new Scanner(System.in);
 			try {
 				while(true) {
@@ -44,9 +28,6 @@ public class DbApplication {
 			} catch (Exception e) {
 				System.exit(0);
 			}
-			
-//            con.commit();
-//			con.close(); 
 		  
 		}catch(Exception e){ System.out.println(e);}  
 		  
@@ -84,17 +65,19 @@ public class DbApplication {
 		System.out.println(p.my_role);
 		switch (p.my_role) {
 		case Role.MANAGER: {
+			System.out.println("Here");
 			Manager manLogIn = new Manager(p, con);
-			manLogIn.managerMenu();
+			manLogIn.managerMenu();	
 		};
+		break;
 		case Role.CUSTOMER:
 			Customer cusLogIn = new Customer(p, con);
 			cusLogIn.customerMenu();
-			
+			break;
 		case Role.RECEPTIONIST:
 			Receptionist respLogIn = new Receptionist(p, con);
 			respLogIn.ReceptionistMenu();
-			
+			break;
 			
 		case Role.MECHANIC:
 			

@@ -1,4 +1,4 @@
-package src.db_package;
+package db_package;
 import java.sql.*;
 class Person implements Loginable {
 	protected String userID;
@@ -68,10 +68,39 @@ class Person implements Loginable {
 	}
 
 	@Override
-	public boolean login(String UserId, String Password) {
+	public boolean login(String Emailid, String Password) {
 		// TODO Auto-generated method stub
-		LoggedIn = true;
-		return true;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		LoggedIn = false;
+		try{
+			pstmt = conn.prepareStatement("SELECT emailid, userid, role FROM person WHERE emailid=? AND password=?");
+			pstmt.setString(1, Emailid);
+			pstmt.setString(2, Password);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				this.emailID = rs.getString(1);
+				this.userID = rs.getString(2);
+				String role = rs.getString(3);
+				if(role.equals("Manager")) {
+					this.my_role = 1;
+				}
+				else if(role.equals("Receptionist")) {
+					this.my_role = 2;
+				}
+				else if(role.equals("Mechanic")) {
+					this.my_role = 3;
+				}
+				else if(role.equals("Customer")) {
+					this.my_role = 4;
+				}
+				LoggedIn = true;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		return LoggedIn;
 		
 	}
 	
