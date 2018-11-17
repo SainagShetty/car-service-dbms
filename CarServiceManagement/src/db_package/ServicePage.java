@@ -3,7 +3,7 @@ package src.db_package;
 import java.sql.Connection;
 import java.util.Scanner;
 
-class ServicePage {
+static class ServicePage {
 	Scanner reader;
 	Connection conn;
 	int used_by;
@@ -13,7 +13,7 @@ class ServicePage {
 		this.conn = conn;
 	}
 	
-	Boolean customerServicePage(int c_id) {
+	Boolean customerServicePage(Customer cus) {
 		
 		Boolean goback = false;
 		if (used_by != Role.CUSTOMER) {
@@ -110,7 +110,7 @@ class ServicePage {
 	}
 	
 	void scheduleRepairService(String licensePlate, String currentMileage , String mechanicName) {
-		Repair repairService = new Repair();
+		Repair repairService = new Repair(c_id, licensePlate, sc_id);
 		
 	}
 	
