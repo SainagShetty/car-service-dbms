@@ -44,6 +44,7 @@ class Person implements Loginable {
 	
 	public void setUserId(String userid) { // must update in db
 		this.userID = userid;
+		
 	}
 	
 	public void setPassword(String password) { // must store in db 
