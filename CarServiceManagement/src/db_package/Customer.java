@@ -88,7 +88,7 @@ class Customer extends Person{
     			this.profilePage();
     		} else if (input.startsWith("2")) {
     			CarRegister cr = new CarRegister(Role.CUSTOMER, this.conn);
-//			cr.registerCar(this.c_id);
+			this.vehicleList.add(cr.registerCar(this.c_id));
     		} else if (input.startsWith("3")){
     			this.servicePage();
     		}else if (input.startsWith("4")){

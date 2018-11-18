@@ -41,12 +41,17 @@ class Vehicle {
 		this.license_no = license_no;
 	}
 	
-	Vehicle(String model, String make, String license_no, Date date_of_purchase, int year, Connection conn){
+	Vehicle(String model, String make, String license_no, Date date_of_purchase, int year, 
+			Connection conn, String c_id, int mileage, Date last_service_date){
+		this.c_id = c_id;
 		this.make = make;
 		this.model = model;
+		this.year = year;
 		this.license_no = license_no;
+		this.mileage = mileage;
 		this.date_of_purchase = date_of_purchase;
 		this.conn = conn;
+		this.last_service_date = last_service_date;
 		dbCreateVehicle();
 	}
 	
@@ -61,6 +66,24 @@ class Vehicle {
 	
 	void dbCreateVehicle() {
 		//create entry in database 
+		PreparedStatement pstmt = null;
+		try{ 	
+			pstmt = conn.prepareStatement("INSERT INTO Vehicle Values(?, ?, ?, ?, ?, ?, ?, ?)");
+			pstmt.setString(1, this.model);
+			pstmt.setString(2, this.make);
+			pstmt.setString(1, this.license_no);
+			pstmt.setDate(2, (java.sql.Date) this.date_of_purchase);
+			pstmt.setInt(1, this.mileage);
+			pstmt.setString(2, this.c_id);
+			pstmt.setInt(1, this.year);
+			pstmt.setDate(2, (java.sql.Date) this.last_service_date);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0){
+				// Failure
+				System.out.println("Error");
+			}
+			System.out.println("Works");
+		}catch(SQLException e){}
 	}
 	
 	void vehicleProfile() {
