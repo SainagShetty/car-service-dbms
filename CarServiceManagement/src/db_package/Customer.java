@@ -57,8 +57,9 @@ class Customer extends Person{
 			e.printStackTrace();
 		}
 	}
-
-	Customer(int c_id, Connection conn){
+ 
+	
+	Customer(String email, Connection conn){
 	super(conn); //just updates connection 
 	// Query 1 fetch from Customer table and update instance variables.
 	// Query 2 fetch from persons table and set Persons instance variable.
@@ -153,9 +154,8 @@ class Customer extends Person{
 //    }
     private void servicePage() {
     		System.out.println("Start a service");
-    		
-    		
-    		
+    		ServicePage sp = new ServicePage(Role.CUSTOMER, this.conn);
+    		sp.customerServicePage(this);
     }
     private void invoicePage() {
     		System.out.println("View Invoice");
