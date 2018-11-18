@@ -18,8 +18,10 @@ class Customer extends Person{
 	String c_tel_no;
 	String c_id;
 	String service_center;
+	Connection con;
 	Customer(Person p, Connection conn){
 		super(p);
+		con = conn;
 		reader = new Scanner(System.in);
 		vehicleList = new Vector<Vehicle>();
 		//get other details from database
@@ -171,18 +173,42 @@ class Customer extends Person{
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
 				input = reader.nextLine();
+				if(updateCustInfo(1, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
 				input = reader.nextLine();
+				if(updateCustInfo(2, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter New Phone Number");
 				input = reader.nextLine();
+				if(updateCustInfo(3, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Password");
 				input = reader.nextLine();
+				if(updateCustInfo(4, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
     		}
 			if (input.startsWith("5")) {
     			exit = true;
@@ -193,5 +219,61 @@ class Customer extends Person{
     		
 		personDelete();
     }
+    
+    //TODO to be optimized
+    public boolean updateCustInfo(int index, String val){
+    	PreparedStatement pstmt = null;
+		try{ 	
+			if(index == 4) {
+				 pstmt = con.prepareStatement("UPDATE Person SET PASSWORD = ? WHERE C_ID = ?");
+					pstmt.setString(1, val);
+					pstmt.setString(2, this.c_id);
+					pstmt.executeQuery();
+					if(pstmt.executeUpdate() == 0){
+						// Failure
+						return false;
+					}
+					this.password = val;
+			}
+			else if(index == 1) {
+
+				 pstmt = con.prepareStatement("UPDATE Customer SET C_NAME = ? WHERE C_ID = ?");
+					pstmt.setString(1, val);
+					pstmt.setString(2, this.c_id);
+					pstmt.executeQuery();
+					if(pstmt.executeUpdate() == 0){
+						// Failure
+						return false;
+					}
+					this.c_name = val;
+			}
+			else if(index == 2) {
+				 pstmt = con.prepareStatement("UPDATE Customer SET C_ADDR = ? WHERE C_ID = ?");
+					pstmt.setString(1, val);
+					pstmt.setString(2, this.c_id);
+					pstmt.executeQuery();
+					if(pstmt.executeUpdate() == 0){
+						// Failure
+						return false;
+					}
+					this.c_address = val;
+			}
+			else if(index == 3) {
+				pstmt = con.prepareStatement("UPDATE Customer SET C_TEL_NO = ? WHERE C_ID = ?");
+				 pstmt.setString(1, val);
+				 pstmt.setString(2, this.c_id);
+				 pstmt.executeQuery();
+					if(pstmt.executeUpdate() == 0){
+						// Failure
+						return false;
+					}
+					this.c_tel_no = val;
+			}
+			
+		}catch(SQLException e){
+			return false;
+		}
+		return true;
+	}
 
 }
