@@ -19,7 +19,6 @@ public class DbApplication {
 						loginPage();
 					} else if (input.startsWith("2")) {
 						signUpPage();
-						
 					} else {
 						System.out.println("invalid Input. Try again!");
 					}
@@ -64,12 +63,10 @@ public class DbApplication {
 		// old user
 		System.out.println(p.my_role);
 		switch (p.my_role) {
-		case Role.MANAGER: {
-			System.out.println("Here");
+		case Role.MANAGER: 
 			Manager manLogIn = new Manager(p, con);
 			manLogIn.managerMenu();	
-		};
-		break;
+			break;
 		case Role.CUSTOMER:
 			Customer cusLogIn = new Customer(p, con);
 			cusLogIn.customerMenu();
@@ -78,7 +75,6 @@ public class DbApplication {
 			Receptionist respLogIn = new Receptionist(p, con);
 			respLogIn.ReceptionistMenu();
 			break;
-			
 		case Role.MECHANIC:
 			
 		}
@@ -103,7 +99,7 @@ public class DbApplication {
 		System.out.println("Enter ServiceCenter id");
 		String sc_id = reader.nextLine();
 		//userid = email
-		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, Integer.parseInt(sc_id), con);
+		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, sc_id, con);
 		System.out.println("### Customer Created. Login with new credentials");
 		loginPage();	
 	}
