@@ -59,6 +59,7 @@ class Vehicle {
 		this.mileage = mileage;
 	}
 	
+	//Not needed
 	void setCustomer(String c_id) {
 		this.c_id = c_id;
 		// update c_id in table 
@@ -68,22 +69,43 @@ class Vehicle {
 		//create entry in database 
 		PreparedStatement pstmt = null;
 		try{ 	
-			pstmt = conn.prepareStatement("INSERT INTO Vehicle Values(?, ?, ?, ?, ?, ?, ?, ?)");
-			pstmt.setString(1, this.model);
-			pstmt.setString(2, this.make);
-			pstmt.setString(1, this.license_no);
-			pstmt.setDate(2, (java.sql.Date) this.date_of_purchase);
-			pstmt.setInt(1, this.mileage);
-			pstmt.setString(2, this.c_id);
-			pstmt.setInt(1, this.year);
-			pstmt.setDate(2, (java.sql.Date) this.last_service_date);
+			if(this.last_service_date == null) {
+				pstmt = conn.prepareStatement("INSERT INTO Vehicle(model, make, license_no, date_of_purchase, mileage, c_id, year)"
+						+ " Values(?, ?, ?, ?, ?, ?, ?)");
+				pstmt.setString(1, this.model);
+				pstmt.setString(2, this.make);
+				pstmt.setString(3, this.license_no);
+				java.sql.Date date = new java.sql.Date(this.date_of_purchase.getTime());
+				pstmt.setDate(4, date);
+				pstmt.setInt(5, this.mileage);
+				pstmt.setString(6, this.c_id);
+				pstmt.setInt(7, this.year);
+			}
+			else {
+				pstmt = conn.prepareStatement("INSERT INTO Vehicle(model, make, license_no, date_of_purchase, mileage, c_id, year, last_service_date)"
+						+ " Values(?, ?, ?, ?, ?, ?, ?, ?)");
+				pstmt.setString(1, this.model);
+				pstmt.setString(2, this.make);
+				pstmt.setString(3, this.license_no);
+				java.sql.Date date = new java.sql.Date(this.date_of_purchase.getTime());
+				pstmt.setDate(4, date);
+				pstmt.setInt(5, this.mileage);
+				pstmt.setString(6, this.c_id);
+				pstmt.setInt(7, this.year);
+				java.sql.Date date2 = new java.sql.Date(this.last_service_date.getTime());
+				pstmt.setDate(8, date2);
+			}
+			
 			pstmt.executeQuery();
 			if(pstmt.executeUpdate() == 0){
 				// Failure
 				System.out.println("Error");
+			}else {
+				System.out.println("Success");
 			}
-			System.out.println("Works");
-		}catch(SQLException e){}
+		}catch(SQLException e){
+//			System.out.print("Error" + e);
+		}
 	}
 	
 	void vehicleProfile() {
