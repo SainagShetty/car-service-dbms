@@ -68,10 +68,12 @@ class Employee extends Person {
 	}
 	
 	
-    Employee(String userID, String emailID, String password, int my_role, String sc_id,
+    Employee(String userID, String emailID, String name, String password, int my_role, String sc_id,
     		String e_address, String e_tel_no, Date start_date, int compensation, Connection conn) {	
-		super(userID, emailID, my_role, conn); // this will create an entry in persons table
-		service_center = sc_id;
+		super(userID, emailID, my_role, password, conn); // this will create an entry in persons table
+		this.conn = conn;
+		this.e_name = name;
+		this.service_center = sc_id;
 		this.e_address = e_address;
 		this.e_tel_no = e_tel_no;
 		this.start_date = start_date;
@@ -82,31 +84,32 @@ class Employee extends Person {
 
     
     void createEmployee() {
+    	
+    	String temp = Role.getRole(this.my_role);
+		
     	PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			pstmt = conn.prepareStatement("INSERT INTO EMPLOYEE "
+			pstmt = this.conn.prepareStatement("INSERT INTO EMPLOYEE "
 					+ "(E_ID, E_NAME, E_EMAIL, SC_ID, E_ADDRESS, E_TEL_NO, E_ROLE, START_DATE, COMPENSATION) "
 					+ "VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?, ?)");
-			pstmt.setString(1, this.eid);
+					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			pstmt.setString(1, "1234567");
 			pstmt.setString(2, this.e_name);
 			pstmt.setString(3, this.emailID);
 			pstmt.setString(4, this.service_center);
 			pstmt.setString(5, this.e_address);
 			pstmt.setString(6, this.e_tel_no);
-			String temp = Role.getRole(this.my_role);
 			pstmt.setString(7, temp);
 			pstmt.setDate(8, this.start_date);
 			pstmt.setInt(9, this.compensation);
-			
 			pstmt.executeQuery();
 			if(pstmt.executeUpdate() == 0)
 				System.out.println("Employee Create Failed");
 			else
 				System.out.println("Employee created successfully");
 		}catch(SQLException e){
-			e.printStackTrace();
+//			e.printStackTrace();
 		}	
     }
  
@@ -152,9 +155,9 @@ class Manager extends Employee implements MonthlyPayable{
 //	}
 	
 	
-	Manager(String userID, String name, String emailID, String sc_id,
+	Manager(String userID, String emailID,String name, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID, "12345678", Role.MANAGER, sc_id,
+		super(userID, emailID, name, password, Role.MANAGER, sc_id,
 		   		e_address, e_tel_no, start_date, compensation, conn);	
 	}
 	
@@ -567,7 +570,7 @@ class Manager extends Employee implements MonthlyPayable{
 					
 						//String userID,String emailID, String password, String sc_id,
 				   		// String e_address, String e_tel_no, Date start_date, int compensation, Connection conn
-						Receptionist newRecp = new Receptionist(emailad, emailad , "12345678", this.service_center,
+						Receptionist newRecp = new Receptionist(emailad, emailad , name, "12345678", this.service_center,
 								address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);
 					    break;
 					} else {
@@ -585,7 +588,7 @@ class Manager extends Employee implements MonthlyPayable{
 					
 				} else if (emprole.toLowerCase().equals("mechanic")) {
 					
-					Mechanic newMech = new Mechanic(emailad, emailad , "12345678", this.service_center,
+					Mechanic newMech = new Mechanic(emailad, emailad , name,  "12345678", this.service_center,
 							address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);	
 					break;
 				} else {
@@ -652,10 +655,9 @@ class Receptionist extends Employee implements MonthlyPayable{
 	}
 	
 	
-	
-	Receptionist(String userID, String name, String emailID, String sc_id,
+	Receptionist(String userID, String emailID, String name, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID, "12345678", Role.RECEPTIONIST, sc_id,
+		super(userID, emailID, name, password, Role.RECEPTIONIST, sc_id,
 		   		e_address, e_tel_no, start_date, compensation, conn);			
 	}
 	
@@ -712,9 +714,9 @@ class Mechanic extends Employee implements HourlyPayable{
 	}
 	
 	
-	Mechanic(String userID, String emailID, String password, String sc_id,
+	Mechanic(String userID, String emailID, String name, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID, "12345678", Role.MECHANIC, sc_id,
+		super(userID, emailID, name, password, Role.MECHANIC, sc_id,
 		   		e_address, e_tel_no, start_date, compensation, conn);	
 	}
 

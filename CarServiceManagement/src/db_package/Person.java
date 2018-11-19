@@ -39,11 +39,12 @@ class Person implements Loginable {
 		return this.userID;
 	}
 	
-	Person(String userID, String emailID, int role, Connection conn) {
+	Person(String userID, String emailID, int role, String password, Connection conn) {
 		this.conn  = conn;
 		this.userID = userID;
 		this.emailID = emailID;
 		this.my_role = role;
+		this.password = password;
 		
 		this.createPerson();
 	}
@@ -52,21 +53,19 @@ class Person implements Loginable {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			pstmt = conn.prepareStatement("INSERT INTO PERSON "
-					+ "(USERID, EMAILID, PASSWORD, ROLE) "
-					+ "VALUES "
-					+ "(?, ?, '12345678', ?)");
+			pstmt = this.conn.prepareStatement("INSERT INTO PERSON (USERID, EMAILID, PASSWORD, ROLE) VALUES (?, ?, ?, ?)");
 			pstmt.setString(1, this.userID);
 			pstmt.setString(2, this.emailID);
+			pstmt.setString(3, this.password);
 			String temp = Role.getRole(this.my_role);
-			pstmt.setString(3, temp);
+			pstmt.setString(4, temp);
 			pstmt.executeQuery();
 			if(pstmt.executeUpdate() == 0)
 				System.out.println("Person Create Failed");
 			else
 				System.out.println("Person created successfully");
 		}catch(SQLException e){
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
