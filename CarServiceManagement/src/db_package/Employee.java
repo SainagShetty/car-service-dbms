@@ -483,9 +483,10 @@ class Manager extends Employee implements MonthlyPayable{
 		String new_role = reader.nextLine();
 		System.out.println("Enter Start Date");
 		String new_start_date = reader.nextLine();
-		java.util.Date new_sdate;
+		
+		Date new_sdate = null;
 		try {
-			new_sdate = new SimpleDateFormat("dd/MM/yyyy").parse(new_start_date);
+			new_sdate = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(new_start_date);
 		}
 		catch(Exception e) {
 			System.out.println("Date not in format");
@@ -493,10 +494,11 @@ class Manager extends Employee implements MonthlyPayable{
 		
 		System.out.println("Enter Compensation");
 		String new_compensation = reader.nextLine();
+		int new_compensation1 = Integer.parseInt(new_compensation);
 
 		//Create UserID
 		if("receptionist".equals(new_role.toLowerCase()))	{
-			Receptionist res_new = new Receptionist("12354678", new_name, new_email, this.service_center, new_addr, new_tel_no, new_sdate, new_compensation, conn)
+			Receptionist res_new = new Receptionist("12354678", new_name, new_email, this.service_center, new_addr, new_tel_no, new_sdate, new_compensation1, conn);
 		} else if("mechanic".equals(new_role.toLowerCase())) {
 			
 		}
