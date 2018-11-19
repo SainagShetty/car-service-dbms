@@ -29,6 +29,7 @@ class Employee extends Person {
 	
 	Employee(Employee emp, Connection conn){
 		super(conn);
+		
 	}
 	
 	// flag true to create using emp_id , false to create using email
@@ -74,6 +75,11 @@ class Employee extends Person {
     		//Check if employee id exists in table
     	 return true;
     }
+
+	public void displayPayroll() {
+		// TODO Auto-generated method stub
+		
+	}
 
     
 }
