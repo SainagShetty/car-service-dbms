@@ -134,7 +134,7 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("1")){
     			this.profilePage();
     		} else if (input.startsWith("2")) {
-    			continue;
+    			this.customerProfile();
     		} else if (input.startsWith("3")){
     			continue;
     		} else if (input.startsWith("4")){
@@ -364,6 +364,72 @@ class Manager extends Employee implements MonthlyPayable{
 		return true;
 	}
     
+    private void customerProfile() {
+    	boolean exit = false;
+		while(!exit) {
+			System.out.println("Enter Customer Email ID");
+			String input = reader.nextLine();
+			this.displayCustomerProfile(input);
+			System.out.println("1. Go Back");
+			input = reader.nextLine();
+			if (input.startsWith("1")) {
+				exit = true;
+    		}
+		}
+    }
+    
+    public void displayCustomerProfile(String emailID) {
+    	boolean status = false;
+    	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT c_id, c_name, sc_id, c_addr, c_tel_no FROM Customer WHERE c_email=?");
+			pstmt.setString(1, emailID);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				
+				System.out.println("Customer Profile");
+				String c_id = rs.getString(1);
+	    		System.out.println("Customer ID: " + c_id);
+	    		System.out.println("Name: " + rs.getString(2));
+	    		System.out.println("Address: " + rs.getString(4));
+	    		System.out.println("Email Address: " + emailID);
+	    		System.out.println("Phone Number: " + rs.getString(5));
+	    		System.out.println("Cars: ");
+	    		
+	    		Vector<Vehicle> vehicleList = new Vector<Vehicle>();
+	    		PreparedStatement pstmt2 = null;
+	    		ResultSet rs2 = null;
+	    		try{
+	    			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
+	    			pstmt2.setString(1, c_id);
+	    			rs2 = pstmt2.executeQuery();
+	    			while(rs2.next())  {
+	    				String tmp = rs2.getString(1);
+	    				Vehicle v = new Vehicle(tmp);
+	    				vehicleList.add(v);
+//	    				System.out.println(tmp);
+	    			}
+	    		}catch(SQLException e){
+	    			e.printStackTrace();
+	    		}
+	    		
+	    		for(int i=0; i<vehicleList.size(); i++) {
+	    			System.out.print(i+1);
+	    			Vehicle tmp = vehicleList.get(i);
+	    			tmp.vehicleProfile();	
+	    		}
+	    		status = true;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		if(!status)
+		{
+			System.out.println("Enter Email Id is not assigned to any customer");
+		}
+    }
 
 	@Override
 	public String lastPaymenDate() {
