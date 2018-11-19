@@ -12,6 +12,7 @@ class Person implements Loginable {
 	Connection conn;
 	static PreparedStatement stmt;
 
+	
 	Person(Connection conn){
 		this.conn = conn;
 	}
@@ -27,10 +28,11 @@ class Person implements Loginable {
 	
 	Person(String emailID, Connection conn){
 		// fetch from db
+		//TODO
 	}
 	
 	public void signup() {
-		
+		//TODO
 	}
 	
 	public String getUserID() {
@@ -85,7 +87,7 @@ class Person implements Loginable {
 	
 	private void store_db(Connection conn) {
 		
-		
+		// TODO
 	}
 	
 	Boolean personDelete() {

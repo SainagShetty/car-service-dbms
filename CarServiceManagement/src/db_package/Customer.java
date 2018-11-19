@@ -123,7 +123,7 @@ class Customer extends Person{
     		}
 		}
     }
-    private void displayProfile() {
+    public void displayProfile() {
     		System.out.println("Profile");
     		System.out.println("Customer ID: " + this.c_id);
     		System.out.println("Name: " + this.c_name);
@@ -147,6 +147,7 @@ class Customer extends Person{
     		}
     		
     }
+   
 //    private void registerCarPage() {
 //    	System.out.println("Register Car");
 //    	
