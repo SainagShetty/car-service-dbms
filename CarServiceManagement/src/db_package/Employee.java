@@ -365,17 +365,11 @@ class Manager extends Employee implements MonthlyPayable{
 	}
     
     private void customerProfile() {
-    	boolean exit = false;
-		while(!exit) {
-			System.out.println("Enter Customer Email ID");
-			String input = reader.nextLine();
-			this.displayCustomerProfile(input);
-			System.out.println("1. Go Back");
-			input = reader.nextLine();
-			if (input.startsWith("1")) {
-				exit = true;
-    		}
-		}
+
+		System.out.println("Enter Customer Email ID");
+		String input = reader.nextLine();
+		this.displayCustomerProfile(input);
+		
     }
     
     public void displayCustomerProfile(String emailID) {
@@ -429,7 +423,18 @@ class Manager extends Employee implements MonthlyPayable{
 		{
 			System.out.println("Enter Email Id is not assigned to any customer");
 		}
+		
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  Go Back");
+			String input = reader.nextLine();
+			if (input.startsWith("1")) {
+    			exit = true;
+    		}
+		}
     }
+    
+    
 
 	@Override
 	public String lastPaymenDate() {
