@@ -1,5 +1,7 @@
 package db_package;
 import java.sql.*;
+import java.util.*;
+
 class Person implements Loginable {
 	protected String userID;
 	String emailID;
@@ -37,11 +39,35 @@ class Person implements Loginable {
 		return this.userID;
 	}
 	
-	Person(String emailID, int role, Connection conn) {
-		this.emailID = emailID ;
-		this.my_role = role;
+	Person(String userID, String emailID, int role, Connection conn) {
 		this.conn  = conn;
-		// data base entry created by signup()
+		this.userID = userID;
+		this.emailID = emailID;
+		this.my_role = role;
+		
+		this.createPerson();
+	}
+	
+	protected void createPerson() {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("INSERT INTO PERSON "
+					+ "(USERID, EMAILID, PASSWORD, ROLE) "
+					+ "VALUES "
+					+ "(?, ?, '12345678', ?)");
+			pstmt.setString(1, this.userID);
+			pstmt.setString(2, this.emailID);
+			String temp = Role.getRole(this.my_role);
+			pstmt.setString(3, temp);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Person Create Failed");
+			else
+				System.out.println("Person created successfully");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void setUserId(String userid) { // must update in db
