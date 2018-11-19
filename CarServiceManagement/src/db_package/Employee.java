@@ -190,6 +190,7 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("2")) {
     			this.customerProfile();
     		} else if (input.startsWith("3")){
+    			this.addEmployee();
     			continue;
     		} else if (input.startsWith("4")){
     			continue;
@@ -711,9 +712,9 @@ class Mechanic extends Employee implements HourlyPayable{
 	}
 	
 	
-	Mechanic(String userID, String name, String emailID, String sc_id,
+	Mechanic(String userID, String emailID, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID, "12345678", Role.MANAGER, sc_id,
+		super(userID, emailID, "12345678", Role.MECHANIC, sc_id,
 		   		e_address, e_tel_no, start_date, compensation, conn);	
 	}
 
