@@ -27,6 +27,9 @@ class Employee extends Person {
 		super(p);
 	}
 	
+	Employee(Employee emp, Connection conn){
+		super(conn);
+	}
 	
 	// flag true to create using emp_id , false to create using email
 	//this object constructor should fetch from database
@@ -72,10 +75,7 @@ class Employee extends Person {
     	 return true;
     }
 
-    void displayPayroll() {
-    		
-    	
-    }
+    
 }
 
 
@@ -296,7 +296,16 @@ class Manager extends Employee implements MonthlyPayable{
 			input = reader.nextLine();
 			if (Employee.employeeExists(input)) {	
 			    Employee emp = new Employee(input, conn, Employee.withid);
-			    emp.displayPayroll();
+			    if(emp.my_role == Role.RECEPTIONIST) {
+			    	Receptionist recEmp = new  Receptionist(emp);
+			    	
+			    	 	displayPayroll();
+			    } else if (emp.my_role == Role.MECHANIC) {
+			    		emp.displayPayroll();
+			    } else if (emp.my_role == Role.MANAGER) {
+			    	
+			    }
+			   
 			    exists =true;
 			} else {
 				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
@@ -355,6 +364,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 	
 	
 	
+	public Receptionist(Employee emp) {
+		super(emp);
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	public String lastPaymenDate() {
 		// TODO Auto-generated method stub
@@ -382,6 +395,11 @@ class Receptionist extends Employee implements MonthlyPayable{
 	void ReceptionistMenu() {
 		
 		
+		
+	}
+	@Override
+	public void displayPayroll() {
+		// TODO Auto-generated method stub
 		
 	}
 	
@@ -450,6 +468,12 @@ class Mechanic extends Employee implements HourlyPayable{
 	void MechanicMenu() {
 		
 		
+		
+	}
+
+	@Override
+	public void displayPayroll() {
+		// TODO Auto-generated method stub
 		
 	}
 }
