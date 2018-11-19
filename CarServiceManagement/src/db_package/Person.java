@@ -10,6 +10,7 @@ class Person implements Loginable {
 	Connection conn;
 	static PreparedStatement stmt;
 
+	
 	Person(Connection conn){
 		this.conn = conn;
 	}
