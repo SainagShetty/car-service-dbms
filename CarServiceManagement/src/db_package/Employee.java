@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 class Employee extends Person {
 	String eid;
@@ -60,16 +60,21 @@ class Employee extends Person {
 
 class Manager extends Employee implements MonthlyPayable{
 	
+	Scanner reader; 
+	Connection conn;
+	
 	Manager(String emailID, Connection conn){
 		super(emailID, conn);
 	}
+	
 	// used during login
 	Manager(Person p, Connection conn){
 		super(p);
-		//get other details from database
+		this.conn = conn;
+		reader = new Scanner(System.in);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		LoggedIn = false;
+		LoggedIn = true;
 		try{
 			pstmt = conn.prepareStatement("SELECT e_id, e_name, sc_id, e_address, e_tel_no, start_date, compensation FROM Employee WHERE e_email=?");
 			pstmt.setString(1, p.emailID);
@@ -98,6 +103,267 @@ class Manager extends Employee implements MonthlyPayable{
 		super(userID, emailID,password, Role.MANAGER, sc_id,
 		   		e_address, e_tel_no, start_date, compensation, conn);	
 	}
+	
+	void managerMenu() {
+		System.out.println(this.e_name);
+		Boolean exit = false;
+    	while(!exit) {
+    		System.out.println("Name: " + this.e_name);
+        	System.out.println("### Manager landing page ###");
+    		System.out.println("1.  Profile");
+    		System.out.println("2.  View Customer Profile");
+    		System.out.println("3.  Add New Employees");
+    		System.out.println("4.  Payroll");
+    		System.out.println("5.  Inventory");
+    		System.out.println("6.  Orders");
+    		System.out.println("7.  Notifications");
+    		System.out.println("8.  New Car Model");
+    		System.out.println("9.  Car Service Details");
+    		System.out.println("10.  Service History");
+    		System.out.println("11.  Invoices");
+    		System.out.println("12.  Logout");
+    		
+    		String input = reader.nextLine();
+    		if (input.startsWith("12")) {
+    			signout();
+    			exit = true;
+    		} else if (input.startsWith("11")){
+    			continue;
+    		} else if (input.startsWith("10")){
+    			continue;
+    		} else if (input.startsWith("1")){
+    			this.profilePage();
+    		} else if (input.startsWith("2")) {
+    			continue;
+    		} else if (input.startsWith("3")){
+    			continue;
+    		} else if (input.startsWith("4")){
+    			continue;
+    		} else if (input.startsWith("5")){
+    			continue;
+    		} else if (input.startsWith("6")){
+    			continue;
+    		} else if (input.startsWith("7")){
+    			continue;
+    		} else if (input.startsWith("8")){
+    			continue;
+    		} else if (input.startsWith("9")){
+    			continue;
+    		} else {
+    			exit = true;
+    		}
+    	}		
+	}
+	
+	private void profilePage() {
+    	boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  View Profile");
+			System.out.println("2.  Update Profile");
+			System.out.println("3.  Go Back");
+			String input = reader.nextLine();
+			if (input.startsWith("1")) {
+				this.displayProfile();
+    		}
+			else if (input.startsWith("2")) {
+    			this.updateProfile();
+    		}
+			else if (input.startsWith("3")) {
+    			exit = true;
+    		}
+		}
+    }
+	
+	private void displayProfile() {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		System.out.println("Profile");
+		System.out.println("Employee ID: " + this.eid);
+		System.out.println("Name: " + this.e_name);
+		System.out.println("Address: " + this.e_address);
+		System.out.println("Email Address: " + this.emailID);
+		System.out.println("Phone Number: " + this.e_tel_no);
+		//Display Service Center Name?
+		System.out.println("Service Center: "+this.service_center);
+		//Update from table
+		System.out.println("Role: Manager");
+		System.out.println("Date: "+formatter.format(start_date));
+		System.out.println("Compensation: "+Integer.toString(compensation));
+		//Update from table
+		System.out.println("Compensation Frequency: Monthly");
+
+		
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  Go Back");
+			String input = reader.nextLine();
+			if (input.startsWith("1")) {
+    			exit = true;
+    		}
+		}
+		
+	}
+	
+	private void updateProfile() {
+    	boolean exit = false;
+		while(!exit) {
+			System.out.println("1. Name");
+			System.out.println("2. Address");
+			System.out.println("3. Email Address");
+			System.out.println("4. Phone Number");
+			System.out.println("5. Password");
+			System.out.println("6. Go Back");
+			String input = reader.nextLine();
+			if (input.startsWith("1")) {
+				System.out.println("Enter New Name");
+				input = reader.nextLine();
+				if(updateEmpInfo(1, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("2")) {
+				System.out.println("Enter New Address");
+				input = reader.nextLine();
+				if(updateEmpInfo(2, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("3")) {
+				System.out.println("Enter Email Address");
+				input = reader.nextLine();
+				if(updateEmpInfo(3, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("4")) {
+				System.out.println("Enter New Phone Number");
+				input = reader.nextLine();
+				if(updateEmpInfo(4, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("5")) {
+				System.out.println("Enter New Password");
+				input = reader.nextLine();
+				if(updateEmpInfo(5, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("6")) {
+    			exit = true;
+    		}
+		}
+    }
+	
+	//TODO to be optimized
+    public boolean updateEmpInfo(int index, String val){
+    	PreparedStatement pstmt = null;
+		if(index == 5) {
+			try
+			{
+				pstmt = conn.prepareStatement("UPDATE PERSON SET PASSWORD = ? WHERE USERID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.password = val;
+				return true;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 1) {
+			
+			try {
+				pstmt = conn.prepareStatement("UPDATE EMPLOYEE SET E_NAME = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_name = val;
+				System.out.println("Updating name done");
+				return true;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+			
+		}
+		else if(index == 2) {
+			try {
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_ADDRESS = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_address = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 3) {
+			try {
+				//Create a trigger to update Email address in person table (EMAILID) from employee table (E_EMAIL)
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_EMAIL = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.emailID = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 4) {
+			try {
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_TEL_NO = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_tel_no = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+    
 
 	@Override
 	public String lastPaymenDate() {
@@ -121,13 +387,6 @@ class Manager extends Employee implements MonthlyPayable{
 	public int generateMonthlyPayment() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-	
-	
-	void managerMenu() {
-		System.out.println(this.e_name);
-		
-		
 	}
 
 }
