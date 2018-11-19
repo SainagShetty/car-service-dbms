@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -19,6 +18,8 @@ class Customer extends Person{
 	String c_id;
 	String service_center;
 	Connection con;
+	Vector<InvoicePage> invoices;
+	
 	Customer(Person p, Connection conn){
 		super(p);
 		con = conn;
@@ -60,9 +61,42 @@ class Customer extends Person{
  
 	
 	Customer(String email, Connection conn){
-	super(conn); //just updates connection 
-	// Query 1 fetch from Customer table and update instance variables.
+		super(conn); //just updates connection 
+		this.con = conn;
+		this.emailID = email;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		// Query 1 fetch from Customer table and update instance variables.
+		try{
+			pstmt = conn.prepareStatement("SELECT c_id, c_name, sc_id, c_addr, c_tel_no FROM Customer WHERE c_email=?");
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				this.c_id = rs.getString(1);
+				this.c_name = rs.getString(2); 
+				this.service_center = rs.getString(3); 
+				this.c_address = rs.getString(4);
+				this.c_tel_no = rs.getString(5);
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		PreparedStatement pstmt2 = null;
+		ResultSet rs2 = null;
+		try{
+			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
+			pstmt2.setString(1, this.c_id);
+			rs2 = pstmt2.executeQuery();
+			while(rs2.next())  {
+				String tmp = rs2.getString(1);
+				Vehicle v = new Vehicle(tmp);
+				vehicleList.add(v);
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 	// Query 2 fetch from persons table and set Persons instance variable.
+		
 	}
 	
     Customer(String userID,String emailID, String password, String c_name, String c_address, String c_tel_no, String serviceCen_id, Connection conn) {	
@@ -93,6 +127,7 @@ class Customer extends Person{
     		} else if (input.startsWith("3")){
     			this.servicePage();
     		}else if (input.startsWith("4")){
+    			System.out.println("Viewing invoices");
     			this.invoicePage();
     		}else if (input.startsWith("5")){
     			signout();
@@ -157,8 +192,31 @@ class Customer extends Person{
     		ServicePage sp = new ServicePage(Role.CUSTOMER, this.conn);
     		sp.customerServicePage(this);
     }
+    
     private void invoicePage() {
     		System.out.println("View Invoice");
+    		invoices = new Vector<InvoicePage>(); 
+    		PreparedStatement pstmt = null;
+    		ResultSet rs = null;
+    		ArrayList<String> srID = new ArrayList<String>();
+    		try{
+    			String query = "SELECT service.ser_id "
+    					+ "FROM service "
+    					+ "WHERE service.c_id = ?";
+    			pstmt = con.prepareStatement(query);
+    			pstmt.setString(1, this.c_id);
+    			rs = pstmt.executeQuery();
+    			while(rs.next())  {
+    				srID.add(rs.getString(1));
+    			}
+    		}catch(Exception e){
+    			e.printStackTrace();
+    		}
+    		for(int i = 0; i < srID.size();i++) {
+    			invoices.add(new InvoicePage(this.con, srID.get(i)));
+    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+    		}
+    		
     }
     
     private void updateProfile() {
