@@ -66,7 +66,7 @@ class Customer extends Person{
 	}
 	
     Customer(String userID,String emailID, String password, String c_name, String c_address, String c_tel_no, String serviceCen_id, Connection conn) {	
-		super(emailID, Role.CUSTOMER, conn); // this will create an entry in persons table
+		super(userID, emailID, Role.CUSTOMER, conn); // this will create an entry in persons table
 		this.c_address = c_address;
 		this.c_tel_no = c_tel_no;
 		this.c_name = c_name;

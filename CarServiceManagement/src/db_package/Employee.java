@@ -17,61 +17,11 @@ class Employee extends Person {
     String  e_tel_no;
 	Date start_date;
 	int compensation;
-	
-	Employee(Person p){
-		super(p);
-	}
-	
-	Employee(int emp_id, Connection conn){
-		super(conn); //just updates connection 
-		// Q1 fetch from Employee table and update instance variables.
-		// Q2 fetch from persons table and set Persons instance variable 
-		
-	}
-	//this object constructor should fetch from database
-	Employee(String emailID, Connection conn ){
-		super(emailID, conn);
-	}
-
-    Employee(String userID,String emailID, String password, int my_role, String sc_id,
-    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn) {	
-		super(emailID, my_role, conn); // this will create an entry in persons table
-		service_center = sc_id;
-		this.e_address = e_address;
-		this.compensation = compensation;
-		this.start_date = start_date;
-		this.e_tel_no = e_tel_no;
-		createEmployee(conn);
-	}
-    
-    void createEmployee(Connection conn) {
-    		// create entry in Employee table.
-    }
-    
-    void deleteEmployee(Connection conn) {
-    	
-    		personDelete();
-    }
-    
-
-}
-
-
-
-class Manager extends Employee implements MonthlyPayable{
-	
-	Scanner reader; 
 	Connection conn;
 	
-	Manager(String emailID, Connection conn){
-		super(emailID, conn);
-	}
-	
-	// used during login
-	Manager(Person p, Connection conn){
+	Employee(Person p, Connection conn){
 		super(p);
 		this.conn = conn;
-		reader = new Scanner(System.in);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		LoggedIn = true;
@@ -91,6 +41,89 @@ class Manager extends Employee implements MonthlyPayable{
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+	}
+	
+	Employee(int emp_id, Connection conn){
+		super(conn); //just updates connection
+		this.conn = conn;
+		// Q1 fetch from Employee table and update instance variables.
+		// Q2 fetch from persons table and set Persons instance variable 
+		
+	}
+	//this object constructor should fetch from database
+	Employee(String emailID, Connection conn ){
+		super(emailID, conn);
+		this.conn = conn;
+	}
+
+    Employee(String userID, String name, String emailID,String sc_id, String e_address, String e_tel_no,
+    		int my_role, Date start_date, int compensation, Connection conn) {	
+		super(userID, emailID, my_role, conn); 
+		
+		this.conn = conn;
+		this.eid = userID;
+		this.e_name = name;
+		this.service_center = sc_id;
+		this.e_address = e_address;
+		this.e_tel_no = e_tel_no;
+		this.start_date = start_date;
+		this.compensation = compensation;
+		
+		createEmployee();
+	}
+    
+    void createEmployee() {
+    	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("INSERT INTO EMPLOYEE "
+					+ "(E_ID, E_NAME, E_EMAIL, SC_ID, E_ADDRESS, E_TEL_NO, E_ROLE, START_DATE, COMPENSATION) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?, ?, ?, ?)");
+			pstmt.setString(1, this.eid);
+			pstmt.setString(2, this.e_name);
+			pstmt.setString(3, this.emailID);
+			pstmt.setString(4, this.service_center);
+			pstmt.setString(5, this.e_address);
+			pstmt.setString(6, this.e_tel_no);
+			String temp = Role.getRole(this.my_role);
+			pstmt.setString(7, temp);
+			pstmt.setDate(8, this.start_date);
+			pstmt.setInt(9, this.compensation);
+			
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Employee Create Failed");
+			else
+				System.out.println("Employee created successfully");
+		}catch(SQLException e){
+			e.printStackTrace();
+		}	
+    }
+    
+    void deleteEmployee(Connection conn) {
+    	
+    		personDelete();
+    }
+    
+
+}
+
+
+
+class Manager extends Employee implements MonthlyPayable{
+	
+	Scanner reader = new Scanner(System.in);; 
+	Connection conn;
+	
+	Manager(String emailID, Connection conn){
+		super(emailID, conn);
+	}
+	
+	// used during login
+	Manager(Person p, Connection conn){
+		super(p, conn);
+		this.conn = conn;
 		
 	}
 	
@@ -98,10 +131,11 @@ class Manager extends Employee implements MonthlyPayable{
 		super(emp_id, conn);
 	}
 	
-	Manager(String userID,String emailID, String password, String sc_id,
+	
+	Manager(String userID, String name, String emailID, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID,password, Role.MANAGER, sc_id,
-		   		e_address, e_tel_no, start_date, compensation, conn);	
+		super(userID, name, emailID, sc_id,
+		   		e_address, e_tel_no, Role.MANAGER, start_date, compensation, conn);	
 	}
 	
 	void managerMenu() {
@@ -434,7 +468,40 @@ class Manager extends Employee implements MonthlyPayable{
 		}
     }
     
-    
+    protected void addEmployee()
+    {
+    	System.out.println("###Register a New Employee");
+		System.out.println("Enter Name");
+		String new_name = reader.nextLine();
+		System.out.println("Enter Address");
+		String new_addr = reader.nextLine();
+		System.out.println("Enter Email ID");
+		String new_email = reader.nextLine();
+		System.out.println("Enter PhoneNumber");
+		String new_tel_no = reader.nextLine();
+		System.out.println("Enter Role");
+		String new_role = reader.nextLine();
+		System.out.println("Enter Start Date");
+		String new_start_date = reader.nextLine();
+		java.util.Date new_sdate;
+		try {
+			new_sdate = new SimpleDateFormat("dd/MM/yyyy").parse(new_start_date);
+		}
+		catch(Exception e) {
+			System.out.println("Date not in format");
+		}
+		
+		System.out.println("Enter Compensation");
+		String new_compensation = reader.nextLine();
+
+		//Create UserID
+		if("receptionist".equals(new_role.toLowerCase()))	{
+			Receptionist res_new = new Receptionist("12354678", new_name, new_email, this.service_center, new_addr, new_tel_no, new_sdate, new_compensation, conn)
+		} else if("mechanic".equals(new_role.toLowerCase())) {
+			
+		}
+//		System.out.println("### Employee Created. Login with new credentials");
+    }
 
 	@Override
 	public String lastPaymenDate() {
@@ -468,38 +535,19 @@ class Receptionist extends Employee implements MonthlyPayable{
 	Receptionist(String emailID, Connection conn){
 		super(emailID, conn);
 	}
+	
 	Receptionist(Person p, Connection conn){
-		super(p);
-		//get other details from database
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		LoggedIn = false;
-		try{
-			pstmt = conn.prepareStatement("SELECT e_id, e_name, sc_id, e_address, e_tel_no, start_date, compensation FROM Employee WHERE e_email=?");
-			pstmt.setString(1, p.emailID);
-			rs = pstmt.executeQuery();
-			while(rs.next())  {
-				this.eid = rs.getString(1);
-				this.e_name = rs.getString(2); 
-				this.service_center = rs.getString(3); 
-				this.e_address = rs.getString(4);
-				this.e_tel_no = rs.getString(5);
-				this.start_date = rs.getDate(6);
-				this.compensation = rs.getInt(7);
-			}
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
+		super(p, conn);
 	}
 	
 	Receptionist(int emp_id, Connection conn){
 		super(emp_id, conn);
 	}
 	
-	Receptionist(String userID,String emailID, String password, String sc_id,
+	Receptionist(String userID, String name, String emailID, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID,password, Role.RECEPTIONIST, sc_id,
-		   		e_address, e_tel_no, start_date, compensation, conn);	
+		super(userID, name, emailID, sc_id,
+		   		e_address, e_tel_no, Role.RECEPTIONIST, start_date, compensation, conn);	
 	}
 
 	
@@ -541,36 +589,16 @@ class Mechanic extends Employee implements HourlyPayable{
 	}
 	
 	Mechanic(Person p, Connection conn){
-		super(p);
-		//get other details from database
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		LoggedIn = false;
-		try{
-			pstmt = conn.prepareStatement("SELECT e_id, e_name, sc_id, e_address, e_tel_no, start_date, compensation FROM Employee WHERE e_email=?");
-			pstmt.setString(1, p.emailID);
-			rs = pstmt.executeQuery();
-			while(rs.next())  {
-				this.eid = rs.getString(1);
-				this.e_name = rs.getString(2); 
-				this.service_center = rs.getString(3); 
-				this.e_address = rs.getString(4);
-				this.e_tel_no = rs.getString(5);
-				this.start_date = rs.getDate(6);
-				this.compensation = rs.getInt(7);
-			}
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
+		super(p, conn);
 	}
 	Mechanic(int emp_id, Connection conn){
 		super(emp_id, conn);
 	}
 	
-	Mechanic(String userID,String emailID, String password, String sc_id,
+	Mechanic(String userID, String name, String emailID, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
-		super(userID, emailID,password, Role.MECHANIC, sc_id,
-		   		e_address, e_tel_no, start_date, compensation, conn);	
+		super(userID, name, emailID, sc_id,
+		   		e_address, e_tel_no, Role.MANAGER, start_date, compensation, conn);	
 	}
 
 	
