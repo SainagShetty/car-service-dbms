@@ -66,6 +66,7 @@ class Customer extends Person{
 		this.con = conn;
 		this.emailID = email;
 		PreparedStatement pstmt = null;
+		vehicleList = new Vector<Vehicle>();
 		ResultSet rs = null;
 		// Query 1 fetch from Customer table and update instance variables.
 		try{
