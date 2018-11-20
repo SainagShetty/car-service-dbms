@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 class Employee extends Person {
@@ -668,22 +669,24 @@ class Manager extends Employee implements MonthlyPayable{
     			System.out.println("Enter Employee id");
     			input = reader.nextLine().trim();
     			if (Employee.employeeExists(input, conn)) {	
-    			    Employee emp = new Employee(input, conn, Employee.withid);
-    			    System.out.println(emp.e_name + " " + emp.my_role);
-    			    if(emp.my_role == Role.RECEPTIONIST) {
-    			    	System.out.println("R");
-    			    	Receptionist recEmp = new  Receptionist(emp, conn);
-    			    		recEmp.displayPayroll();	
-    			    } else if (emp.my_role == Role.MECHANIC) {
-    			    	System.out.println("M");
-    			      	Mechanic mecEmp = new  Mechanic(emp, conn);
-    			    		mecEmp.displayPayroll();
-    			    } else if (emp.my_role == Role.MANAGER) {
-    			    	System.out.println("Mng");
-    			    		Manager manEmp = new  Manager(emp, conn);
-    			    		manEmp.displayPayroll();
-    			    }
-    			   
+    				
+//    			    Employee emp = new Employee(input, conn, Employee.withid);
+//    			    System.out.println(emp.e_name + " " + emp.my_role);
+//    			    if(emp.my_role == Role.RECEPTIONIST) {
+//    			    	System.out.println("R");
+//    			    	Receptionist recEmp = new  Receptionist(emp, conn);
+//    			    		recEmp.displayPayroll();	
+//    			    } else if (emp.my_role == Role.MECHANIC) {
+//    			    	System.out.println("M");
+//    			      	Mechanic mecEmp = new  Mechanic(emp, conn);
+//    			    		mecEmp.displayPayroll();
+//    			    } else if (emp.my_role == Role.MANAGER) {
+//    			    	System.out.println("Mng");
+//    			    		Manager manEmp = new  Manager(emp, conn);
+//    			    		manEmp.displayPayroll();
+//    			    }
+//    			   
+    				viewPayroll(input);
     			    exists =true;
     			} else {
     				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
@@ -696,7 +699,54 @@ class Manager extends Employee implements MonthlyPayable{
     			}	
     		} while (!exists);	
     	}
-    
+    	
+    private void viewPayroll(String id) {
+    	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		LoggedIn = true;
+		try{
+			pstmt = conn.prepareStatement("SELECT Payroll.LASTPAYCHECK, "
+					+ "Payroll.LASTPAYCHECK-15, "
+					+ "Payroll.e_id, "
+					+ "Employee.e_name, "
+					+ "Employee.compensation, "
+					+ "Payroll.E_ROLE, "
+					+ "Payroll.EARNINGSYTD, "
+					+ "Payroll.PREVEARNINGS, "
+					+ "CASE employee.e_role when 'Manager' "
+					+ "then ((payroll.prevearnings/employee.compensation)*30) when 'Receptionist' "
+					+ "then ((payroll.prevearnings/employee.compensation)*30) when 'Mechanic' "
+					+ "then ROUND(((payroll.prevearnings/employee.compensation)), 1) END as unit, "
+					+ "CASE employee.e_role when 'Manager' then 'Monthly' when 'Receptionist' "
+					+ "then 'Monthly' when 'Mechanic' then 'Hourly' END as frequency FROM Payroll, "
+					+ "Employee WHERE Employee.e_id = Payroll.e_id and Payroll.e_id = ?");
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				Date checkDate = rs.getDate(1);
+				System.out.println("A. Paycheckdate: " + checkDate);
+				System.out.println("B. Payperiod: " + rs.getDate(2) + " - " + checkDate);
+				System.out.println("C. EmployeeID: " + rs.getString(3));
+				System.out.println("D. Employee Name: " + rs.getString(4));
+				System.out.println("E. Compensation($): " + rs.getInt(5));
+				System.out.println("F. Compensation Frequency: " + rs.getString(10));
+				System.out.println("G. Units: " + rs.getFloat(9));
+				System.out.println("H. Earnings (Current): " + rs.getFloat(8));
+				System.out.println("I. Earnings (Year-to-date): " + rs.getFloat(7) );
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("\n1. Go Back");
+			String input = reader.nextLine();
+			if(input.startsWith("1")) {
+				exit = true;
+			}
+		}
+    }
+    	
     private void displayInventory() {
     	
     }
@@ -799,6 +849,7 @@ class Manager extends Employee implements MonthlyPayable{
 	@Override
 	public void displayPayroll() {
 		// TODO Auto-generated method stub
+		
 		
 	}
 }
