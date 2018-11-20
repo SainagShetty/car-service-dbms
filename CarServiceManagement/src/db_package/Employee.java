@@ -48,7 +48,12 @@ class Employee extends Person {
 	
 	Employee(Employee emp, Connection conn){
 		super(conn);
-		
+		// TODO employeee details to be copied. 
+		service_center = emp.service_center;
+		this.e_address = emp.e_address;
+		this.e_tel_no = emp.e_tel_no;
+		this.start_date =emp.start_date;
+		this.compensation = emp.compensation;	
 	}
 	
 	// flag true to create using emp_id , false to create using email
@@ -617,13 +622,13 @@ class Manager extends Employee implements MonthlyPayable{
 			if (Employee.employeeExists(input)) {	
 			    Employee emp = new Employee(input, conn, Employee.withid);
 			    if(emp.my_role == Role.RECEPTIONIST) {
-			    	Receptionist recEmp = new  Receptionist(emp, conn);
-			    	
-			    	 	displayPayroll();
+			    		Receptionist recEmp = new  Receptionist(emp, conn);
+			    		
+			    		recEmp.displayPayroll();
 			    } else if (emp.my_role == Role.MECHANIC) {
 			    		emp.displayPayroll();
 			    } else if (emp.my_role == Role.MANAGER) {
-			    	
+			    		
 			    }
 			   
 			    exists =true;
