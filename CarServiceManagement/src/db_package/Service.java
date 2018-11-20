@@ -79,8 +79,7 @@ class Repair extends Service{
 //	}
 }
 
-class Maintenance extends Service{
-	
+class Maintenance extends Service{	
 	Connection conn;
 	
 	Maintenance(String sc_id, String c_email, String Vehicle_license, float current_mileage, String mechanic_name, Connection conn) {
