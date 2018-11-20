@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InvoicePage{
 	String srID;
@@ -19,9 +20,11 @@ public class InvoicePage{
 	float totalServiceCost;
 	Connection con;
 	String cID;
-	ArrayList<String> basicTaskIds;
+	ArrayList<String> basicTaskIds, p_name;
+	List<Integer> partsQuantity;
 	float totalCost;
 	float laborTime;
+	float wageHr1, wageHr2;
 	
 	
 	InvoicePage(Connection con, String srID){
@@ -29,6 +32,9 @@ public class InvoicePage{
 		this.laborTime = 0;
 		this.srID = srID;
 		this.con = con;
+		this.wageHr1 = 0;
+		this.wageHr2 = 0;
+		partsQuantity = new ArrayList<Integer>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
@@ -55,6 +61,7 @@ public class InvoicePage{
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
 		fetchPrice();
 //		System.out.println(totalCost);
 //		System.out.println(laborTime);
@@ -62,10 +69,11 @@ public class InvoicePage{
 	
 	void fetchPrice() {
 		basicTaskIds = new ArrayList<String>();
+		p_name = new ArrayList<String>();
+		
 //		System.out.println(this.srID+this.licenceNo+this.licenceNo+this.serviceType);
 		String queryMaintenance = "SELECT maintenance.basic_taskid FROM maintenance "
-				+ "WHERE maintenance.type = "
-				+ "( SELECT service.maintenance_type FROM service WHERE service.ser_id = ?) "
+				+ "WHERE maintenance.type = ? "
 				+ "and maintenance.make = ( SELECT vehicle.make FROM vehicle "
 				+ "WHERE vehicle.license_no = ?) and maintenance.model = "
 				+ "( SELECT vehicle.model FROM vehicle WHERE vehicle.license_no = ?)";
@@ -84,7 +92,7 @@ public class InvoicePage{
 
 		switch(maintenance_type) {
 		case 'R':
-			System.out.println("I'm repair!!!");
+//			System.out.println("I'm repair!!!");
 			try{
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
@@ -118,7 +126,7 @@ public class InvoicePage{
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
 				pstmt = con.prepareStatement(queryMaintenance);
-				pstmt.setString(1, this.srID);
+				pstmt.setString(1, "C");
 				pstmt.setString(2, this.licenceNo);
 				pstmt.setString(3, this.licenceNo);
 				rs = pstmt.executeQuery();
@@ -136,7 +144,7 @@ public class InvoicePage{
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
 				pstmt = con.prepareStatement(queryMaintenance);
-				pstmt.setString(1, this.srID);
+				pstmt.setString(1, "B");
 				pstmt.setString(2, this.licenceNo);
 				pstmt.setString(3, this.licenceNo);
 				rs = pstmt.executeQuery();
@@ -153,7 +161,7 @@ public class InvoicePage{
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
 				pstmt = con.prepareStatement(queryMaintenance);
-				pstmt.setString(1, this.srID);
+				pstmt.setString(1, "A");
 				pstmt.setString(2, this.licenceNo);
 				pstmt.setString(3, this.licenceNo);
 				rs = pstmt.executeQuery();
@@ -168,7 +176,7 @@ public class InvoicePage{
 //		System.out.println("Printing"+basicTaskIds.size());
 		for(int i=0;i<basicTaskIds.size();i++) {
 //			System.out.println(basicTaskIds.get(i)+this.licenceNo+this.licenceNo);
-			String query2 = "select tasks.charge_rate, tasks.time_required, tasks.part_quantity, parts.unit_price "
+			String query2 = "select tasks.charge_rate, tasks.time_required, tasks.part_quantity, parts.unit_price, parts.p_name "
 					+ "from tasks full outer join parts on (tasks.p_id = parts.p_id) "
 					+ "where tasks.basic_taskid = ? and tasks.make = "
 					+ "( SELECT vehicle.make FROM vehicle WHERE vehicle.license_no = ?) "
@@ -185,13 +193,23 @@ public class InvoicePage{
 				rs = pstmt.executeQuery();
 //				System.out.println(basicTaskIds.get(i));
 				while(rs.next())  {
+					
 					float chargeRate = Float.parseFloat(rs.getString(1));
 					float time_required = rs.getFloat(2);
 					int part_quantity = rs.getInt(3);
 					float unit_price = Float.parseFloat(rs.getString(4));
+					this.p_name.add(rs.getString(5));
+					this.partsQuantity.add(part_quantity);
 					this.totalCost += part_quantity*unit_price;
 					this.totalCost += chargeRate*time_required;
 					this.laborTime += time_required; 
+					
+					if(this.wageHr1 == 0) {
+						this.wageHr1 = chargeRate;
+					}
+					else if(this.wageHr1 != chargeRate) {
+						this.wageHr2 = chargeRate;
+					}
 				}
 				
 //				pstmt.close();
@@ -209,6 +227,24 @@ public class InvoicePage{
 		System.out.println("D. Licence Plate: " + this.licenceNo);
 		System.out.println("E. Service Type: " + this.serviceType);
 		System.out.println("F. Mechanic Name: " + this.mechanicName);
+		System.out.println("G. Total Service Cost: " + this.totalCost);
+	}
+	void printInvoicesDetailed() {
+		System.out.println("A. Service ID: " + this.srID);
+		System.out.println("B. Service Start Date/Time: " + this.serviceStart);
+		System.out.println("C. Service End Date/Time: " + this.serviceEnd);
+		System.out.println("D. Licence Plate: " + this.licenceNo);
+		System.out.println("E. Service Type: " + this.serviceType);
+		System.out.println("F. Mechanic Name: " + this.mechanicName);
+		System.out.println("G. Parts Used: ");
+		for(int i=0;i<this.p_name.size();i++) {
+			System.out.println("\t" + this.p_name.get(i) + " : " + this.partsQuantity.get(i));
+		}
+		System.out.println("H. Total labor hours: " + this.laborTime);
+		System.out.println("H. Labor wages per hour: " + this.wageHr1);
+		if(this.wageHr2 != 0) {
+			System.out.print(this.wageHr2);
+		}
 		System.out.println("G. Total Service Cost: " + this.totalCost);
 	}
 }

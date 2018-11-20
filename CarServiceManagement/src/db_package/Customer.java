@@ -19,6 +19,7 @@ class Customer extends Person{
 	String service_center;
 	Connection con;
 	Vector<InvoicePage> invoices;
+	ArrayList<String> srID;
 	
 	Customer(Person p, Connection conn){
 		super(p);
@@ -197,7 +198,7 @@ class Customer extends Person{
     		invoices = new Vector<InvoicePage>(); 
     		PreparedStatement pstmt = null;
     		ResultSet rs = null;
-    		ArrayList<String> srID = new ArrayList<String>();
+    		srID = new ArrayList<String>();
     		try{
     			String query = "SELECT service.ser_id "
     					+ "FROM service "
@@ -216,6 +217,21 @@ class Customer extends Person{
     			invoices.add(new InvoicePage(this.con, srID.get(i)));
     			invoices.get(i).printInvoices();
 //    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+    		}
+    		boolean exit = false;
+    		while(!exit) {
+    			System.out.println("\n1. View Invoice Details");
+    			System.out.println("2. Go Back");
+    			String input = reader.nextLine();
+    			if (input.startsWith("1")) {
+    				System.out.println("### View Invoice Details ###");
+    				System.out.println("Enter Service ID: ");
+    				input = reader.nextLine();
+    				invoices.get(srID.indexOf(input)).printInvoicesDetailed();
+    			}
+    			else if (input.startsWith("2")) {
+    				exit = true;
+    			}
     		}
     		
     }
