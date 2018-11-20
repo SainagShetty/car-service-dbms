@@ -57,7 +57,7 @@ public class ServicePage {
 				if (input.equals("1")) {
 					scheduleMaintenanceService(cus.emailID, licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("2")) {
-					scheduleRepairService(Integer.parseInt(cus.c_id), licensePlate, currentMileage ,  mechanicName);
+					scheduleRepairService(cus.emailID, licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("3")) {
 					continue;
 				}
@@ -148,8 +148,9 @@ public class ServicePage {
 		Maintenance maintenance = new Maintenance(this.sc_id, c_email, temp_license, temp_milage, temp_ename, this.conn);
 	}
 	
-	void scheduleRepairService(int c_id ,String licensePlate, String currentMileage , String mechanicName) {
-		Repair repairService = new Repair(this.sc_id, this.conn);
+	void scheduleRepairService(String emailID ,String licensePlate, String currentMileage , String mechanicName) {
+		float temp_milage = Float.parseFloat(currentMileage);
+		Repair repairService = new Repair(this.sc_id, emailID, licensePlate, temp_milage, mechanicName, this.conn);
 		
 	}
 	
