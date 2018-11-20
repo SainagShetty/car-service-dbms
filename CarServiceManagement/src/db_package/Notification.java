@@ -38,7 +38,6 @@ class Notification {
 				System.out.println("Enter order id");
 				String id = reader.nextLine().trim();
 				Order.printOrderById(id, conn);
-			
 				while(true) {
 					System.out.println("1. Go back");
 					input= reader.nextLine().trim();
@@ -46,7 +45,6 @@ class Notification {
 						break;
 					}	
 				}
-				
 			} else if (input.startsWith("2")) {
 				break;
 			} else {

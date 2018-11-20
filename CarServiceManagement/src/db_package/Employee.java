@@ -285,7 +285,7 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("6")){
     			ordersPage();
     		} else if (input.startsWith("7")){
-    			notificationsPage();
+    			notificationsPage(this.conn);
     		} else if (input.startsWith("8")){
     			newCarModelPage();
     		} else if (input.startsWith("9")){
@@ -822,7 +822,7 @@ class Manager extends Employee implements MonthlyPayable{
 			if( input.startsWith("1")) {
 				System.out.println("###Order History###");
 				
-				Order.printOrderHistory();
+				Order.printOrderHistory(conn);
 				
 				boolean exit_in = false;
 				while(!exit_in) {
@@ -864,8 +864,8 @@ class Manager extends Employee implements MonthlyPayable{
 			}
 		}	
 	}
-	private void notificationsPage() {
-		Notification.notificationPage();		
+	private void notificationsPage(Connection conn) {
+		Notification.notificationPage(conn);		
 	}
 	private void newCarModelPage() {
 			
