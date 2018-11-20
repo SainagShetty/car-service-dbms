@@ -19,7 +19,7 @@ public class DbApplication {
 			try {
 				while(true) {
 					System.out.println("Select 1. Login 2. SignUp");
-					String input = reader.nextLine();
+					String input = reader.nextLine().trim();
 					if (input.startsWith("1")) {
 						loginPage();
 					} else if (input.startsWith("2")) {
@@ -45,15 +45,15 @@ public class DbApplication {
 		
 		while(!status) {
 			System.out.println("Enter UserID");
-			String userid = reader.nextLine();
+			String userid = reader.nextLine().trim();
 			
 			System.out.println("Enter Password");
-			String password = reader.nextLine();
+			String password = reader.nextLine().trim();
 			status = p.login(userid, password);
 		
 			if(status == false) {
 				System.out.println(" Invalid Credentials. enter 1 to goto signup; 0 to try again");
-				String input = reader.nextLine();
+				String input = reader.nextLine().trim();
 				
 				if (input.startsWith("1")) {
 					signup =  true;
@@ -92,17 +92,17 @@ public class DbApplication {
 	public static void signUpPage() {
 		System.out.println("###Register a New Customer");
 		System.out.println("Enter EmailAddress");
-		String c_email = reader.nextLine();
+		String c_email = reader.nextLine().trim();
 		System.out.println("Enter Password");
-		String c_password = reader.nextLine();
+		String c_password = reader.nextLine().trim();
 		System.out.println("Enter Name");
-		String c_name = reader.nextLine();
+		String c_name = reader.nextLine().trim();
 		System.out.println("Enter Address");
-		String c_add = reader.nextLine();
+		String c_add = reader.nextLine().trim();
 		System.out.println("Enter PhoneNumber");
-		String c_tel_no = reader.nextLine();
+		String c_tel_no = reader.nextLine().trim();
 		System.out.println("Enter ServiceCenter id");
-		String sc_id = reader.nextLine();
+		String sc_id = reader.nextLine().trim();
 		//userid = email
 		Customer cus = new Customer(c_email, c_email, c_password , c_name, c_add, c_tel_no, sc_id, con);
 		System.out.println("### Customer Created. Login with new credentials");
