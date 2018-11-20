@@ -1,6 +1,10 @@
 package db_package;
-import java.util.Date;
+import java.util.*;
 import java.sql.*;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 abstract class Service {
 	String ser_id;
@@ -126,30 +130,164 @@ class Maintenance extends Service{
 		this.make = vehicle.getMake();
 		this.model = vehicle.getModel();
 		
-		System.out.println("Make model "+make+" "+model);
-		
 		Customer customer = new Customer(c_email, this.conn);
 		this.c_id = customer.getCustomerID();
 		
-		System.out.println("Customer id is "+this.c_id);
-		
 		String service_type = this.maintnanceType(this.make, this.model, current_mileage);
-		System.out.println("service type "+ service_type);
+		ArrayList<String> basicTasks = this.maintnanceTask(this.make, this.model, service_type);
+		
+		ArrayList<String> partID = new ArrayList<String>();
+		ArrayList<Integer> quantity = new ArrayList<Integer>();
+		ArrayList<String> missing = new ArrayList<String>();
+		float totalTime = 0;
+		for (String value : basicTasks) {
+			ArrayList<String> temp = this.fetchTaskDetails(this.make, this.model, value);
+			totalTime += Float.parseFloat(temp.get(0));
+			partID.add(temp.get(1));
+			quantity.add(Integer.parseInt(temp.get(2)));
+			boolean check = this.checkInventory(sc_id, temp.get(1), Integer.parseInt(temp.get(2)));
+			if(!check) {
+				missing.add(temp.get(1));
+			}
+		}
+//		System.out.println("Total time "+totalTime);
+		if(missing.size() == 0) {
+//			System.out.println("Schedule Service");
+			ArrayList<String> currentWeekMap = new ArrayList<String>();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+			LocalDate today = LocalDate.now();
+			int count = 0;
+			for (int i=1; count < 7; i++) {
+			    LocalDate newDay = today.plusDays(i);
+			    String dayOfWeek = newDay.getDayOfWeek().toString();
+//			    System.out.println("Day of the week" +dayOfWeek);
+			    if(dayOfWeek.equals("SATURDAY") || dayOfWeek.equals("SUNDAY")) {
+			    	continue;
+			    }
+			    String formattedDate = newDay.format(formatter);
+			    currentWeekMap.add(formattedDate);
+			    count++;
+			}
+
+//			System.out.println(currentWeekMap);
+			
+			
+			if(mechanic_name.equals("")) {
+				
+				ArrayList<String> mech = new ArrayList<String>();
+				PreparedStatement pstmt = null;
+				ResultSet rs = null;
+				try{
+					pstmt = conn.prepareStatement("SELECT E_ID from EMPLOYEE where e_role = 'Mechanic' and sc_id = ?");
+					pstmt.setString(1, this.sc_id);
+					rs = pstmt.executeQuery();
+					while(rs.next())  {
+						mech.add(rs.getString(1));
+					}
+				}catch(SQLException e){
+					e.printStackTrace();
+				}
+				//Find next two possible date
+				ArrayList<String> availableDates = new ArrayList<String>();
+				ArrayList<String> emp_id = new ArrayList<String>();
+				for(String date_values: currentWeekMap) {
+					for(String mech_values: mech) {
+						try{
+							pstmt = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORK_DATE = ?");
+							pstmt.setString(1, mech_values);
+							pstmt.setString(2, date_values);
+							rs = pstmt.executeQuery();
+							rs.next();
+							if(rs.getInt(1) == 0) {
+								availableDates.add(date_values);
+								emp_id.add(mech_values);
+								break;
+							}
+							else {
+								pstmt = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORK_DATE = ?");
+								pstmt.setString(1, mech_values);
+								pstmt.setString(2, date_values);
+								rs = pstmt.executeQuery();
+								rs.next();
+								if(rs.getFloat(1)+totalTime <= 8.0)
+								{
+									availableDates.add(date_values);
+									emp_id.add(mech_values);
+									break;
+								}
+							}
+							
+						}catch(SQLException e){
+							e.printStackTrace();
+						}
+					}
+				}
+				
+				System.out.println("1. "+availableDates.get(0));
+				System.out.println("2. "+availableDates.get(1));
+				
+			}
+			else {
+				PreparedStatement pstmt = null;
+				ResultSet rs = null;
+				String emp_id = "";
+				try {
+					pstmt = conn.prepareStatement("SELECT E_ID from EMPLOYEE where e_name=?");
+					pstmt.setString(1, mechanic_name);
+					rs = pstmt.executeQuery();
+					rs.next();
+					emp_id = rs.getString(1);
+				}
+				catch(SQLException e){
+					e.printStackTrace();
+				}
+				ArrayList<String> availableDates = new ArrayList<String>();
+				for(String date_values: currentWeekMap) {
+					try{
+						pstmt = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORK_DATE = ?");
+						pstmt.setString(1, emp_id);
+						pstmt.setString(2, date_values);
+						rs = pstmt.executeQuery();
+						rs.next();
+						if(rs.getInt(1) == 0) 
+							availableDates.add(date_values);
+						else {
+							pstmt = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORK_DATE = ?");
+							pstmt.setString(1, emp_id);
+							pstmt.setString(2, date_values);
+							rs = pstmt.executeQuery();
+							rs.next();
+							if(rs.getFloat(1)+totalTime <= 8.0)
+								availableDates.add(date_values);
+						}
+						
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+					
+				}
+				
+				System.out.println("1. "+availableDates.get(0));
+				System.out.println("2. "+availableDates.get(1));
+			}
+		}
+		else {
+			System.out.println("Parts missing, place an order");
+		}
 		
 	}
 	
 	private String maintnanceType(String make, String model, float mileage) {
 		int a = 0, b = 0, c = 0;
-		System.out.println("Inside here");
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			pstmt = conn.prepareStatement("SELECT type, mileage from Maintenance where make = ? and model = ? GROUP BY type, MILEAGE;");
+			pstmt = conn.prepareStatement("SELECT type, mileage from Maintenance where make = ? and model = ? GROUP BY type, MILEAGE");
 			pstmt.setString(1, make);
 			pstmt.setString(2, model);
 			rs = pstmt.executeQuery();
 			while(rs.next())  {
-				System.out.println("NEXT");
 				String type_s = rs.getString(1);
 				if(type_s.equals("A"))
 					a = rs.getInt(2)*1000;
@@ -162,7 +300,7 @@ class Maintenance extends Service{
 			e.printStackTrace();
 		}
 		
-		System.out.println("ABC"+a+" "+b+" "+c);
+//		System.out.println("ABC"+a+" "+b+" "+c);
 		
 		int mileage_int = Math.round(mileage);
 		int temp = mileage_int%c;
@@ -171,6 +309,75 @@ class Maintenance extends Service{
 		if(temp < b)
 			return "B";
 		return "C";
+	}
+	
+	private ArrayList<String> maintnanceTask(String make, String model, String type) {
+		ArrayList<String> basicTasks = new ArrayList<String>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT BASIC_TASKID from Maintenance where make = ? and model = ? and type = ?");
+			pstmt.setString(1, make);
+			pstmt.setString(2, model);
+			pstmt.setString(3, type);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				basicTasks.add(rs.getString(1));
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+//		for (String value : basicTasks) {
+//            System.out.println(value);
+//        }
+		return basicTasks;
+	}
+	
+	private ArrayList<String> fetchTaskDetails(String make, String model, String taskid)
+	{
+		ArrayList<String> details = new ArrayList<String>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT time_required, p_id, part_quantity from TASKS where make = ? and model = ? and basic_taskid = ?");
+			pstmt.setString(1, make);
+			pstmt.setString(2, model);
+			pstmt.setString(3, taskid);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				details.add(rs.getString(1));
+				details.add(rs.getString(2));
+				details.add(rs.getString(3));
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+//		for (String value : details) {
+//	          System.out.println(value);
+//	     }
+		return details;
+	}
+	
+	private boolean checkInventory(String sc_id, String part_id, int quantity) {
+		boolean status = false;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT quantity from INVENTORY where p_id = ? and sc_id = ?");
+			pstmt.setString(1, part_id);
+			pstmt.setString(2, sc_id);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+//				System.out.println("Checking part "+part_id+" Quantity: "+quantity+" in "+rs.getInt(1));
+				int temp_quantity = rs.getInt(1);
+				if(temp_quantity > quantity)
+					status = true;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+
+		return status;
 	}
 	
 }
