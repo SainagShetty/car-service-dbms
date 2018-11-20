@@ -52,6 +52,41 @@ abstract class Service {
 		// set s_id;
 		this.sc_id = "1";
 	}
+	
+	// Called only by Receptionist
+	static void serviceHistory(String cus_email, Connection conn) {
+		//TODO print service history for the cus_email.
+//		A. ServiceID
+//		B. LicensePlate
+//		C. ServiceType
+//		D. MechanicName
+//		E. ServiceStart
+//		Date/Time
+//		F. Service End
+//		Date/Time (expected or actual)
+//		G. Service Status (Pending,
+//		Ongoing, or Complete)
+	}
+	
+	// Called only by Manager
+	static void serviceHistory(Connection conn, String sc_id) {
+//		Display the following details for all cars that were serviced at this service center followed by the menu.
+//		A. ServiceID
+//		B. CustomerName
+//		C. LicensePlate
+//		D. ServiceType
+//		E. MechanicName
+//		F. Service Start
+//		Date/Time
+//		G. Service End
+//		Date/Time (expected or actual)
+//		H. ServiceStatus (Pending,
+//		Ongoing, or Complete)
+	}
+	
+	static void getServiceType() {
+		
+	}
 }
 
 class Repair extends Service{
