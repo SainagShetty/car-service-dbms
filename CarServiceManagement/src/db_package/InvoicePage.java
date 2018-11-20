@@ -246,5 +246,28 @@ public class InvoicePage{
 			System.out.print(this.wageHr2);
 		}
 		System.out.println("G. Total Service Cost: " + this.totalCost);
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = con.prepareStatement("UPDATE SERVICE SET totalCost = ? WHERE ser_id = ?");
+			pstmt.setFloat(1, this.totalCost);
+			pstmt.setString(2, this.srID);
+			pstmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pstmt = null;
+		try {
+			pstmt = con.prepareStatement("UPDATE SERVICE SET laborTime = ? WHERE ser_id = ?");
+			pstmt.setFloat(1, this.laborTime);
+			pstmt.setString(2, this.srID);
+			pstmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 }
