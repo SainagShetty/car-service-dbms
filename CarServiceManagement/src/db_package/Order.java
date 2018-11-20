@@ -50,7 +50,7 @@ class Order {
 	private void setOrigin(String req_part, String req_quantity){
 		
 		 for( String scid : DbApplication.ServiceCIDList) {
-			 ServiceCenter sc_instance = new ServiceCenter(scid);
+			 ServiceCenter sc_instance = new ServiceCenter(scid, this.conn);
 			 if(sc_instance.partAvailableForDelivery(req_part, req_quantity)) {
 				 this.partID = req_part;
 				 this.Quantity = req_quantity;

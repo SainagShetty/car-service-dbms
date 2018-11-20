@@ -10,11 +10,12 @@ class ServiceCenter {
 	String sc_address;
     String receptionistid = null;
 	String sc_id;
-    
-    ServiceCenter(String sc_id){
+    Connection conn;
+	
+    ServiceCenter(String sc_id, Connection conn){
     	
     		this.sc_id = sc_id;
-    		
+    		this.conn = conn;
     		//TODO
     		// get from Service center table 
     		// update instance variables
@@ -51,7 +52,7 @@ class ServiceCenter {
 		
 		
 		//TODO check is part available in inventory in given quantity.
-		
+		//Part, inventory for this sc
 		
 		
 		return false;
