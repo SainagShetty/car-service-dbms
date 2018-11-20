@@ -540,7 +540,7 @@ class Manager extends Employee implements MonthlyPayable{
     				if (emprole.toLowerCase().equals("receptionist")) {
     					// if ServiceCenter has more than one receptionist.
     					
-    					ServiceCenter sc = new ServiceCenter(this.service_center);
+    					ServiceCenter sc = new ServiceCenter(this.service_center, this.conn);
     					if (!sc.hasReceptionist(conn))
     					{
     					
