@@ -164,7 +164,7 @@ class Maintenance extends Service{
 //		System.out.println("Total time "+totalTime);
 		if(missing.size() == 0) {
 //			System.out.println("Schedule Service");
-			ArrayList<Date> currentWeekMap = new ArrayList<Date>();
+			ArrayList<java.sql.Date> currentWeekMap = new ArrayList<java.sql.Date>();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 			LocalDate today = LocalDate.now();
@@ -211,16 +211,18 @@ class Maintenance extends Service{
 				}catch(SQLException e){
 					e.printStackTrace();
 				}
+				
 				//Find next two possible date
-				ArrayList<String> availableDates = new ArrayList<String>();
+				ArrayList<java.sql.Date> availableDates = new ArrayList<java.sql.Date>();
 				ArrayList<String> emp_id = new ArrayList<String>();
 				ArrayList<Float> time_slot = new ArrayList<Float>();
-				for(String date_values: currentWeekMap) {
+				for(java.sql.Date date_values: currentWeekMap) {
 					for(String mech_values: mech) {
 						try{
+							
 							pstmt = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORKD_DATE = ?");
 							pstmt.setString(1, mech_values);
-							pstmt.setString(2, date_values);
+							pstmt.setDate(2, date_values);
 							rs = pstmt.executeQuery();
 							rs.next();
 							if(rs.getInt(1) == 0) {
@@ -233,7 +235,7 @@ class Maintenance extends Service{
 							
 								pstmt = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORKD_DATE = ?");
 								pstmt.setString(1, mech_values);
-								pstmt.setString(2, date_values);
+								pstmt.setDate(2, date_values);
 								rs = pstmt.executeQuery();
 								rs.next();
 								if(rs.getFloat(1)+totalTime <= 8.0)
@@ -241,9 +243,6 @@ class Maintenance extends Service{
 									availableDates.add(date_values);
 									emp_id.add(mech_values);
 									time_slot.add(rs.getFloat(1));
-									System.out.println(rs.getFloat(1));
-									System.out.println(availableDates);
-									System.out.println(time_slot);
 									break;
 								}
 							}
@@ -258,7 +257,6 @@ class Maintenance extends Service{
 				System.out.println("1. "+availableDates.get(0));
 				System.out.println("2. "+availableDates.get(1));
 				System.out.println("3. Go Back");
-				
 				boolean exit = false;
 				while(!exit) {
 					
@@ -270,17 +268,12 @@ class Maintenance extends Service{
 						formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
-						try {
-							calendar.setTime(formatter_2.parse(availableDates.get(0)+" 09:00:00"));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						calendar.setTime(availableDates.get(0));
+						System.out.println(availableDates.get(0));
 						float timeDiff = time_slot.get(0);
 						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
-				 
-				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));				 
+				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
 				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
 				        calendar.add(Calendar.HOUR, (int)totalTime);
 				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
@@ -406,12 +399,12 @@ class Maintenance extends Service{
 				catch(SQLException e){
 					e.printStackTrace();
 				}
-				ArrayList<String> availableDates = new ArrayList<String>();
-				for(String date_values: currentWeekMap) {
+				ArrayList<java.sql.Date> availableDates = new ArrayList<java.sql.Date>();
+				for(java.sql.Date date_values: currentWeekMap) {
 					try{
 						pstmt = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORKD_DATE = ?");
 						pstmt.setString(1, emp_id);
-						pstmt.setString(2, date_values);
+						pstmt.setDate(2, date_values);
 						rs = pstmt.executeQuery();
 						rs.next();
 						if(rs.getInt(1) == 0) 
@@ -419,7 +412,7 @@ class Maintenance extends Service{
 						else {
 							pstmt = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORKD_DATE = ?");
 							pstmt.setString(1, emp_id);
-							pstmt.setString(2, date_values);
+							pstmt.setDate(2, date_values);
 							rs = pstmt.executeQuery();
 							rs.next();
 							if(rs.getFloat(1)+totalTime <= 8.0)
