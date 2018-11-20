@@ -1,5 +1,6 @@
 package db_package;
 import java.sql.Connection;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +43,12 @@ class ServiceCenter {
 			pstmt.setString(1, this.sc_id);
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				if (rs.getString("E_ROLE") == "Receptionist"){
-					return true
+				System.out.println(rs.getString("E_ROLE"));
+				if (rs.getString("E_ROLE").equals("Receptionist")){
+					return true;
 				} 
 			}
-			return false
+			return false;
 		}
 		catch(SQLException e){
 			e.printStackTrace();
