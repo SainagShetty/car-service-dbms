@@ -10,7 +10,6 @@ class Notification {
 	Date notificationDate;
 	String suplierName;
 	Notification(){
-		
 	}
 //	static void addNotification(Order order){
 //		//TODO	
@@ -23,10 +22,10 @@ class Notification {
 	}
 	
 	static void notificationPage(Connection conn) {
-		printallNotifications();	
+		printallNotifications(conn);	
 	}
 	
-	static void printallNotifications() {
+	static void printallNotifications(Connection conn) {
 		Scanner reader = new Scanner(System.in);
 		System.out.println( "###Notifications ####");
 		
@@ -38,8 +37,7 @@ class Notification {
 			if (input.startsWith("1")) {
 				System.out.println("Enter order id");
 				String id = reader.nextLine().trim();
-				Order.printOrderById(id);
-			
+				Order.printOrderById(id, conn);
 				while(true) {
 					System.out.println("1. Go back");
 					input= reader.nextLine().trim();
@@ -47,7 +45,6 @@ class Notification {
 						break;
 					}	
 				}
-				
 			} else if (input.startsWith("2")) {
 				break;
 			} else {

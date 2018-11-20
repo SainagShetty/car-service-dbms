@@ -822,7 +822,7 @@ class Manager extends Employee implements MonthlyPayable{
 			if( input.startsWith("1")) {
 				System.out.println("###Order History###");
 				
-				Order.printOrderHistory();
+				Order.printOrderHistory(conn);
 				
 				boolean exit_in = false;
 				while(!exit_in) {
@@ -864,8 +864,8 @@ class Manager extends Employee implements MonthlyPayable{
 			}
 		}	
 	}
-	private void notificationsPage(Connection conn2) {
-		Notification.notificationPage(conn2);		
+	private void notificationsPage(Connection conn) {
+		Notification.notificationPage(conn);		
 	}
 	private void newCarModelPage() {
 			
