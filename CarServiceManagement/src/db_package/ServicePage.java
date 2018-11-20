@@ -79,7 +79,8 @@ public class ServicePage {
 		return true;
 	}
 	
-	void receptionistScheduleServicePage() {
+	void receptionistScheduleServicePage(String sc_id) {
+		this.sc_id = sc_id;
 		Boolean goback = false;
 		if (used_by != Role.RECEPTIONIST) {
 			System.out.println("Only a Receptionist can Access this page");
@@ -97,6 +98,15 @@ public class ServicePage {
 			
 			if (input.startsWith("1")) {
 				//TODO
+				System.out.println("Enter Customer Email id");
+				String temp_email = reader.nextLine();
+				System.out.println("License Plate");
+				String temp_license = reader.nextLine();
+				System.out.println("Current Milage");
+				float temp_milage = Float.parseFloat(reader.nextLine());
+				System.out.println("Mechanic Name");
+				String temp_ename = reader.nextLine();
+				Maintenance maintenance = new Maintenance(this.sc_id, temp_email, temp_license, temp_milage, temp_ename, this.conn);
 			} else if (input.startsWith("2")){
 				//TODO
 			} else if (input.startsWith("3")){
