@@ -173,7 +173,7 @@ public class ServicePage {
 //			if (serviceIDlist == null)
 //				serviceIDlist = printServicesForCustomer(cus_email);
 			
-			printServicesForCustomer(cus_email);
+			ArrayList<String> serviceID = printServicesForCustomer(cus_email);
 			System.out.println("### Select option ###");
 			System.out.println(" 1.  Pick a service");
 			System.out.println(" 2.  Go Back");
@@ -223,7 +223,7 @@ public class ServicePage {
 		
 			if(input.equals("1")){
 				System.out.println("### Pick two dates ###");
-				//TODO
+				
 			} else if (input.equals("2")) {
 				break;
 			} else {
@@ -233,7 +233,7 @@ public class ServicePage {
 	}
 
 //	List<String> printServicesForCustomer(String Cus_email) {
-	void printServicesForCustomer(String Cus_email) {
+	public ArrayList<String> printServicesForCustomer(String Cus_email) {
 //		Display the following details for all upcoming services for this customer, followed by the menu
 //		A. LicensePlate
 //		B. ServiceID
@@ -243,8 +243,8 @@ public class ServicePage {
 //		pair)
 //		E. ServiceDetails
 //		(Service A/B/C or Problem)
-		
-		Service.serviceHistory(Cus_email, conn);
+		ArrayList<String> serviceID = Service.serviceHistory(Cus_email, true, conn);
+		return serviceID;
 		//List<String> serviceIDlist = new ArrayList<String>();	
 		//return serviceIDlist;
 	}

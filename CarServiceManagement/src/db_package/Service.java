@@ -134,6 +134,88 @@ abstract class Service {
 //		Ongoing, or Complete)
 	}
 	
+	static ArrayList<String> serviceHistory(String cus_email, boolean flag,  Connection conn) {
+		Customer cus = new Customer(cus_email, conn);
+		String cus_id = cus.getCustomerID();
+		System.out.println("CustomerID " + cus_id);
+		int count = 0;
+		ArrayList<String> serviceID = new ArrayList<String>();
+	 	boolean status = false;
+	 	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			pstmt = conn.prepareStatement("SELECT * FROM Service WHERE c_id=?");
+			pstmt.setString(1, cus_id);
+			rs = pstmt.executeQuery();
+
+		while(rs.next())  {
+						
+						System.out.println("Service History for Customer");
+						String service_id = rs.getString(1);
+						String employee_id = rs.getString(2);
+						String c_id = rs.getString(3);
+						String sc_id = rs.getString(4);
+						String License_no = rs.getString(5);
+						Date endtime = rs.getDate(6);
+						String BasicFaults = rs.getString(7);
+					    String maintnType = rs.getString(8);
+					    Date startDate = rs.getDate(9);
+					    String laborTime = rs.getString(10);
+					    String TotalCost = rs.getString(11);
+					    String ser_status = "PENDING";
+					    
+					    System.out.println(endtime);
+					    Date today = new Date(0);
+					    
+					    if(startDate.after(today) ) {
+					    		ser_status = "ONGOING";	
+					    } else if (endtime ==null || endtime.after(today) ) {
+					    		ser_status = "PENDING";	
+					    } else {
+					    		ser_status = "COMPLETED";	
+					    }
+					    
+					    Mechanic mech = new Mechanic(employee_id,conn,Employee.withid);
+					    	if(ser_status.equals("ONGOING")) {
+					    		System.out.println("Service "+count);
+					    		count++;
+				    			System.out.println("ServiceID: " + service_id);
+				    			serviceID.add(service_id);
+				    			System.out.println("LicensePlate: " + License_no);
+				    			System.out.println("ServiceType: " + maintnType);
+				    			System.out.println("MechanicName: " + mech.emailID);
+				    			System.out.println("ServiceStart " + startDate);
+				    			System.out.println("ServiceEnd " + endtime);
+				    			System.out.println("Service Status " + ser_status);
+					    	}
+			    			status = true;
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
+		if(!status)
+		{
+			System.out.println("Entered email has no service history");
+		}
+		return serviceID;
+		//TODO print service history for the cus_email.
+//		A. ServiceID
+//		B. LicensePlate
+//		C. ServiceType
+//		D. MechanicName
+//		E. ServiceStart
+//		Date/Time
+//		F. Service End
+//		Date/Time (expected or actual)
+//		G. Service Status (Pending,
+//		Ongoing, or Complete)
+	}
+	
 	// Called only by Manager
 	static void serviceHistory(Connection conn, String sc_id) {
 //		Display the following details for all cars that were serviced at this service center followed by the menu.
@@ -1264,18 +1346,52 @@ class Maintenance extends Service{
 		ArrayList<String> basicTasks = new ArrayList<String>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		try{
-			pstmt = conn.prepareStatement("SELECT BASIC_TASKID from Maintenance where make = ? and model = ? and type = ?");
-			pstmt.setString(1, make);
-			pstmt.setString(2, model);
-			pstmt.setString(3, type);
-			rs = pstmt.executeQuery();
-			while(rs.next())  {
-				basicTasks.add(rs.getString(1));
+		if(type.equals("C"))
+		{
+			try{
+				pstmt = conn.prepareStatement("SELECT BASIC_TASKID from Maintenance where make = ? and model = ? and type = ?");
+				pstmt.setString(1, make);
+				pstmt.setString(2, model);
+				pstmt.setString(3, "C");
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					basicTasks.add(rs.getString(1));
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
 			}
-		}catch(SQLException e){
-			e.printStackTrace();
 		}
+		if(type.equals("C") || type.equals("B"))
+		{
+			try{
+				pstmt = conn.prepareStatement("SELECT BASIC_TASKID from Maintenance where make = ? and model = ? and type = ?");
+				pstmt.setString(1, make);
+				pstmt.setString(2, model);
+				pstmt.setString(3, "B");
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					basicTasks.add(rs.getString(1));
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		if(type.equals("C") || type.equals("B") || type.equals("A"))
+		{
+			try{
+				pstmt = conn.prepareStatement("SELECT BASIC_TASKID from Maintenance where make = ? and model = ? and type = ?");
+				pstmt.setString(1, make);
+				pstmt.setString(2, model);
+				pstmt.setString(3, "A");
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					basicTasks.add(rs.getString(1));
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+	
 //		for (String value : basicTasks) {
 //            System.out.println(value);
 //        }
@@ -1328,6 +1444,10 @@ class Maintenance extends Service{
 		}
 
 		return status;
+	}
+	
+	public void rescheduleService() {
+		
 	}
 	
 }
