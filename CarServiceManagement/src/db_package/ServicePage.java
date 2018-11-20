@@ -40,12 +40,13 @@ public class ServicePage {
 				printServiceHistory(cus.c_id);
 			} else if (input.equals("2")) {
 				
+				String mechanicName = null;
 				System.out.println(" Enter  License Plate");
 				String licensePlate= reader.nextLine().trim();
 				System.out.println(" Enter  CurrentMileage");
 				String currentMileage = reader.nextLine().trim();
 				System.out.println("Enter  MechanicName");
-				String mechanicName = reader.nextLine().trim();
+				mechanicName = reader.nextLine().trim();
 				
 				System.out.println("### Select option ###");
 				System.out.println(" 1. Schedule Maintenance");
@@ -141,12 +142,9 @@ public class ServicePage {
 	}
 	
 	void scheduleMaintenanceService(String c_email, String licensePlate, String currentMileage , String mechanicName) {
-		System.out.println("License Plate");
 		String temp_license = reader.nextLine();
-		System.out.println("Current Milage");
-		float temp_milage = Float.parseFloat(reader.nextLine());
-		System.out.println("Mechanic Name");
-		String temp_ename = reader.nextLine();
+		float temp_milage = Float.parseFloat(currentMileage);
+		String temp_ename = mechanicName;
 		Maintenance maintenance = new Maintenance(this.sc_id, c_email, temp_license, temp_milage, temp_ename, this.conn);
 	}
 	
