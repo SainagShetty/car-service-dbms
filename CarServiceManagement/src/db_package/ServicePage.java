@@ -29,8 +29,8 @@ public class ServicePage {
 			System.out.println("### Select option ###");
 			System.out.println(" 1.  View Service History");
 			System.out.println(" 2.  Schedule Service");
-			System.out.println(" 3. Reschedule Service");
-			System.out.println(" 4. Go Back");
+			System.out.println(" 3.  Reschedule Service");
+			System.out.println(" 4.  Go Back");
 			
 			String input= reader.nextLine();
 		
@@ -89,8 +89,8 @@ public class ServicePage {
 			System.out.println("### Select option ###");
 			System.out.println(" 1.  View Service History");
 			System.out.println(" 2.  Schedule Service");
-			System.out.println(" 3. Reschedule Service");
-			System.out.println(" 4. Go Back");
+			System.out.println(" 3.  Reschedule Service");
+			System.out.println(" 4.  Go Back");
 			
 			
 		}
