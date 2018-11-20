@@ -6,6 +6,7 @@ abstract class Service {
 	String ser_id;
 	String e_id;
 	String sc_id;
+	String c_id;
 	String c_email;
 	String vehicle_license;
 	Date startDate;
@@ -82,8 +83,8 @@ class Maintenance extends Service{
 	
 	Connection conn;
 	
-	Maintenance(String sc_id, String c_email, String Vehicle_license, float current_milage, String mechanic_name, Connection conn) {
-		super(sc_id, c_email, Vehicle_license, current_milage, mechanic_name, conn);
+	Maintenance(String sc_id, String c_email, String Vehicle_license, float current_mileage, String mechanic_name, Connection conn) {
+		super(sc_id, c_email, Vehicle_license, current_mileage, mechanic_name, conn);
 		
 		this.conn = conn;
 		
@@ -91,8 +92,51 @@ class Maintenance extends Service{
 		this.make = vehicle.getMake();
 		this.model = vehicle.getModel();
 		
-		Customer customer = new Customer(c_email, this.conn);
+		System.out.println("Make model "+make+" "+model);
 		
+		Customer customer = new Customer(c_email, this.conn);
+		this.c_id = customer.getCustomerID();
+		
+		System.out.println("Customer id is "+this.c_id);
+		
+		String service_type = this.maintnanceType(this.make, this.model, current_mileage);
+		System.out.println("service type "+ service_type);
+		
+	}
+	
+	private String maintnanceType(String make, String model, float mileage) {
+		int a = 0, b = 0, c = 0;
+		System.out.println("Inside here");
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT type, mileage from Maintenance where make = ? and model = ? GROUP BY type, MILEAGE;");
+			pstmt.setString(1, make);
+			pstmt.setString(2, model);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				System.out.println("NEXT");
+				String type_s = rs.getString(1);
+				if(type_s.equals("A"))
+					a = rs.getInt(2)*1000;
+				else if(type_s.equals("B"))
+					b = rs.getInt(2)*1000;
+				else if(type_s.equals("C"))
+					c = rs.getInt(2)*1000;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("ABC"+a+" "+b+" "+c);
+		
+		int mileage_int = Math.round(mileage);
+		int temp = mileage_int%c;
+		if(temp < a)
+			return "A";
+		if(temp < b)
+			return "B";
+		return "C";
 	}
 	
 }

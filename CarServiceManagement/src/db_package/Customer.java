@@ -61,8 +61,8 @@ class Customer extends Person{
 	}
  
 	
-	Customer(String email, Connection conn){
-		super(conn); //just updates connection 
+	Customer(String email, Connection conn){		
+		super(conn); //just updates connection
 		this.con = conn;
 		this.emailID = email;
 		PreparedStatement pstmt = null;
@@ -82,20 +82,25 @@ class Customer extends Person{
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
 		PreparedStatement pstmt2 = null;
 		ResultSet rs2 = null;
 		try{
 			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
 			pstmt2.setString(1, this.c_id);
 			rs2 = pstmt2.executeQuery();
+			System.out.println("qury executed");
 			while(rs2.next())  {
 				String tmp = rs2.getString(1);
+				System.out.println("Inside while " +tmp);
 				Vehicle v = new Vehicle(tmp);
 				vehicleList.add(v);
 			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
+		System.out.println("End of Customer Constructor");
 	// Query 2 fetch from persons table and set Persons instance variable.
 		
 	}
@@ -108,6 +113,10 @@ class Customer extends Person{
 		this.service_center = serviceCen_id;
 		createCustomer(conn);
 	}
+    
+    public String getCustomerID() {
+    	return this.c_id;
+    }
     
     void customerMenu() {
     	Boolean exit = false;
