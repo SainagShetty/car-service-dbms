@@ -35,4 +35,9 @@ public class Inventory {
 			e.printStackTrace();
 		}
 	}
+ 	
+ 	
+ 	public static void updateInventory() {
+ 		//TODO by Rajat
+ 	}
 }
