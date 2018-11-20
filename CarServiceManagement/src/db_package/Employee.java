@@ -129,10 +129,6 @@ class Employee extends Person {
     	 return true;
     }
 
-	public void displayPayroll() {
-		// TODO Auto-generated method stub
-		
-	}
 
     
 }
@@ -154,11 +150,10 @@ class Manager extends Employee implements MonthlyPayable{
 		this.conn = conn;
 		
 	}
-	
-//	Manager(int emp_id, Connection conn){
-//		super(emp_id, conn);
-//	}
-	
+
+	Manager(Employee emp, Connection conn){
+		super(emp, conn);
+	}
 	
 	Manager(String userID, String emailID,String name, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
@@ -200,7 +195,7 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("3")){
     			this.addEmployee();
     		} else if (input.startsWith("4")){
-    			continue;
+    			this.payrollPage();
     		} else if (input.startsWith("5")){
     			Inventory inv = new Inventory(this.conn);
     			inv.viewInventory(this.service_center);
@@ -590,7 +585,6 @@ class Manager extends Employee implements MonthlyPayable{
     		}
     	}
     	
-    	
     	private void payrollPage() {
     		String input;
     		boolean exists = false;
@@ -602,12 +596,13 @@ class Manager extends Employee implements MonthlyPayable{
     			    Employee emp = new Employee(input, conn, Employee.withid);
     			    if(emp.my_role == Role.RECEPTIONIST) {
     			    	Receptionist recEmp = new  Receptionist(emp, conn);
-    			    	
-    			    	 	displayPayroll();
+    			    		recEmp.displayPayroll();	
     			    } else if (emp.my_role == Role.MECHANIC) {
-    			    		emp.displayPayroll();
+    			      	Mechanic mecEmp = new  Mechanic(emp, conn);
+    			    		mecEmp.displayPayroll();
     			    } else if (emp.my_role == Role.MANAGER) {
-    			    	
+    			    		Manager manEmp = new  Manager(emp, conn);
+    			    		manEmp.displayPayroll();
     			    }
     			   
     			    exists =true;
@@ -657,6 +652,12 @@ class Manager extends Employee implements MonthlyPayable{
 	}
 	
 	private void invoicePage() {
+		
+	}
+
+	@Override
+	public void displayPayroll() {
+		// TODO Auto-generated method stub
 		
 	}
 }
@@ -730,6 +731,9 @@ class Mechanic extends Employee implements HourlyPayable{
 		super(p, conn);
 	}
 	
+	Mechanic(Employee emp, Connection conn){
+		super(emp, conn);
+	}
 	
 	Mechanic(String userID, String emailID, String name, String password, String sc_id,
    		 String e_address, String e_tel_no, Date start_date, int compensation, Connection conn){
