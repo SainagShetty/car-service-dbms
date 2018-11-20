@@ -61,12 +61,66 @@ class Employee extends Person {
 	Employee(String id, Connection conn, int flag){
 		super(conn);
 		if (withid == flag) {
-			//////TODO
+			String roleTmp = "";
+			this.conn = conn;
+			this.eid = id;
+			this.userID = id;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			LoggedIn = true;
+			try{
+				pstmt = conn.prepareStatement("SELECT e_email, e_name, sc_id, e_address, e_tel_no, start_date, compensation, E_ROLE FROM Employee WHERE e_id=?");
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					this.emailID = rs.getString(1);
+					this.e_name = rs.getString(2); 
+					this.service_center = rs.getString(3); 
+					this.e_address = rs.getString(4);
+					this.e_tel_no = rs.getString(5);
+					this.start_date = rs.getDate(6);
+					this.compensation = rs.getInt(7);
+					roleTmp = rs.getString(8);
+				}
+				if(roleTmp.equals("Manager")) {
+					this.my_role = Role.MANAGER;
+				}
+				else if(roleTmp.equals("Receptionist")) {
+					this.my_role = Role.RECEPTIONIST;
+				}
+				else if(roleTmp.equals("Mechanic")) {
+					this.my_role = Role.MECHANIC;
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
 			// Q1 select using employee id from Employee table and update instance variables.
 			// Q2 fetch from persons table and set Persons instance variable 
 			
 		} else if (withemail == flag){
 			 /////TODO
+			this.conn = conn;
+			this.emailID = id;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			LoggedIn = true;
+			try{
+				pstmt = conn.prepareStatement("SELECT e_id, e_name, sc_id, e_address, e_tel_no, start_date, compensation FROM Employee WHERE e_email=?");
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					this.eid = rs.getString(1);
+					this.e_name = rs.getString(2); 
+					this.service_center = rs.getString(3); 
+					this.e_address = rs.getString(4);
+					this.e_tel_no = rs.getString(5);
+					this.start_date = rs.getDate(6);
+					this.compensation = rs.getInt(7);
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+			this.userID = this.eid;
 			// Q1 select using employee email from Employee table and update instance variables.
 			// Q2 fetch from persons table and set Persons instance variable 			
 		}
@@ -123,10 +177,29 @@ class Employee extends Person {
     		personDelete();
     }
     
-    static boolean  employeeExists(String emp_id) {
+    static boolean  employeeExists(String emp_id, Connection con) {
     		//TODO
     		//Check if employee id exists in table
-    	 return true;
+    	PreparedStatement pstmt2 = null;
+		ResultSet rs2 = null;
+		try{
+			pstmt2 = con.prepareStatement("SELECT count(*) FROM Employee WHERE e_id=?");
+			pstmt2.setString(1, emp_id);
+			rs2 = pstmt2.executeQuery();
+			int val = 0;
+			while(rs2.next())  {
+				val = rs2.getInt(1);
+			}
+			if(val == 1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+    	 return false;
     }
 
 
@@ -601,15 +674,19 @@ class Manager extends Employee implements MonthlyPayable{
     		do {
     			System.out.println("Enter Employee id");
     			input = reader.nextLine();
-    			if (Employee.employeeExists(input)) {	
+    			if (Employee.employeeExists(input, conn)) {	
     			    Employee emp = new Employee(input, conn, Employee.withid);
+    			    System.out.println(emp.e_name + " " + emp.my_role);
     			    if(emp.my_role == Role.RECEPTIONIST) {
+    			    	System.out.println("R");
     			    	Receptionist recEmp = new  Receptionist(emp, conn);
     			    		recEmp.displayPayroll();	
     			    } else if (emp.my_role == Role.MECHANIC) {
+    			    	System.out.println("M");
     			      	Mechanic mecEmp = new  Mechanic(emp, conn);
     			    		mecEmp.displayPayroll();
     			    } else if (emp.my_role == Role.MANAGER) {
+    			    	System.out.println("Mng");
     			    		Manager manEmp = new  Manager(emp, conn);
     			    		manEmp.displayPayroll();
     			    }
