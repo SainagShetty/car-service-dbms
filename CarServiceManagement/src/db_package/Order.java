@@ -188,9 +188,12 @@ class Order {
 	}
 	
 	static void updateOrderlist(String orderids[]) {
+	        int r;
 		 for(String order : orderids) {
-			 // mark status COMPLETED in database
-			 //TODO
+			 PreparedStatement pstmt = null;
+			 pstmt = conn.prepareStatement("update ORDERS set O_STATE=\"Complete\" where O_ID=?");
+			 pstmt.setString(1,order);
+			 r=pstmt.executeUpdate();
 		 }
 	}
 	
