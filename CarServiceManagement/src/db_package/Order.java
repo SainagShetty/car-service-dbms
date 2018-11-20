@@ -103,6 +103,19 @@ class Order {
 		// 
 		
 	}
+	static void printOrderById(String orderid) {
+		//TODO
+		
+//		A. OrderID
+//		B. Date
+//		C. PartName
+//		D. SupplierName
+//		E. PurchaserName
+//		F. Quantity
+//		G. Unit Price
+//		H. TotalCost
+//		I. Order Status
+	}
 	
 	
 }

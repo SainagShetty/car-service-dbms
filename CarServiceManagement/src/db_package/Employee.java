@@ -709,11 +709,10 @@ class Manager extends Employee implements MonthlyPayable{
 		}	
 	}
 	private void notificationsPage() {
-		
-		
+		Notification.notificationPage();		
 	}
 	private void newCarModelPage() {
-		
+			
 	}
 	private void carServiceDetailsPage() {
 		
