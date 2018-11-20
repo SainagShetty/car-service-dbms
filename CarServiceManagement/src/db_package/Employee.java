@@ -260,15 +260,15 @@ class Manager extends Employee implements MonthlyPayable{
     			exit = true;
     		} 
     		else if (input.startsWith("14")){
-	    		System.out.println("Enter Customer Email id");
-				String temp_email = reader.nextLine();
-				System.out.println("License Plate");
-				String temp_license = reader.nextLine();
-				System.out.println("Current Milage");
-				float temp_milage = Float.parseFloat(reader.nextLine());
-				System.out.println("Mechanic Name");
-				String temp_ename = reader.nextLine();
-				Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
+//	    		System.out.println("Enter Customer Email id");
+//				String temp_email = reader.nextLine();
+//				System.out.println("License Plate");
+//				String temp_license = reader.nextLine();
+//				System.out.println("Current Milage");
+//				float temp_milage = Float.parseFloat(reader.nextLine());
+//				System.out.println("Mechanic Name");
+//				String temp_ename = reader.nextLine();
+//				Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
     		}else if (input.startsWith("11")){
     			this.invoicePage();
     		} else if (input.startsWith("10")){
@@ -987,7 +987,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    			
 	    		} else if ( input.startsWith("5")){
 	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
-	    			recp_sp.receptionistScheduleServicePage();
+	    			recp_sp.receptionistScheduleServicePage(this.service_center);
 	    			
 	    		} else if ( input.startsWith("6")){
 	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
