@@ -15,5 +15,16 @@ class Part {
 	}
 	
 	
+	static String findDistributor(String partId, String quantity) {
+		String ret = null;
+		
+		//TODO 
+		// check the distributor for part id. return distributor id.
+		
+		
+		return ret;
+	}
+	
+	
 	
 }

@@ -5,8 +5,13 @@ import java.util.*;
 public class DbApplication {
 	static Scanner reader;
 	static Connection con;
+
+  static ArrayList<String> ServiceCIDList;
 	
 	public static void main(String args[]){ 
+	   ServiceCIDList = new ArrayList<String>();
+	   ServiceCIDList.add("S0001");
+	   ServiceCIDList.add("S0002");
 		DBConnection dbConnection = DBConnection.getDBConnection();
 		try{    
 			con = dbConnection.createConnection();

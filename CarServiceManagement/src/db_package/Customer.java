@@ -99,6 +99,7 @@ class Customer extends Person{
 		
 	}
 	
+	// signup
     Customer(String userID,String emailID, String password, String c_name, String c_address, String c_tel_no, String serviceCen_id, Connection conn) {	
 		super(userID, emailID, Role.CUSTOMER, password, conn); // this will create an entry in persons table
 		this.c_address = c_address;
