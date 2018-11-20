@@ -23,6 +23,7 @@ class Order {
 	String DestSCID;
 	String Quantity;
 	String status;
+	static int iterable=12;
 	
 	Boolean origin_found = false;
 	Order(){
@@ -53,6 +54,21 @@ class Order {
 	
 	void dbCreateOrder(){
 		//set OrderId here
+		PreparedStatement p = null;
+		int r;
+		p = this.conn.prepareStatement("INSERT INTO ORDERS(ORDER_PLACEMENT_DATE,EXPECTED_DELIVERY_DATE,ACTUAL_DELIVERY_DATE,O_ID,ORIGIN_D_ID,ORIGIN_SC_ID,P_ID,DESTINATION_SC_ID,QUANTITY,O_STATE) VALUES (?,?,?,?,?,?,?,?,?,?)");
+		p.setDate(1,this.orderDate);
+		p.setDate(2,this.expectedDate);
+		p.setDate(3,this.ActualDelivery);
+		p.setString(4,iterable);
+		p.setString(5,this.originDID);
+		p.setString(6,this.originScID);
+		p.setString(7,this.partID);
+		p.setString(8,this.DestSCID);
+		p.setString(9,this.Quantity);
+		p.setString(10,this.status);
+		r=p.executeUpdate();
+		iterable+=1;
 	}
 	void markOrderComplete() {
 		this.status = OrderStatus.COMPLETED.toString();
