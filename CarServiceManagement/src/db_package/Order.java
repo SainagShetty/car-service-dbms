@@ -217,7 +217,7 @@ class Order {
 		 for(String order : orderids) {
 			 PreparedStatement pstmt = null;
 			 try {
-				pstmt = conn.prepareStatement("update ORDERS set O_STATE=\"Complete\" where O_ID=?");
+				pstmt = conn.prepareStatement("update ORDERS set O_STATE=\""+OrderStatus.COMPLETED.toString()+"\"where O_ID=?");
 				pstmt.setString(1,order);
 				 r=pstmt.executeUpdate();
 			} catch (SQLException e) {
