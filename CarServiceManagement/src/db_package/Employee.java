@@ -94,7 +94,7 @@ class Employee extends Person {
 					+ "(E_ID, E_NAME, E_EMAIL, SC_ID, E_ADDRESS, E_TEL_NO, E_ROLE, START_DATE, COMPENSATION) "
 					+ "VALUES "
 					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			pstmt.setString(1, "1234567");
+			pstmt.setString(1, this.emailID);
 			pstmt.setString(2, this.e_name);
 			pstmt.setString(3, this.emailID);
 			pstmt.setString(4, this.service_center);
@@ -194,11 +194,19 @@ class Manager extends Employee implements MonthlyPayable{
     			this.customerProfile();
     		} else if (input.startsWith("3")){
     			this.addEmployee();
-    			continue;
     		} else if (input.startsWith("4")){
     			continue;
     		} else if (input.startsWith("5")){
-    			continue;
+    			Inventory inv = new Inventory(this.conn);
+    			inv.viewInventory(this.service_center);
+    			boolean exit_in = false;
+    			while(!exit_in) {
+    				System.out.println("1.  Go Back");
+    				String input_in = reader.nextLine();
+    				if (input_in.startsWith("1")) {
+    	    			exit_in = true;
+    	    		}
+    			}
     		} else if (input.startsWith("6")){
     			continue;
     		} else if (input.startsWith("7")){
@@ -493,6 +501,127 @@ class Manager extends Employee implements MonthlyPayable{
     }
     
 
+    private void addEmployee() {
+    	boolean goback = false;
+    		
+    	while (!goback){
+    		System.out.println(" Enter  Name");
+    		String name = reader.nextLine();
+    		System.out.println(" Enter  Address");
+    		String address= reader.nextLine();
+    		System.out.println(" Enter  EmailAddress");
+    		String emailad = reader.nextLine();
+    		System.out.println("Enter  PhoneNumber");
+    		String phoneno = reader.nextLine();
+    		System.out.println("Enter  Role");
+    		String emprole = reader.nextLine();
+    		System.out.println("Enter  Start Date");
+    		String startdate = reader.nextLine();
+    		Date date1;
+    		java.util.Date date;
+    		java.sql.Date sqlStartDate = null;
+    		try {
+    			SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
+    			date = sdf1.parse(startdate);
+    			sqlStartDate = new java.sql.Date(date.getTime()); 
+    			
+    		} catch (ParseException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		
+    		System.out.println("Enter  Compensation");
+    		String compesation = reader.nextLine();
+    		System.out.println("Enter  1 to add 0 to go back");
+    		String input = reader.nextLine();
+    			
+    			if (input.startsWith("1")) {
+    			
+    				if (emprole.toLowerCase().equals("receptionist")) {
+    					// if ServiceCenter has more than one receptionist.
+    					
+    					ServiceCenter sc = new ServiceCenter(this.service_center);
+    					if (!sc.hasReceptionist(conn))
+    					{
+    					
+    						//String userID,String emailID, String password, String sc_id,
+    				   		// String e_address, String e_tel_no, Date start_date, int compensation, Connection conn
+    						Receptionist newRecp = new Receptionist(emailad, emailad , name, "12345678", this.service_center,
+    								address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);
+    					    break;
+    					} else {
+    						System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
+    						input = reader.nextLine();
+    						
+    						if(input.startsWith("0")) {
+    						
+    							//goback = true;
+    							break;
+    						} else if(input.startsWith("1")) {
+    							continue;
+    						}
+    					}
+    					
+    				} else if (emprole.toLowerCase().equals("mechanic")) {
+    					
+    					Mechanic newMech = new Mechanic(emailad, emailad , name,  "12345678", this.service_center,
+    							address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);	
+    					break;
+    				} else {
+    					System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
+    					input = reader.nextLine();
+    					
+    					if(input.startsWith("0")) {
+    					
+    						//goback = true;
+    						break;
+    					} else if(input.startsWith("1")) {
+    						continue;
+    					}
+    				}
+    			} else if (input.startsWith("0")) {
+    				return;
+    			}
+    		}
+    	}
+    	
+    	
+    	private void payrollPage() {
+    		String input;
+    		boolean exists = false;
+    		
+    		do {
+    			System.out.println("Enter Employee id");
+    			input = reader.nextLine();
+    			if (Employee.employeeExists(input)) {	
+    			    Employee emp = new Employee(input, conn, Employee.withid);
+    			    if(emp.my_role == Role.RECEPTIONIST) {
+    			    	Receptionist recEmp = new  Receptionist(emp, conn);
+    			    	
+    			    	 	displayPayroll();
+    			    } else if (emp.my_role == Role.MECHANIC) {
+    			    		emp.displayPayroll();
+    			    } else if (emp.my_role == Role.MANAGER) {
+    			    	
+    			    }
+    			   
+    			    exists =true;
+    			} else {
+    				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
+    				input = reader.nextLine();
+    				if(input.startsWith("1")) {
+    					continue;
+    				} else {
+    					exists = true;
+    				}
+    			}	
+    		} while (!exists);	
+    	}
+    
+    private void displayInventory() {
+    	
+    }
+    
 	@Override
 	public String lastPaymenDate() {
 		// TODO Auto-generated method stub
@@ -524,122 +653,6 @@ class Manager extends Employee implements MonthlyPayable{
 	
 	private void invoicePage() {
 		
-	}
-	private void addEmployee() {
-	boolean goback = false;
-		
-	while (!goback){
-		System.out.println(" Enter  Name");
-		String name = reader.nextLine();
-		System.out.println(" Enter  Address");
-		String address= reader.nextLine();
-		System.out.println(" Enter  EmailAddress");
-		String emailad = reader.nextLine();
-		System.out.println("Enter  PhoneNumber");
-		String phoneno = reader.nextLine();
-		System.out.println("Enter  Role");
-		String emprole = reader.nextLine();
-		System.out.println("Enter  Start Date");
-		String startdate = reader.nextLine();
-		Date date1;
-		java.util.Date date;
-		java.sql.Date sqlStartDate = null;
-		try {
-			SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
-			date = sdf1.parse(startdate);
-			sqlStartDate = new java.sql.Date(date.getTime()); 
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Enter  Compensation");
-		String compesation = reader.nextLine();
-		System.out.println("Enter  1 to add 0 to go back");
-		String input = reader.nextLine();
-			
-			if (input.startsWith("1")) {
-			
-				if (emprole.toLowerCase().equals("receptionist")) {
-					// if ServiceCenter has more than one receptionist.
-					
-					ServiceCenter sc = new ServiceCenter(this.service_center);
-					if (!sc.hasReceptionist(conn))
-					{
-					
-						//String userID,String emailID, String password, String sc_id,
-				   		// String e_address, String e_tel_no, Date start_date, int compensation, Connection conn
-						Receptionist newRecp = new Receptionist(emailad, emailad , name, "12345678", this.service_center,
-								address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);
-					    break;
-					} else {
-						System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-						input = reader.nextLine();
-						
-						if(input.startsWith("0")) {
-						
-							//goback = true;
-							break;
-						} else if(input.startsWith("1")) {
-							continue;
-						}
-					}
-					
-				} else if (emprole.toLowerCase().equals("mechanic")) {
-					
-					Mechanic newMech = new Mechanic(emailad, emailad , name,  "12345678", this.service_center,
-							address, phoneno, sqlStartDate, Integer.parseInt(compesation), conn);	
-					break;
-				} else {
-					System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-					input = reader.nextLine();
-					
-					if(input.startsWith("0")) {
-					
-						//goback = true;
-						break;
-					} else if(input.startsWith("1")) {
-						continue;
-					}
-				}
-			} else if (input.startsWith("0")) {
-				return;
-			}
-		}
-	}
-	
-	
-	private void payrollPage() {
-		String input;
-		boolean exists = false;
-		
-		do {
-			System.out.println("Enter Employee id");
-			input = reader.nextLine();
-			if (Employee.employeeExists(input)) {	
-			    Employee emp = new Employee(input, conn, Employee.withid);
-			    if(emp.my_role == Role.RECEPTIONIST) {
-			    	Receptionist recEmp = new  Receptionist(emp, conn);
-			    	
-			    	 	displayPayroll();
-			    } else if (emp.my_role == Role.MECHANIC) {
-			    		emp.displayPayroll();
-			    } else if (emp.my_role == Role.MANAGER) {
-			    	
-			    }
-			   
-			    exists =true;
-			} else {
-				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
-				input = reader.nextLine();
-				if(input.startsWith("1")) {
-					continue;
-				} else {
-					exists = true;
-				}
-			}	
-		} while (!exists);	
 	}
 	
 }
