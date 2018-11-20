@@ -37,7 +37,7 @@ public class ServicePage {
 			String input= reader.nextLine().trim();
 		
 			if (input.equals("1")) {
-				printServiceHistory(Integer.parseInt(cus.c_id));
+				printServiceHistory(cus.c_id);
 			} else if (input.equals("2")) {
 				
 				System.out.println(" Enter  License Plate");
@@ -54,7 +54,7 @@ public class ServicePage {
 				
 				input= reader.nextLine().trim();
 				if (input.equals("1")) {
-					scheduleMaintenanceService(Integer.parseInt(cus.c_id), licensePlate, currentMileage ,  mechanicName);
+					scheduleMaintenanceService(cus.emailID, licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("2")) {
 					scheduleRepairService(Integer.parseInt(cus.c_id), licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("3")) {
@@ -127,21 +127,27 @@ public class ServicePage {
 		return true;
 	}
 	
-	private void printServiceHistory(int customer_id) {
+	private void printServiceHistory(String c_id) {
 		
 	}
 	
-	private void printServiceHistory(int customer_id, int license_plate) {
+	private void printServiceHistory(String customer_id, String license_plate) {
 		
 	}
 	
 	
-	private void printServiceHistoryByServiceCenter(int serviceC_id) {
+	private void printServiceHistoryByServiceCenter(String serviceC_id) {
 		
 	}
 	
-	void scheduleMaintenanceService(int c_id, String licensePlate, String currentMileage , String mechanicName) {
-	
+	void scheduleMaintenanceService(String c_email, String licensePlate, String currentMileage , String mechanicName) {
+		System.out.println("License Plate");
+		String temp_license = reader.nextLine();
+		System.out.println("Current Milage");
+		float temp_milage = Float.parseFloat(reader.nextLine());
+		System.out.println("Mechanic Name");
+		String temp_ename = reader.nextLine();
+		Maintenance maintenance = new Maintenance(this.sc_id, c_email, temp_license, temp_milage, temp_ename, this.conn);
 	}
 	
 	void scheduleRepairService(int c_id ,String licensePlate, String currentMileage , String mechanicName) {
