@@ -185,18 +185,11 @@ class Manager extends Employee implements MonthlyPayable{
     			signout();
     			exit = true;
     		} else if (input.startsWith("11")){
-    			System.out.println("Enter Customer Email id");
-    			String temp_email = reader.nextLine();
-    			System.out.println("License Plate");
-    			String temp_license = reader.nextLine();
-    			System.out.println("Current Milage");
-    			float temp_milage = Float.parseFloat(reader.nextLine());
-    			System.out.println("Mechanic Name");
-    			String temp_ename = reader.nextLine();
-    			Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
-    			
+    			this.invoicePage();
+
     		} else if (input.startsWith("10")){
-    			continue;
+    			this.serviceHistoryPage();
+    			
     		} else if (input.startsWith("1")){
     			this.profilePage();
     		} else if (input.startsWith("2")) {
@@ -217,19 +210,20 @@ class Manager extends Employee implements MonthlyPayable{
     	    		}
     			}
     		} else if (input.startsWith("6")){
-    			continue;
+    			ordersPage();
     		} else if (input.startsWith("7")){
-    			continue;
+    			notificationsPage();
     		} else if (input.startsWith("8")){
-    			continue;
+    			newCarModelPage();
     		} else if (input.startsWith("9")){
-    			continue;
+    			carServiceDetailsPage();
     		} else {
     			exit = true;
     		}
     	}		
 	}
 	
+
 	private void profilePage() {
     	boolean exit = false;
 		while(!exit) {
@@ -654,16 +648,81 @@ class Manager extends Employee implements MonthlyPayable{
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	 
-	private void servicePage() {
-		
-	}
 	
 	private void invoicePage() {
 		
+		
 	}
 
+	private void ordersPage() {
+		boolean goback = false;
+		while(!goback) {
+			System.out.println("### Orders ###");
+			System.out.println("Select from below");
+			System.out.println("1. Order History");
+			System.out.println("2. New Order");
+			System.out.println("3. Go Back");
+			String input = reader.nextLine();
+			if( input.startsWith("1")) {
+				System.out.println("###Order History###");
+				
+				Order.printOrderHistory();
+				
+				boolean exit_in = false;
+				while(!exit_in) {
+					System.out.println("1.  Go Back");
+					String input_in = reader.nextLine();
+					if (input_in.startsWith("1")) {
+		    			exit_in = true;
+		    			}
+				}
+				
+			} else if (input.startsWith("2")) {
+				System.out.println("###New Order###");
+				System.out.println("Enter Part ID");
+				String req_part = reader.nextLine();
+				System.out.println("Enter Quantity");
+				String req_quantity = reader.nextLine();
+				Order new_order = new Order(this.service_center);
+				
+				//confirm 
+				boolean exit_in = false;
+				while (!exit_in) {
+					System.out.println("1. Place Order");
+					System.out.println("2. Goback");
+					input = reader.nextLine();
+						
+						if( input.startsWith("1")) {
+							new_order.placeOrder(req_part, req_quantity, conn);
+							exit_in = true;
+						} else if (input.startsWith("2")){
+							exit_in = true;
+						} else {
+							System.out.println("Invalid Input. Try Again");
+						}
+				}
+			} else if (input.startsWith("3")) {
+				goback = true;
+			} else {
+				System.out.println("Invalid Input. Try Again");
+			}
+		}	
+	}
+	private void notificationsPage() {
+		
+		
+	}
+	private void newCarModelPage() {
+		
+	}
+	private void carServiceDetailsPage() {
+		
+		
+	}
+	private void serviceHistoryPage() {
+		
+	}
+	
 	@Override
 	public void displayPayroll() {
 		// TODO Auto-generated method stub
