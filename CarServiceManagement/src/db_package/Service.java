@@ -251,13 +251,13 @@ class Maintenance extends Service{
 					e.printStackTrace();
 				}
 				  java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
-				  System.out.println(sqlStartDate);
+//				  System.out.println(sqlStartDate);
 			    
 			    currentWeekMap.add(sqlStartDate);
 			    count++;
 			}
 
-			System.out.println(currentWeekMap);
+//			System.out.println(currentWeekMap);
 			
 			
 			if(mechanic_name.equals("")) {
@@ -333,7 +333,7 @@ class Maintenance extends Service{
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(0));
-						System.out.println(availableDates.get(0));
+						calendar.add(Calendar.HOUR, -3);
 						float timeDiff = time_slot.get(0);
 						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
@@ -400,7 +400,6 @@ class Maintenance extends Service{
 							}
 				        }
 				        else {
-				        	System.out.println("IN HERE");
 				        	try{
 				        		PreparedStatement pstmt3 = null;
 								
