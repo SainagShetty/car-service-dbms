@@ -1,5 +1,6 @@
 package db_package;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.util.Scanner;
 
@@ -21,7 +22,7 @@ class Notification {
 		return new String();
 	}
 	
-	static void notificationPage() {
+	static void notificationPage(Connection conn) {
 		printallNotifications();	
 	}
 	
