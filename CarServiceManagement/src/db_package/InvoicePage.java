@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class InvoicePage{
 	String srID;
@@ -21,14 +20,25 @@ public class InvoicePage{
 	Connection con;
 	String cID;
 	ArrayList<String> basicTaskIds;
+	float totalCost;
+	float laborTime;
+	
 	
 	InvoicePage(Connection con, String srID){
+		this.totalCost = 0;
+		this.laborTime = 0;
 		this.srID = srID;
 		this.con = con;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			String query = "SELECT service.c_id, service.license_no, service.end_time, CASE WHEN service.maintenance_type is NULL THEN basicfaults.faults ELSE service.maintenance_type END AS service_type, service.start_date, employee.e_name, vehicle.make, vehicle.model FROM employee, service FULL OUTER JOIN basicfaults ON (basicfaults.basic_fid = service.basic_fid) FULL OUTER JOIN vehicle ON (service.license_no = vehicle.license_no) WHERE service.e_id = employee.e_id and service.ser_id = ?";
+			String query = "SELECT service.c_id, service.license_no, service.end_time, "
+					+ "CASE WHEN service.maintenance_type is NULL THEN basicfaults.faults "
+					+ "ELSE service.maintenance_type END AS service_type, service.start_date, "
+					+ "employee.e_name, vehicle.make, vehicle.model FROM employee, service FULL "
+					+ "OUTER JOIN basicfaults ON (basicfaults.basic_fid = service.basic_fid) FULL "
+					+ "OUTER JOIN vehicle ON (service.license_no = vehicle.license_no) WHERE "
+					+ "service.e_id = employee.e_id and service.ser_id = ?";
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, this.srID);
 			rs = pstmt.executeQuery();
@@ -46,11 +56,13 @@ public class InvoicePage{
 			e.printStackTrace();
 		}
 		fetchPrice();
+//		System.out.println(totalCost);
+//		System.out.println(laborTime);
 	}
 	
 	void fetchPrice() {
 		basicTaskIds = new ArrayList<String>();
-		System.out.println(this.srID+this.licenceNo+this.licenceNo);
+		System.out.println(this.srID+this.licenceNo+this.licenceNo+this.serviceType);
 		String queryMaintenance = "SELECT maintenance.basic_taskid FROM maintenance "
 				+ "WHERE maintenance.type = "
 				+ "( SELECT service.maintenance_type FROM service WHERE service.ser_id = ?) "
@@ -60,19 +72,19 @@ public class InvoicePage{
 		String queryRepair = "SELECT faults.basic_taskid FROM faults, service "
 				+ "WHERE service.basic_fid = faults.basic_fid and service.ser_id = ?";
 		char maintenance_type = 'R';
-		if(this.serviceType.startsWith("A")) {
+		if(this.serviceType.startsWith("A") && this.serviceType.length() == 1) {
 			maintenance_type = 'A';
 		}
-		else if(this.serviceType.startsWith("B")) {
+		else if(this.serviceType.startsWith("B") && this.serviceType.length() == 1) {
 			maintenance_type = 'B';
 		}
-		else if(this.serviceType.startsWith("C")) {
+		else if(this.serviceType.startsWith("C") && this.serviceType.length() == 1) {
 			maintenance_type = 'C';
 		}
 
 		switch(maintenance_type) {
 		case 'R':
-//			System.out.println("I'm repair!!!");
+			System.out.println("I'm repair!!!");
 			try{
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
@@ -81,6 +93,19 @@ public class InvoicePage{
 				rs = pstmt.executeQuery();
 				while(rs.next())  {
 					this.basicTaskIds.add(rs.getString(1));
+				}
+//				pstmt.close();
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+			try{
+				PreparedStatement pstmt = null;
+				ResultSet rs = null;
+				pstmt = con.prepareStatement("Select diagnostic_fee from basicfaults where faults=?");
+				pstmt.setString(1, this.serviceType);
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					this.totalCost += rs.getInt(1);
 				}
 //				pstmt.close();
 			}catch(SQLException e){
@@ -142,12 +167,42 @@ public class InvoicePage{
 		}
 //		System.out.println("Printing"+basicTaskIds.size());
 		for(int i=0;i<basicTaskIds.size();i++) {
-			System.out.println(basicTaskIds.get(i));
+//			System.out.println(basicTaskIds.get(i)+this.licenceNo+this.licenceNo);
+			String query2 = "select tasks.charge_rate, tasks.time_required, tasks.part_quantity, parts.unit_price "
+					+ "from tasks full outer join parts on (tasks.p_id = parts.p_id) "
+					+ "where tasks.basic_taskid = ? and tasks.make = "
+					+ "( SELECT vehicle.make FROM vehicle WHERE vehicle.license_no = ?) "
+					+ "and tasks.model = ( SELECT vehicle.model FROM vehicle WHERE "
+					+ "vehicle.license_no = ?)";
+			try{
+				
+				PreparedStatement pstmt = null;
+				ResultSet rs = null;
+				pstmt = con.prepareStatement(query2);
+				pstmt.setString(1, basicTaskIds.get(i));
+				pstmt.setString(2, this.licenceNo);
+				pstmt.setString(3, this.licenceNo);
+				rs = pstmt.executeQuery();
+//				System.out.println(basicTaskIds.get(i));
+				while(rs.next())  {
+					float chargeRate = Float.parseFloat(rs.getString(1));
+					float time_required = rs.getFloat(2);
+					int part_quantity = rs.getInt(3);
+					float unit_price = Float.parseFloat(rs.getString(4));
+					this.totalCost += part_quantity*unit_price;
+					this.totalCost += chargeRate*time_required;
+					this.laborTime += time_required; 
+				}
+				
+//				pstmt.close();
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
 		}
+		
 	}
 	
 	void printInvoices() {
-		
 		
 	}
 }
