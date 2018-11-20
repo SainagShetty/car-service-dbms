@@ -245,7 +245,7 @@ public class ServicePage {
 //		E. ServiceDetails
 //		(Service A/B/C or Problem)
 		
-		Service.serviceHistory(Cus_email, conn);
+		Service.serviceHistory(Cus_email, true, conn);
 		//List<String> serviceIDlist = new ArrayList<String>();	
 		//return serviceIDlist;
 	}
