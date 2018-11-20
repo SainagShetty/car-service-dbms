@@ -826,11 +826,12 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    			recp_sp.receptionistRescheduleServicePage();
 	    			
 	    		} else if ( input.startsWith("7")){
-	    			// Invoices
+	    			// Invoices Sainag
 	    		} else if ( input.startsWith("8")){
-	    			// Daily task update Inventory
+	    			dailyTaskUpdateInventory();
 	    			
 	    		} else if ( input.startsWith("9")){
+	    			dailyTaskRecordDeliveries();
 	    			// Daily task Record Deliveries
 	    		}
 		}
@@ -1117,6 +1118,33 @@ class Receptionist extends Employee implements MonthlyPayable{
 		}
     }
 	
+	
+	void dailyTaskRecordDeliveries() {
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("Select option");
+			System.out.println("1  Enter Order ID");
+			System.out.println("2. Go Back");
+			
+			String input = reader.nextLine();
+			if(input.startsWith("1")) {
+				System.out.println("Enter Comma Separated order ids");
+				String orderidS = reader.nextLine();
+				orderidS = orderidS.replaceAll("\\s","");
+				String orderidlist[] = orderidS.split(",");
+				Order.updateOrderlist(orderidlist);
+				
+			}else if (input.startsWith("2")) {
+				exit = true;
+			}else {
+				System.out.println("Invalid Option. Try Again");
+			}
+		}
+	}
+	
+	void dailyTaskUpdateInventory() {
+		//TODO
+	}
 }
 
 class Mechanic extends Employee implements HourlyPayable{
