@@ -54,6 +54,7 @@ abstract class Service {
 	void startService() {
 //		this.startDate = new Date();	
 		// update db
+		
 	}
 	
 	void endService() {
@@ -95,4 +96,13 @@ class Repair extends Service{
 	void repairMenu() {
 		
 	}
+}
+
+class Maintenance extends Service{
+
+	Maintenance(String c_id, String Vehicle_license, String sc_id, Connection conn) {
+		super(c_id, Vehicle_license, sc_id, conn);
+		// TODO Auto-generated constructor stub
+	}
+	
 }
