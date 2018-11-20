@@ -108,6 +108,14 @@ class Vehicle {
 		}
 	}
 	
+	public String getModel() {
+		return this.model;
+	}
+	
+	public String getMake() {
+		return this.make;
+	}
+	
 	void vehicleProfile() {
 		System.out.println(this.license_no + ", " + this.make + ", " + this.model + ", " + this.year + ", purchased " + this.date_of_purchase + ", Latest Service Info: " + this.mileage + " miles, Last service on " + this.last_service_date );
 //		XYZ-5643, Honda, Civic, 2009, purchased 24-Dec-2009. Latest service info: 90452 miles, Service C on 10-Sep-2018
