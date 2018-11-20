@@ -776,8 +776,38 @@ class Manager extends Employee implements MonthlyPayable{
 	}
 	
 	private void invoicePage() {
-		
-		
+		System.out.println("Viewing Invoices: ");
+		Vector<InvoicePage> invoices = new Vector<InvoicePage>(); 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ArrayList<String> srID = new ArrayList<String>();
+		try{
+			String query = "SELECT service.ser_id "
+					+ "FROM service "
+					+ "WHERE service.SC_ID = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, this.service_center);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				srID.add(rs.getString(1));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		for(int i = 0; i < srID.size();i++) {
+			System.out.println("INVOICE NO " + (i+1));
+			invoices.add(new InvoicePage(this.conn, srID.get(i)));
+			invoices.get(i).printInvoices();
+//			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+		}
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("\n1. Go Back");
+			String input = reader.nextLine();
+			if(input.startsWith("1")) {
+				exit = true;
+			}
+		}
 	}
 
 	private void ordersPage() {
