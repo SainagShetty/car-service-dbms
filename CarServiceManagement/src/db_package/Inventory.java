@@ -37,9 +37,7 @@ public class Inventory {
 	}
  	
  	
- 	#public static void updateInventory() {
- 	#	//TODO by Rajat
- 	#}
+ 	
 	public static void addtoInventory(String part_id, String ser_id, int n, Connection conn){
  		PreparedStatement pstmt = null;
  		int q=0;
