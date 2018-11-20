@@ -19,6 +19,7 @@ class Customer extends Person{
 	String service_center;
 	Connection con;
 	Vector<InvoicePage> invoices;
+	ArrayList<String> srID;
 	
 	Customer(Person p, Connection conn){
 		super(p);
@@ -60,11 +61,12 @@ class Customer extends Person{
 	}
  
 	
-	Customer(String email, Connection conn){
-		super(conn); //just updates connection 
+	Customer(String email, Connection conn){		
+		super(conn); //just updates connection
 		this.con = conn;
 		this.emailID = email;
 		PreparedStatement pstmt = null;
+		vehicleList = new Vector<Vehicle>();
 		ResultSet rs = null;
 		// Query 1 fetch from Customer table and update instance variables.
 		try{
@@ -81,20 +83,25 @@ class Customer extends Person{
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
 		PreparedStatement pstmt2 = null;
 		ResultSet rs2 = null;
 		try{
 			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
 			pstmt2.setString(1, this.c_id);
 			rs2 = pstmt2.executeQuery();
+			System.out.println("qury executed");
 			while(rs2.next())  {
 				String tmp = rs2.getString(1);
+				System.out.println("Inside while " +tmp);
 				Vehicle v = new Vehicle(tmp);
 				vehicleList.add(v);
 			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
+		System.out.println("End of Customer Constructor");
 	// Query 2 fetch from persons table and set Persons instance variable.
 		
 	}
@@ -108,6 +115,10 @@ class Customer extends Person{
 		this.service_center = serviceCen_id;
 		createCustomer(conn);
 	}
+    
+    public String getCustomerID() {
+    	return this.c_id;
+    }
     
     void customerMenu() {
     	Boolean exit = false;
@@ -140,6 +151,26 @@ class Customer extends Person{
     }
     void createCustomer(Connection conn) {
     		// create entry in table.
+    	PreparedStatement pstmt = null;
+		try{
+			pstmt = this.conn.prepareStatement("INSERT INTO CUSTOMER "
+					+ "(C_ID, C_EMAIL, C_ADDR, C_TEL_NO, C_NAME, SC_ID) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?, ?)");			
+			pstmt.setString(1, this.emailID);
+			pstmt.setString(2, this.emailID);
+			pstmt.setString(3, this.c_address);
+			pstmt.setString(4, this.c_tel_no);
+			pstmt.setString(5, this.c_name);
+			pstmt.setString(6, this.service_center);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Employee Create Failed");
+			else
+				System.out.println("Employee created successfully");
+		}catch(SQLException e){
+//			e.printStackTrace();
+		}	
     }
     private void profilePage() {
     	boolean exit = false;
@@ -196,11 +227,10 @@ class Customer extends Person{
     }
     
     private void invoicePage() {
-    		System.out.println("View Invoice");
     		invoices = new Vector<InvoicePage>(); 
     		PreparedStatement pstmt = null;
     		ResultSet rs = null;
-    		ArrayList<String> srID = new ArrayList<String>();
+    		srID = new ArrayList<String>();
     		try{
     			String query = "SELECT service.ser_id "
     					+ "FROM service "
@@ -215,8 +245,25 @@ class Customer extends Person{
     			e.printStackTrace();
     		}
     		for(int i = 0; i < srID.size();i++) {
+    			System.out.println("INVOICE NO " + (i+1));
     			invoices.add(new InvoicePage(this.con, srID.get(i)));
-    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+    			invoices.get(i).printInvoices();
+//    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+    		}
+    		boolean exit = false;
+    		while(!exit) {
+    			System.out.println("\n1. View Invoice Details");
+    			System.out.println("2. Go Back");
+    			String input = reader.nextLine();
+    			if (input.startsWith("1")) {
+    				System.out.println("### View Invoice Details ###");
+    				System.out.println("Enter Service ID: ");
+    				input = reader.nextLine();
+    				invoices.get(srID.indexOf(input)).printInvoicesDetailed();
+    			}
+    			else if (input.startsWith("2")) {
+    				exit = true;
+    			}
     		}
     		
     }

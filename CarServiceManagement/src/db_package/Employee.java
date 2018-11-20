@@ -185,11 +185,11 @@ class Manager extends Employee implements MonthlyPayable{
     			signout();
     			exit = true;
     		} else if (input.startsWith("11")){
-    			invoicePage();
-    			continue;
+    			this.invoicePage();
+
     		} else if (input.startsWith("10")){
-    			serviceHistoryPage();
-    			continue;
+    			this.serviceHistoryPage();
+    			
     		} else if (input.startsWith("1")){
     			this.profilePage();
     		} else if (input.startsWith("2")) {
