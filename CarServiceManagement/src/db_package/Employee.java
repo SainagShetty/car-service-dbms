@@ -197,7 +197,16 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("4")){
     			continue;
     		} else if (input.startsWith("5")){
-    			this.displayInventory();
+    			Inventory inv = new Inventory(this.conn);
+    			inv.viewInventory(this.service_center);
+    			boolean exit_in = false;
+    			while(!exit_in) {
+    				System.out.println("1.  Go Back");
+    				String input_in = reader.nextLine();
+    				if (input_in.startsWith("1")) {
+    	    			exit_in = true;
+    	    		}
+    			}
     		} else if (input.startsWith("6")){
     			continue;
     		} else if (input.startsWith("7")){
@@ -608,6 +617,10 @@ class Manager extends Employee implements MonthlyPayable{
     			}	
     		} while (!exists);	
     	}
+    
+    private void displayInventory() {
+    	
+    }
     
 	@Override
 	public String lastPaymenDate() {
