@@ -101,7 +101,7 @@ class Customer extends Person{
 	}
 	
     Customer(String userID,String emailID, String password, String c_name, String c_address, String c_tel_no, String serviceCen_id, Connection conn) {	
-		super(emailID, Role.CUSTOMER, conn); // this will create an entry in persons table
+		super(userID, emailID, Role.CUSTOMER, password, conn); // this will create an entry in persons table
 		this.c_address = c_address;
 		this.c_tel_no = c_tel_no;
 		this.c_name = c_name;
@@ -159,7 +159,7 @@ class Customer extends Person{
     		}
 		}
     }
-    private void displayProfile() {
+    public void displayProfile() {
     		System.out.println("Profile");
     		System.out.println("Customer ID: " + this.c_id);
     		System.out.println("Name: " + this.c_name);
@@ -183,6 +183,7 @@ class Customer extends Person{
     		}
     		
     }
+   
 //    private void registerCarPage() {
 //    	System.out.println("Register Car");
 //    	

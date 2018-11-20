@@ -3,13 +3,17 @@ import java.util.Date;
 import java.sql.*;
 
 class Part {
-	String p_name;
 	Connection conn;
-	int unit_price;
-	int warranty_months;
+	String p_id;
+	String p_name;
+	String unit_price;
+	String warranty_months;
 	String make;
 	
-	Part(){
-		
+	Part(Connection conn){
+		this.conn = conn;
 	}
+	
+	
+	
 }

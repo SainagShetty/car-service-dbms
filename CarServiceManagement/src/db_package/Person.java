@@ -1,5 +1,7 @@
 package db_package;
 import java.sql.*;
+import java.util.*;
+
 class Person implements Loginable {
 	protected String userID;
 	String emailID;
@@ -10,6 +12,7 @@ class Person implements Loginable {
 	Connection conn;
 	static PreparedStatement stmt;
 
+	
 	Person(Connection conn){
 		this.conn = conn;
 	}
@@ -25,21 +28,45 @@ class Person implements Loginable {
 	
 	Person(String emailID, Connection conn){
 		// fetch from db
+		//TODO
 	}
 	
 	public void signup() {
-		
+		//TODO
 	}
 	
 	public String getUserID() {
 		return this.userID;
 	}
 	
-	Person(String emailID, int role, Connection conn) {
-		this.emailID = emailID ;
-		this.my_role = role;
+	Person(String userID, String emailID, int role, String password, Connection conn) {
 		this.conn  = conn;
-		// data base entry created by signup()
+		this.userID = userID;
+		this.emailID = emailID;
+		this.my_role = role;
+		this.password = password;
+		
+		this.createPerson();
+	}
+	
+	protected void createPerson() {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = this.conn.prepareStatement("INSERT INTO PERSON (USERID, EMAILID, PASSWORD, ROLE) VALUES (?, ?, ?, ?)");
+			pstmt.setString(1, this.userID);
+			pstmt.setString(2, this.emailID);
+			pstmt.setString(3, this.password);
+			String temp = Role.getRole(this.my_role);
+			pstmt.setString(4, temp);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Person Create Failed");
+			else
+				System.out.println("Person created successfully");
+		}catch(SQLException e){
+//			e.printStackTrace();
+		}
 	}
 	
 	public void setUserId(String userid) { // must update in db
@@ -59,7 +86,7 @@ class Person implements Loginable {
 	
 	private void store_db(Connection conn) {
 		
-		
+		// TODO
 	}
 	
 	Boolean personDelete() {
