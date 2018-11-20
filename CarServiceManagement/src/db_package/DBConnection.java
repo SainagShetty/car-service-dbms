@@ -42,6 +42,13 @@ public class DBConnection {
 		return conn;
 	}
 	
+	protected void closeConnection(){
+		if(conn != null) {
+			try {
+				conn.close();
+			} catch(Throwable whatever) {}
+		}
+	}
 	
 	
 	void testrun() {
