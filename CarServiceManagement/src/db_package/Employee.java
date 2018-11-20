@@ -1342,7 +1342,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 				String orderidS = reader.nextLine().trim();
 				orderidS = orderidS.replaceAll("\\s","");
 				String orderidlist[] = orderidS.split(",");
-				Order.updateOrderlist(orderidlist);
+				Order.updateOrderlist(orderidlist, conn);
 				
 			}else if (input.startsWith("2")) {
 				exit = true;
