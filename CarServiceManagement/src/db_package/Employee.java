@@ -48,7 +48,12 @@ class Employee extends Person {
 	
 	Employee(Employee emp, Connection conn){
 		super(conn);
-		
+		// TODO employeee details to be copied. 
+		service_center = emp.service_center;
+		this.e_address = emp.e_address;
+		this.e_tel_no = emp.e_tel_no;
+		this.start_date =emp.start_date;
+		this.compensation = emp.compensation;	
 	}
 	
 	// flag true to create using emp_id , false to create using email
@@ -654,7 +659,6 @@ class Manager extends Employee implements MonthlyPayable{
 	private void invoicePage() {
 		
 	}
-	
 }
 
 class Receptionist extends Employee implements MonthlyPayable{
