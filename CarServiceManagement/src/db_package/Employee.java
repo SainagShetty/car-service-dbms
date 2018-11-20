@@ -254,23 +254,15 @@ class Manager extends Employee implements MonthlyPayable{
     		System.out.println("11.  Invoices");
     		System.out.println("12.  Logout");
     		
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     		if (input.startsWith("12")) {
     			signout();
     			exit = true;
     		} else if (input.startsWith("11")){
-    			System.out.println("Enter Customer Email id");
-    			String temp_email = reader.nextLine();
-    			System.out.println("License Plate");
-    			String temp_license = reader.nextLine();
-    			System.out.println("Current Milage");
-    			float temp_milage = Float.parseFloat(reader.nextLine());
-    			System.out.println("Mechanic Name");
-    			String temp_ename = reader.nextLine();
-    			Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
-    			
+    			this.invoicePage();
     		} else if (input.startsWith("10")){
-    			continue;
+    			Service.serviceHistory(conn, this.service_center);
+    			
     		} else if (input.startsWith("1")){
     			this.profilePage();
     		} else if (input.startsWith("2")) {
@@ -285,32 +277,33 @@ class Manager extends Employee implements MonthlyPayable{
     			boolean exit_in = false;
     			while(!exit_in) {
     				System.out.println("1.  Go Back");
-    				String input_in = reader.nextLine();
+    				String input_in = reader.nextLine().trim();
     				if (input_in.startsWith("1")) {
     	    			exit_in = true;
     	    		}
     			}
     		} else if (input.startsWith("6")){
-    			continue;
+    			ordersPage();
     		} else if (input.startsWith("7")){
-    			continue;
+    			notificationsPage();
     		} else if (input.startsWith("8")){
-    			continue;
+    			newCarModelPage();
     		} else if (input.startsWith("9")){
-    			continue;
+    			carServiceDetailsPage();
     		} else {
     			exit = true;
     		}
     	}		
 	}
 	
+
 	private void profilePage() {
     	boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  View Profile");
 			System.out.println("2.  Update Profile");
 			System.out.println("3.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				this.displayProfile();
     		}
@@ -346,7 +339,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -363,10 +356,10 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("4. Phone Number");
 			System.out.println("5. Password");
 			System.out.println("6. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(1, input)){
 					System.out.println("Success");
 				}
@@ -376,7 +369,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(2, input)){
 					System.out.println("Success");
 				}
@@ -386,7 +379,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter Email Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(3, input)){
 					System.out.println("Success");
 				}
@@ -396,7 +389,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Phone Number");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(4, input)){
 					System.out.println("Success");
 				}
@@ -406,7 +399,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("5")) {
 				System.out.println("Enter New Password");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(5, input)){
 					System.out.println("Success");
 				}
@@ -516,7 +509,7 @@ class Manager extends Employee implements MonthlyPayable{
     private void customerProfile() {
 
 		System.out.println("Enter Customer Email ID");
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		this.displayCustomerProfile(input);
 		
     }
@@ -576,7 +569,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -589,17 +582,17 @@ class Manager extends Employee implements MonthlyPayable{
     		
     	while (!goback){
     		System.out.println(" Enter  Name");
-    		String name = reader.nextLine();
+    		String name = reader.nextLine().trim();
     		System.out.println(" Enter  Address");
-    		String address= reader.nextLine();
+    		String address= reader.nextLine().trim();
     		System.out.println(" Enter  EmailAddress");
-    		String emailad = reader.nextLine();
+    		String emailad = reader.nextLine().trim();
     		System.out.println("Enter  PhoneNumber");
-    		String phoneno = reader.nextLine();
+    		String phoneno = reader.nextLine().trim();
     		System.out.println("Enter  Role");
-    		String emprole = reader.nextLine();
+    		String emprole = reader.nextLine().trim();
     		System.out.println("Enter  Start Date");
-    		String startdate = reader.nextLine();
+    		String startdate = reader.nextLine().trim();
     		Date date1;
     		java.util.Date date;
     		java.sql.Date sqlStartDate = null;
@@ -614,9 +607,9 @@ class Manager extends Employee implements MonthlyPayable{
     		}
     		
     		System.out.println("Enter  Compensation");
-    		String compesation = reader.nextLine();
+    		String compesation = reader.nextLine().trim();
     		System.out.println("Enter  1 to add 0 to go back");
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     			
     			if (input.startsWith("1")) {
     			
@@ -634,7 +627,7 @@ class Manager extends Employee implements MonthlyPayable{
     					    break;
     					} else {
     						System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    						input = reader.nextLine();
+    						input = reader.nextLine().trim();
     						
     						if(input.startsWith("0")) {
     						
@@ -652,7 +645,7 @@ class Manager extends Employee implements MonthlyPayable{
     					break;
     				} else {
     					System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    					input = reader.nextLine();
+    					input = reader.nextLine().trim();
     					
     					if(input.startsWith("0")) {
     					
@@ -674,7 +667,7 @@ class Manager extends Employee implements MonthlyPayable{
     		
     		do {
     			System.out.println("Enter Employee id");
-    			input = reader.nextLine();
+    			input = reader.nextLine().trim();
     			if (Employee.employeeExists(input, conn)) {	
     				
 //    			    Employee emp = new Employee(input, conn, Employee.withid);
@@ -697,7 +690,7 @@ class Manager extends Employee implements MonthlyPayable{
     			    exists =true;
     			} else {
     				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
-    				input = reader.nextLine();
+    				input = reader.nextLine().trim();
     				if(input.startsWith("1")) {
     					continue;
     				} else {
@@ -781,16 +774,78 @@ class Manager extends Employee implements MonthlyPayable{
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	 
-	private void servicePage() {
-		
-	}
 	
 	private void invoicePage() {
 		
+		
 	}
 
+	private void ordersPage() {
+		boolean goback = false;
+		while(!goback) {
+			System.out.println("### Orders ###");
+			System.out.println("Select from below");
+			System.out.println("1. Order History");
+			System.out.println("2. New Order");
+			System.out.println("3. Go Back");
+			String input = reader.nextLine().trim();
+			if( input.startsWith("1")) {
+				System.out.println("###Order History###");
+				
+				Order.printOrderHistory();
+				
+				boolean exit_in = false;
+				while(!exit_in) {
+					System.out.println("1.  Go Back");
+					String input_in = reader.nextLine().trim();
+					if (input_in.startsWith("1")) {
+		    			exit_in = true;
+		    			}
+				}
+				
+			} else if (input.startsWith("2")) {
+				System.out.println("###New Order###");
+				System.out.println("Enter Part ID");
+				String req_part = reader.nextLine().trim();
+				System.out.println("Enter Quantity");
+				String req_quantity = reader.nextLine().trim();
+				Order new_order = new Order(this.service_center);
+				
+				//confirm 
+				boolean exit_in = false;
+				while (!exit_in) {
+					System.out.println("1. Place Order");
+					System.out.println("2. Goback");
+					input = reader.nextLine().trim();
+						
+						if( input.startsWith("1")) {
+							new_order.placeOrder(req_part, req_quantity, conn);
+							exit_in = true;
+						} else if (input.startsWith("2")){
+							exit_in = true;
+						} else {
+							System.out.println("Invalid Input. Try Again");
+						}
+				}
+			} else if (input.startsWith("3")) {
+				goback = true;
+			} else {
+				System.out.println("Invalid Input. Try Again");
+			}
+		}	
+	}
+	private void notificationsPage() {
+		Notification.notificationPage();		
+	}
+	private void newCarModelPage() {
+			
+	}
+	private void carServiceDetailsPage() {
+		
+		
+	}
+	
+	
 	@Override
 	public void displayPayroll() {
 		// TODO Auto-generated method stub
@@ -800,7 +855,7 @@ class Manager extends Employee implements MonthlyPayable{
 }
 
 class Receptionist extends Employee implements MonthlyPayable{
-	
+	Scanner reader =  new Scanner(System.in);
 	Receptionist(String ID, Connection conn, int flag){
 		super(ID, conn, flag);
 	}
@@ -847,9 +902,66 @@ class Receptionist extends Employee implements MonthlyPayable{
 	}
 	
 	void ReceptionistMenu() {
-		
-		
-		
+	
+		boolean exit = false;
+		while(!exit) {
+    		
+	        	System.out.println("### Receptionist landing page ###");
+	    		System.out.println("1.  Profile");
+	    		System.out.println("2.  View Customer Profile");
+	    		System.out.println("3.  Register Car");
+	    		System.out.println("4.  Service History");
+	    		System.out.println("5.  Schedule Service");
+	    		System.out.println("6.  Reschedule\n" + 
+	    				"Service");
+	    		System.out.println("7.  Invoices");
+	    		System.out.println("8.   Daily Task-Update\n" + 
+	    				"Inventory");
+	    		System.out.println("9.  Daily\n" + 
+	    				"Task-Record\n" + 
+	    				"Deliveries");
+	    		System.out.println("10.  Logout");
+	    		
+	    		String input = reader.nextLine().trim();
+	    		if (input.startsWith("10")) {
+	    			signout();
+	    			exit = true;
+	    		} else if (input.startsWith("1")){
+	    			this.profilePage();
+	
+	    		} else if (input.startsWith("2")){
+	    			this.customerProfile();
+	    		
+	    		} else if ( input.startsWith("3")){
+	    			CarRegister cr = new CarRegister(Role.RECEPTIONIST, this.conn);
+	    			System.out.println("Enter customer email");
+	    			String cus_email = reader.nextLine().trim();
+	    			Customer cus = new Customer(cus_email, conn); 
+	    			cus.vehicleList.add(cr.registerCar(cus.getCustomerID()));
+	    			
+	    		} else if ( input.startsWith("4")){
+	    			System.out.println("Enter customer email");
+	    			String cus_email = reader.nextLine().trim();
+	    			Service.serviceHistory(cus_email, conn);
+	    			
+	    		} else if ( input.startsWith("5")){
+	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
+	    			recp_sp.receptionistScheduleServicePage();
+	    			
+	    		} else if ( input.startsWith("6")){
+	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
+	    			recp_sp.receptionistRescheduleServicePage();
+	    			
+	    		} else if ( input.startsWith("7")){
+	    			// Invoices Sainag
+	    		} else if ( input.startsWith("8")){
+	    			dailyTaskUpdateInventory();
+	    			
+	    		} else if ( input.startsWith("9")){
+	    			dailyTaskRecordDeliveries();
+	    			// Daily task Record Deliveries
+	    		}
+		}
 	}
 	@Override
 	public void displayPayroll() {
@@ -857,6 +969,309 @@ class Receptionist extends Employee implements MonthlyPayable{
 		
 	}
 	
+	private void profilePage() {
+    	boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  View Profile");
+			System.out.println("2.  Update Profile");
+			System.out.println("3.  Go Back");
+			String input = reader.nextLine().trim();
+			if (input.startsWith("1")) {
+				this.displayProfile();
+    		}
+			else if (input.startsWith("2")) {
+    			this.updateProfile();
+    		}
+			else if (input.startsWith("3")) {
+    			exit = true;
+    		}
+		}
+    }
+	
+	private void updateProfile() {
+    	boolean exit = false;
+		while(!exit) {
+			System.out.println("1. Name");
+			System.out.println("2. Address");
+			System.out.println("3. Email Address");
+			System.out.println("4. Phone Number");
+			System.out.println("5. Password");
+			System.out.println("6. Go Back");
+			String input = reader.nextLine().trim();
+			if (input.startsWith("1")) {
+				System.out.println("Enter New Name");
+				input = reader.nextLine().trim();
+				if(updateEmpInfo(1, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("2")) {
+				System.out.println("Enter New Address");
+				input = reader.nextLine().trim();
+				if(updateEmpInfo(2, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("3")) {
+				System.out.println("Enter Email Address");
+				input = reader.nextLine().trim();
+				if(updateEmpInfo(3, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("4")) {
+				System.out.println("Enter New Phone Number");
+				input = reader.nextLine().trim();
+				if(updateEmpInfo(4, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("5")) {
+				System.out.println("Enter New Password");
+				input = reader.nextLine().trim();
+				if(updateEmpInfo(5, input)){
+					System.out.println("Success");
+				}
+				else {
+					System.out.println("Error");
+				}
+    		}
+			if (input.startsWith("6")) {
+    			exit = true;
+    		}
+		}
+    }
+	public boolean updateEmpInfo(int index, String val){
+    	PreparedStatement pstmt = null;
+		if(index == 5) {
+			try
+			{
+				pstmt = conn.prepareStatement("UPDATE PERSON SET PASSWORD = ? WHERE USERID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.password = val;
+				return true;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 1) {
+			
+			try {
+				pstmt = conn.prepareStatement("UPDATE EMPLOYEE SET E_NAME = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_name = val;
+				System.out.println("Updating name done");
+				return true;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+			
+		}
+		else if(index == 2) {
+			try {
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_ADDRESS = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_address = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 3) {
+			try {
+				//Create a trigger to update Email address in person table (EMAILID) from employee table (E_EMAIL)
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_EMAIL = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.emailID = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		else if(index == 4) {
+			try {
+				pstmt = conn.prepareStatement("UPDATE Employee SET E_TEL_NO = ? WHERE E_ID = ?");
+				pstmt.setString(1, val);
+				pstmt.setString(2, this.eid);
+				pstmt.executeQuery();
+				if(pstmt.executeUpdate() == 0){
+					// Failure
+					return false;
+				}
+				this.e_tel_no = val;
+			}
+			catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+	private void displayProfile() {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		System.out.println("Profile");
+		System.out.println("Employee ID: " + this.eid);
+		System.out.println("Name: " + this.e_name);
+		System.out.println("Address: " + this.e_address);
+		System.out.println("Email Address: " + this.emailID);
+		System.out.println("Phone Number: " + this.e_tel_no);
+		//Display Service Center Name?
+		System.out.println("Service Center: "+this.service_center);
+		//Update from table
+		System.out.println("Role: Receptionist");
+		System.out.println("Date: "+formatter.format(start_date));
+		System.out.println("Compensation: "+Integer.toString(compensation));
+		//Update from table
+		System.out.println("Compensation Frequency: Monthly");
+
+		
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  Go Back");
+			String input = reader.nextLine().trim();
+			if (input.startsWith("1")) {
+    			exit = true;
+    		}
+		}
+		
+	}
+	
+    private void customerProfile() {
+
+		System.out.println("Enter Customer Email ID");
+		String input = reader.nextLine().trim();
+		this.displayCustomerProfile(input);
+		
+    }
+    
+	public void displayCustomerProfile(String emailID) {
+    	boolean status = false;
+    	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT c_id, c_name, sc_id, c_addr, c_tel_no FROM Customer WHERE c_email=?");
+			pstmt.setString(1, emailID);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				
+				System.out.println("Customer Profile");
+				String c_id = rs.getString(1);
+	    		System.out.println("Customer ID: " + c_id);
+	    		System.out.println("Name: " + rs.getString(2));
+	    		System.out.println("Address: " + rs.getString(4));
+	    		System.out.println("Email Address: " + emailID);
+	    		System.out.println("Phone Number: " + rs.getString(5));
+	    		System.out.println("Cars: ");
+	    		
+	    		Vector<Vehicle> vehicleList = new Vector<Vehicle>();
+	    		PreparedStatement pstmt2 = null;
+	    		ResultSet rs2 = null;
+	    		try{
+	    			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
+	    			pstmt2.setString(1, c_id);
+	    			rs2 = pstmt2.executeQuery();
+	    			while(rs2.next())  {
+	    				String tmp = rs2.getString(1);
+	    				Vehicle v = new Vehicle(tmp);
+	    				vehicleList.add(v);
+//	    				System.out.println(tmp);
+	    			}
+	    		}catch(SQLException e){
+	    			e.printStackTrace();
+	    		}
+	    		
+	    		for(int i=0; i<vehicleList.size(); i++) {
+	    			System.out.print(i+1);
+	    			Vehicle tmp = vehicleList.get(i);
+	    			tmp.vehicleProfile();	
+	    		}
+	    		status = true;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		if(!status)
+		{
+			System.out.println("Enter Email Id is not assigned to any customer");
+		}
+		
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("1.  Go Back");
+			String input = reader.nextLine().trim();
+			if (input.startsWith("1")) {
+    			exit = true;
+    		}
+		}
+    }
+	
+	
+	void dailyTaskRecordDeliveries() {
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("Select option");
+			System.out.println("1  Enter Order ID");
+			System.out.println("2. Go Back");
+			
+			String input = reader.nextLine().trim();
+			if(input.startsWith("1")) {
+				System.out.println("Enter Comma Separated order ids");
+				String orderidS = reader.nextLine().trim();
+				orderidS = orderidS.replaceAll("\\s","");
+				String orderidlist[] = orderidS.split(",");
+				Order.updateOrderlist(orderidlist);
+				
+			}else if (input.startsWith("2")) {
+				exit = true;
+			}else {
+				System.out.println("Invalid Option. Try Again");
+			}
+		}
+	}
+	
+	void dailyTaskUpdateInventory() {
+		//TODO
+	}
 }
 
 class Mechanic extends Employee implements HourlyPayable{

@@ -11,6 +11,8 @@ enum OrderStatus{
 class Order {
 	// only manager can create this class 
 	Connection conn;
+	
+	String orderID = null;
 	Date orderDate;
 	Date expectedDate;
 	Date ActualDelivery;
@@ -37,10 +39,21 @@ class Order {
 		Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
 		this.orderDate = date;
 		this.status = OrderStatus.PENDING.toString();
-		setExpectedDate();
+		
+		setExpectedDate(); //TODO
 		this.ActualDelivery = null;
+		
+		dbCreateOrder();
+		
+		if (this.orderId != null) {
+			System.out.println("Order Created. Order ID :"+ this.orderId);
+			//print estimated date TODO
+		}
 	}
 	
+	void dbCreateOrder(){
+		//set OrderId here
+	}
 	void markOrderComplete() {
 		this.status = OrderStatus.COMPLETED.toString();
 		this.ActualDelivery = new java.sql.Date(Calendar.getInstance().getTime().getTime());
@@ -89,6 +102,26 @@ class Order {
 		//TODO 
 		// 
 		
+	}
+	static void printOrderById(String orderid) {
+		//TODO
+		
+//		A. OrderID
+//		B. Date
+//		C. PartName
+//		D. SupplierName
+//		E. PurchaserName
+//		F. Quantity
+//		G. Unit Price
+//		H. TotalCost
+//		I. Order Status
+	}
+	
+	static void updateOrderlist(String orderids[]) {
+		 for(String order : orderids) {
+			 // mark status COMPLETED in database
+			 //TODO
+		 }
 	}
 	
 	

@@ -15,28 +15,29 @@ class CarRegister {
 		this.conn = conn;
 	}
 	
+	
 	Vehicle registerCar(String c_id) {
 		
-		System.out.println("### RegisterCar page ###");
+
 		System.out.println(" Enter  License Plate");
-		String license_no= reader.nextLine();
+		String license_no= reader.nextLine().trim();
 		System.out.println(" Enter  Purchase date(dd/MM/yyyy)");
-		String date_of_purchase = reader.nextLine();
+		String date_of_purchase = reader.nextLine().trim();
 		System.out.println("Enter  Make");
-		String make = reader.nextLine();
+		String make = reader.nextLine().trim();
 		System.out.println("Enter Model");
-		String model = reader.nextLine();
+		String model = reader.nextLine().trim();
 		System.out.println("Enter Year");
-		String year = reader.nextLine();
+		String year = reader.nextLine().trim();
 		System.out.println("Enter Current mileage");
-		String mileage = reader.nextLine();
+		String mileage = reader.nextLine().trim();
 		System.out.println("Enter Last Service Date(dd/MM/yyyy)");
-		String lastServiceDate = reader.nextLine();
+		String lastServiceDate = reader.nextLine().trim();
 		
 		System.out.println("### Select option ###");
 		System.out.println(" 1.  Register");
 		System.out.println(" 2.  Cancel");
-		String input= reader.nextLine();
+		String input= reader.nextLine().trim();
 		
 		if(input.equals("1")) {
 			Date date_of_purchase1;
