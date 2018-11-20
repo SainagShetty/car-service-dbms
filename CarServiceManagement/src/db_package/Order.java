@@ -96,14 +96,84 @@ class Order {
 	private void setExpectedDate() {
 		
 	}
-	static void printOrderHistory(){
+	static void printOrderHistory(Connection conn){
+		PreparedStatement pstmt = null;
+		ResultSet rs=null;
+		ResultSet r2=null;
+		String supplier;
+		float unitprice=0;
+		int quantity;
+		float tp;
+		try{
+			pstmt = conn.prepareStatement("select * from orders order by order_placement_date desc");
+			pstmt2 = conn.prepareStatement("select UNIT_PRICE from PARTS where P_ID=?")
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				if(rs.getString("ORIGIN_D_ID") != NULL){
+					supplier=rs.getString("ORIGIN_D_ID")
+				}
+				else{
+					supplier=rs.getString("ORIGIN_SC_ID")
+				}
+				pstmt2.setString(1,rs.getString("P_ID"))
+				r2 = pstmt2.executeQuery();
+				unitprice = Float.parseFloat(r2.getString(1));
+				quantity = Integer.parseInt(rs.getString("QUANTITY"));
+				tp = unitprice*quantity;
+
+
+				System.out.println("Order ID- " + rs.getString("O_ID") + " Date- " + rs.getString("ORDER_PLACEMENT_DATE") + " PartName- " + rs.getString("P_ID") + " SupplierName- "+ supplier + " Quantity- "+ rs.getString("QUANTITY")+ " Unit Price- "+r2.getString(1)+" Total Price- "+Float.toString(tp));
+			}
+		}
+	catch(SQLException e){
+			e.printStackTrace();
+		}
+		//TODO 
+		// 
 		
+	}
+	static void printOrderById(String orderid, Connection conn) {
+	       PreparedStatement pstmt = null;
+		ResultSet rs=null;
+		ResultSet r2=null;
+		String supplier;
+		float unitprice=0;
+		int quantity;
+		float tp;
+		try{
+			pstmt = conn.prepareStatement("select * from orders where O_ID=?");
+			pstmt2 = conn.prepareStatement("select UNIT_PRICE from PARTS where P_ID=?")
+			pstmt.setString(1,orderid);
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				if(rs.getString("ORIGIN_D_ID") != NULL){
+					supplier=rs.getString("ORIGIN_D_ID")
+				}
+				else{
+					supplier=rs.getString("ORIGIN_SC_ID")
+				}
+				pstmt2.setString(1,rs.getString("P_ID"))
+				r2 = pstmt2.executeQuery();
+				unitprice = Float.parseFloat(r2.getString(1));
+				quantity = Integer.parseInt(rs.getString("QUANTITY"));
+				tp = unitprice*quantity;
+
+
+
+
+
+				System.out.println("Order ID- " + rs.getString("O_ID") + " Date- " + rs.getString("ORDER_PLACEMENT_DATE") + " PartName- " + rs.getString("P_ID") + " SupplierName- "+ supplier + " Quantity- "+ rs.getString("QUANTITY")+ " Unit Price- "+r2.getString(1)+" Total Price- "+Float.toString(tp));
+			}
 		
 		//TODO 
 		// 
 		
 	}
-	static void printOrderById(String orderid) {
+	catch(SQLException e){
+			e.printStackTrace();
+		}
+	
+	        
 		//TODO
 		
 //		A. OrderID
