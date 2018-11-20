@@ -1,5 +1,6 @@
 package db_package;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DbApplication {
@@ -18,20 +19,28 @@ public class DbApplication {
 			reader = new Scanner(System.in);
 			try {
 				while(true) {
-					System.out.println("Select 1. Login 2. SignUp");
+					System.out.println("Select 1. Login 2. SignUp 3. Exit");
 					String input = reader.nextLine().trim();
 					if (input.startsWith("1")) {
 						loginPage();
 					} else if (input.startsWith("2")) {
 						signUpPage();
-					} else {
+					} else if (input.startsWith("3")) {
+						dbConnection.closeConnection();
+						System.out.println("Closing Connections...");
+						System.out.println("Closing Application...");
+						System.exit(0);
+					}
+					else {
 						System.out.println("invalid Input. Try again!");
 					}
 				}
 				
 			} catch (Exception e) {
+				dbConnection.closeConnection();
 				System.exit(0);
 			}
+			
 		  
 		}catch(Exception e){ System.out.println(e);}  
 		  
