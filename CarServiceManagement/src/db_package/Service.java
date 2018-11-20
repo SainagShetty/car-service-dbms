@@ -7,49 +7,30 @@ abstract class Service {
 	String e_id;
 	String sc_id;
 	String c_id;
+	String c_email;
 	String vehicle_license;
-	int serviceCenter_id;
-	//Convert into date
-	String startDate;
-	//Convert into date
-	String endDate;
+	Date startDate;
+	Date endDate;
 	int Status;
+	float milage;
+	String make;
+	String model;
+	Connection conn;
 	
-	Service(String ser_id, Connection conn){
-		this.ser_id = ser_id;
-		Statement stmt;
-		try {
-			stmt = conn.createStatement();
-			String s_temp = "select * from Service where SER_ID='"+ser_id+"'";
-//			System.out.println(s_temp);
-			ResultSet rs=stmt.executeQuery(s_temp);
-			rs.next();
-			this.e_id = rs.getObject(2) == null ? "NULL" : rs.getObject(2).toString();
-			this.c_id = rs.getObject(3) == null ? "NULL" : rs.getObject(3).toString();
-			this.sc_id = rs.getObject(4) == null ? "NULL" : rs.getObject(4).toString();
-			this.vehicle_license = rs.getObject(5) == null ? "NULL" : rs.getObject(5).toString();
-			this.endDate = rs.getObject(6) == null ? "NULL" : rs.getObject(6).toString();
-			this.startDate = rs.getObject(9) == null ? "NULL" : rs.getObject(9).toString();
-			
-//			System.out.println(" "+this.ser_id+" "+ this.e_id+" "+this.c_id+" "+this.sc_id+" "+this.vehicle_license+" "+this.endDate+" "+this.startDate);
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-		
+	Service(Connection conn){
+		 this.conn = conn;
 	}
 	
-	Service(String c_id, String Vehicle_license, String sc_id, Connection conn){
-		
-		// if exists in Service table, fetch from DB
-		// or create new
-		this.c_id = c_id;
-		this.vehicle_license = Vehicle_license;
+	Service(String sc_id, String c_email, String Vehicle_license, float current_milage, String mechanic_name, Connection conn){
+		this.conn = conn;
 		this.sc_id = sc_id;
-		dbCreateService();
+		this.c_email = c_email;
+		this.vehicle_license = Vehicle_license;
+		this.milage = current_milage;
+		
+//		dbCreateService();
 	}
+	
 	
 	void startService() {
 //		this.startDate = new Date();	
@@ -70,39 +51,91 @@ abstract class Service {
 }
 
 class Repair extends Service{
-	String problem;
-	
+//	String problem;
+//	
 	Repair(String s_id, Connection conn){
-		super(s_id, conn);	
+		super(conn);	
 	}
-	
-	Repair(String c_id, String Vehicle_license, String sc_id, Connection conn){
-		super(c_id,Vehicle_license, sc_id, conn);
-	}
-
-	void addProblem(String problem) {
-		this.problem = problem; // can create constants 
-	}
-	
-	void runDiagnosis() {
-		//
-		String fault = "New Fault x";
-//		Report new_report = new Report(this.c_id, this.vehicle_license, this.serviceCenter_id);
-		
-//		new_report.addFaults(fault);
-//		new_report.generateReport();
-	}
-	
-	void repairMenu() {
-		
-	}
+//	
+//	Repair(String c_id, String Vehicle_license, String sc_id, Connection conn){
+////		super(c_id,Vehicle_license, sc_id, conn);
+//	}
+//
+//	void addProblem(String problem) {
+//		this.problem = problem; // can create constants 
+//	}
+//	
+//	void runDiagnosis() {
+//		//
+//		String fault = "New Fault x";
+////		Report new_report = new Report(this.c_id, this.vehicle_license, this.serviceCenter_id);
+//		
+////		new_report.addFaults(fault);
+////		new_report.generateReport();
+//	}
+//	
+//	void repairMenu() {
+//		
+//	}
 }
 
-class Maintenance extends Service{
-
-	Maintenance(String c_id, String Vehicle_license, String sc_id, Connection conn) {
-		super(c_id, Vehicle_license, sc_id, conn);
-		// TODO Auto-generated constructor stub
+class Maintenance extends Service{	
+	Connection conn;
+	
+	Maintenance(String sc_id, String c_email, String Vehicle_license, float current_mileage, String mechanic_name, Connection conn) {
+		super(sc_id, c_email, Vehicle_license, current_mileage, mechanic_name, conn);
+		
+		this.conn = conn;
+		
+		Vehicle vehicle = new Vehicle(Vehicle_license);
+		this.make = vehicle.getMake();
+		this.model = vehicle.getModel();
+		
+		System.out.println("Make model "+make+" "+model);
+		
+		Customer customer = new Customer(c_email, this.conn);
+		this.c_id = customer.getCustomerID();
+		
+		System.out.println("Customer id is "+this.c_id);
+		
+		String service_type = this.maintnanceType(this.make, this.model, current_mileage);
+		System.out.println("service type "+ service_type);
+		
+	}
+	
+	private String maintnanceType(String make, String model, float mileage) {
+		int a = 0, b = 0, c = 0;
+		System.out.println("Inside here");
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			pstmt = conn.prepareStatement("SELECT type, mileage from Maintenance where make = ? and model = ? GROUP BY type, MILEAGE;");
+			pstmt.setString(1, make);
+			pstmt.setString(2, model);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				System.out.println("NEXT");
+				String type_s = rs.getString(1);
+				if(type_s.equals("A"))
+					a = rs.getInt(2)*1000;
+				else if(type_s.equals("B"))
+					b = rs.getInt(2)*1000;
+				else if(type_s.equals("C"))
+					c = rs.getInt(2)*1000;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("ABC"+a+" "+b+" "+c);
+		
+		int mileage_int = Math.round(mileage);
+		int temp = mileage_int%c;
+		if(temp < a)
+			return "A";
+		if(temp < b)
+			return "B";
+		return "C";
 	}
 	
 }
