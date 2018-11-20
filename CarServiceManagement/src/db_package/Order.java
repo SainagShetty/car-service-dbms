@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
+import java.time.format.DateTimeFormatter;
 enum OrderStatus{
 	NEW, PENDING, COMPLETED;
 }
@@ -47,6 +50,7 @@ class Order {
 		setExpectedDate(); //TODO
 		this.ActualDelivery = null;
 		
+		System.out.println("Here after actual");
 		dbCreateOrder();
 		
 		if (this.orderId != null) {
@@ -72,7 +76,7 @@ class Order {
 			p.setString(9,this.Quantity);
 			p.setString(10,this.status);
 			r=p.executeUpdate();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -86,6 +90,10 @@ class Order {
 	
 	
 	private void setOrigin(String req_part, String req_quantity){
+		Calendar calendar;
+		System.out.println("In set origin");
+		SimpleDateFormat formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+		calendar  = Calendar.getInstance();
 		
 		 for( String scid : DbApplication.ServiceCIDList) {
 			 ServiceCenter sc_instance = new ServiceCenter(scid, this.conn);
@@ -94,7 +102,9 @@ class Order {
 				 this.Quantity = req_quantity;
 				  this.orginScID = scid;
 				  this.orginDID = null;	 
-				  
+				  calendar.add(Calendar.DATE, 1);
+				  this.expectedDate = (Date) calendar.getTime();
+				  System.out.println("Expected Date " +expectedDate.toString() );
 				  origin_found = true;
 				  break;
 			 }
@@ -102,17 +112,19 @@ class Order {
 		 
 		 // find distributor 
 		 if (!origin_found) {
-			 String distributorId;
+			 String[] distributorId = new String[2] ;
 			 
-			 distributorId = Part.findDistributor(req_part, req_quantity);
 			 
-			 if (distributorId != null) {
+			 	distributorId = Part.findDistributor(req_part, req_quantity, conn);
 				 this.partID = req_part;
 				 this.Quantity = req_quantity;
 				 this.orginScID = null;
-				 this.orginDID = distributorId;
+				 this.orginDID = distributorId[0];
 				 
-			 }
+				 calendar.add(Calendar.DATE, Integer.parseInt(distributorId[1]));
+				 this.expectedDate = (Date) calendar.getTime();
+				 System.out.println("Expected Date " +expectedDate.toString() );			 
+
 		 }
 		 
 	}
