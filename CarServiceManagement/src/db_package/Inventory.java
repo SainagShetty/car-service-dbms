@@ -37,7 +37,61 @@ public class Inventory {
 	}
  	
  	
- 	public static void updateInventory() {
- 		//TODO by Rajat
+ 	
+	public static void addtoInventory(String part_id, String ser_id, int n, Connection conn){
+ 		PreparedStatement pstmt = null;
+ 		ResultSet q;
+ 		int fvalue=0;
+ 		int val=0;
+
+ 		try{
+			pstmt = conn.prepareStatement("SELECT quantity from INVENTORY where P_ID=? and SC_ID=?");
+			pstmt.setString(1, part_id);
+			pstmt.setString(2, ser_id);
+			q = pstmt.executeQuery();
+			System.out.println(q);
+			val = q.getInt(1);
+			fvalue = val + n;
+			pstmt = conn.prepareStatement("UPDATE INVENTORY set quantity =? where P_ID=? and SC_ID=?");
+			pstmt.setString(1, Integer.toString(fvalue));
+			pstmt.setString(2, part_id);
+			pstmt.setString(3, ser_id);
+			q = pstmt.executeQuery();
+            }
+            catch(SQLException e){
+			e.printStackTrace();
+		}
+
+
  	}
+ 	public static boolean subtractfromInventory(String part_id, String ser_id, int n, Connection conn){
+ 		PreparedStatement pstmt = null;
+ 		ResultSet q;
+ 		int fvalue=0;
+
+ 		try{
+			pstmt = conn.prepareStatement("SELECT quantity from INVENTORY where P_ID=? and SC_ID=?");
+			pstmt.setString(1, part_id);
+			pstmt.setString(2, ser_id);
+			q = pstmt.executeQuery();
+			if(q.getInt(1) <n){
+				return false;
+			}
+			else{
+				fvalue =  q.getInt(1) - n;
+				pstmt = conn.prepareStatement("UPDATE INVENTORY set quantity =? where P_ID=? and SC_ID=?");
+				pstmt.setString(1, Integer.toString(fvalue));
+				pstmt.setString(2, part_id);
+				pstmt.setString(3, ser_id);
+				q = pstmt.executeQuery();
+				return true;
+		    }
+            }
+            catch(SQLException e){
+			e.printStackTrace();
+		}
+
+ 		return false;
+ 	}
+	
 }

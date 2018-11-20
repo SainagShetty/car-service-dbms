@@ -15,9 +15,10 @@ class CarRegister {
 		this.conn = conn;
 	}
 	
+	
 	Vehicle registerCar(String c_id) {
 		
-		System.out.println("### RegisterCar page ###");
+
 		System.out.println(" Enter  License Plate");
 		String license_no= reader.nextLine();
 		System.out.println(" Enter  Purchase date(dd/MM/yyyy)");
