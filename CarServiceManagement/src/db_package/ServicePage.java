@@ -34,25 +34,25 @@ public class ServicePage {
 			System.out.println(" 3.  Reschedule Service");
 			System.out.println(" 4.  Go Back");
 			
-			String input= reader.nextLine();
+			String input= reader.nextLine().trim();
 		
 			if (input.equals("1")) {
 				printServiceHistory(Integer.parseInt(cus.c_id));
 			} else if (input.equals("2")) {
 				
 				System.out.println(" Enter  License Plate");
-				String licensePlate= reader.nextLine();
+				String licensePlate= reader.nextLine().trim();
 				System.out.println(" Enter  CurrentMileage");
-				String currentMileage = reader.nextLine();
+				String currentMileage = reader.nextLine().trim();
 				System.out.println("Enter  MechanicName");
-				String mechanicName = reader.nextLine();
+				String mechanicName = reader.nextLine().trim();
 				
 				System.out.println("### Select option ###");
 				System.out.println(" 1. Schedule Maintenance");
 				System.out.println(" 2. Schedule Repair");
 				System.out.println(" 3. Go Back");
 				
-				input= reader.nextLine();
+				input= reader.nextLine().trim();
 				if (input.equals("1")) {
 					scheduleMaintenanceService(Integer.parseInt(cus.c_id), licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("2")) {
@@ -93,7 +93,7 @@ public class ServicePage {
 			System.out.println(" 2.  Schedule Repair");
 			System.out.println(" 3.  Go Back");
 			
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			
 			if (input.startsWith("1")) {
 				//TODO
@@ -153,7 +153,7 @@ public class ServicePage {
 		while(!goback) {
 			System.out.println("### RescheduleService###");
 			System.out.println("Enter customer email address");
-			String cus_email = reader.nextLine();
+			String cus_email = reader.nextLine().trim();
 			if (serviceIDlist == null)
 				serviceIDlist = printServicesForCustomer(cus_email);
 			
@@ -161,13 +161,13 @@ public class ServicePage {
 			System.out.println(" 1.  Pick a service");
 			System.out.println(" 2.  Go Back");
 			
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			
 			if (input.equals("1")) {
 			
 				boolean valid = false;
 				System.out.println("Enter Service ID");
-				String sc_id_val = reader.nextLine();
+				String sc_id_val = reader.nextLine().trim();
 				for( String sc : serviceIDlist ) {
 					if (sc.equalsIgnoreCase(sc_id_val)) {
 						rescheduleServiceForCus(cus_email, sc_id_val);
@@ -199,7 +199,7 @@ public class ServicePage {
 		System.out.println(" 1.  Reschedule Date");
 		System.out.println(" 2.  Go Back");
 		
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		
 		while(true) {
 			if(input.equals("1")){
