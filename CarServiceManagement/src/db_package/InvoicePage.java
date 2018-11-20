@@ -62,7 +62,7 @@ public class InvoicePage{
 	
 	void fetchPrice() {
 		basicTaskIds = new ArrayList<String>();
-		System.out.println(this.srID+this.licenceNo+this.licenceNo+this.serviceType);
+//		System.out.println(this.srID+this.licenceNo+this.licenceNo+this.serviceType);
 		String queryMaintenance = "SELECT maintenance.basic_taskid FROM maintenance "
 				+ "WHERE maintenance.type = "
 				+ "( SELECT service.maintenance_type FROM service WHERE service.ser_id = ?) "
@@ -203,6 +203,12 @@ public class InvoicePage{
 	}
 	
 	void printInvoices() {
-		
+		System.out.println("A. Service ID: " + this.srID);
+		System.out.println("B. Service Start Date/Time: " + this.serviceStart);
+		System.out.println("C. Service End Date/Time: " + this.serviceEnd);
+		System.out.println("D. Licence Plate: " + this.licenceNo);
+		System.out.println("E. Service Type: " + this.serviceType);
+		System.out.println("F. Mechanic Name: " + this.mechanicName);
+		System.out.println("G. Total Service Cost: " + this.totalCost);
 	}
 }

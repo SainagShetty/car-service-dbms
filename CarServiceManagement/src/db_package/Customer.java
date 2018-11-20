@@ -194,7 +194,6 @@ class Customer extends Person{
     }
     
     private void invoicePage() {
-    		System.out.println("View Invoice");
     		invoices = new Vector<InvoicePage>(); 
     		PreparedStatement pstmt = null;
     		ResultSet rs = null;
@@ -213,8 +212,10 @@ class Customer extends Person{
     			e.printStackTrace();
     		}
     		for(int i = 0; i < srID.size();i++) {
+    			System.out.println("INVOICE NO " + (i+1));
     			invoices.add(new InvoicePage(this.con, srID.get(i)));
-    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+    			invoices.get(i).printInvoices();
+//    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
     		}
     		
     }
