@@ -15,7 +15,7 @@ class Part {
 	}
 	
 	
-	static String findDistributor(String partId, String quantity) {
+	static String[] findDistributor(String partId, String quantity) {
 		String ret[] = new String[2];
 		PreparedStatement pstmt1 = null;
 		PreparedStatement pstmt2 = null;
