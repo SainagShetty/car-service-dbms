@@ -258,7 +258,18 @@ class Manager extends Employee implements MonthlyPayable{
     		if (input.startsWith("12")) {
     			signout();
     			exit = true;
-    		} else if (input.startsWith("11")){
+    		} 
+    		else if (input.startsWith("14")){
+	    		System.out.println("Enter Customer Email id");
+				String temp_email = reader.nextLine();
+				System.out.println("License Plate");
+				String temp_license = reader.nextLine();
+				System.out.println("Current Milage");
+				float temp_milage = Float.parseFloat(reader.nextLine());
+				System.out.println("Mechanic Name");
+				String temp_ename = reader.nextLine();
+				Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
+    		}else if (input.startsWith("11")){
     			this.invoicePage();
     		} else if (input.startsWith("10")){
     			Service.serviceHistory(conn, this.service_center);
@@ -1342,7 +1353,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 				String orderidS = reader.nextLine().trim();
 				orderidS = orderidS.replaceAll("\\s","");
 				String orderidlist[] = orderidS.split(",");
-				Order.updateOrderlist(orderidlist);
+				Order.updateOrderlist(orderidlist, conn);
 				
 			}else if (input.startsWith("2")) {
 				exit = true;
