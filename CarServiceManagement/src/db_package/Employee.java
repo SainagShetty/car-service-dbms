@@ -185,16 +185,7 @@ class Manager extends Employee implements MonthlyPayable{
     			signout();
     			exit = true;
     		} else if (input.startsWith("11")){
-    			System.out.println("Enter Customer Email id");
-    			String temp_email = reader.nextLine();
-    			System.out.println("License Plate");
-    			String temp_license = reader.nextLine();
-    			System.out.println("Current Milage");
-    			float temp_milage = Float.parseFloat(reader.nextLine());
-    			System.out.println("Mechanic Name");
-    			String temp_ename = reader.nextLine();
-    			Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
-    			
+    			continue;
     		} else if (input.startsWith("10")){
     			continue;
     		} else if (input.startsWith("1")){

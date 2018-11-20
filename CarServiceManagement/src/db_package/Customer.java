@@ -90,10 +90,8 @@ class Customer extends Person{
 			pstmt2 = conn.prepareStatement("SELECT license_no FROM Vehicle WHERE c_id=?");
 			pstmt2.setString(1, this.c_id);
 			rs2 = pstmt2.executeQuery();
-			System.out.println("qury executed");
 			while(rs2.next())  {
 				String tmp = rs2.getString(1);
-				System.out.println("Inside while " +tmp);
 				Vehicle v = new Vehicle(tmp);
 				vehicleList.add(v);
 			}
@@ -101,7 +99,6 @@ class Customer extends Person{
 			e.printStackTrace();
 		}
 		
-		System.out.println("End of Customer Constructor");
 	// Query 2 fetch from persons table and set Persons instance variable.
 		
 	}
