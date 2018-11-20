@@ -33,15 +33,15 @@ class Notification {
 	
 		while(true) {
 			System.out.println("Select 1 for Details.  2 to go back");
-			String input= reader.nextLine();
+			String input= reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter order id");
-				String id = reader.nextLine();
+				String id = reader.nextLine().trim();
 				Order.printOrderById(id);
 			
 				while(true) {
 					System.out.println("1. Go back");
-					input= reader.nextLine();
+					input= reader.nextLine().trim();
 					if (input.startsWith("1")) {
 						break;
 					}	

@@ -253,7 +253,7 @@ class Manager extends Employee implements MonthlyPayable{
     		System.out.println("11.  Invoices");
     		System.out.println("12.  Logout");
     		
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     		if (input.startsWith("12")) {
     			signout();
     			exit = true;
@@ -276,7 +276,7 @@ class Manager extends Employee implements MonthlyPayable{
     			boolean exit_in = false;
     			while(!exit_in) {
     				System.out.println("1.  Go Back");
-    				String input_in = reader.nextLine();
+    				String input_in = reader.nextLine().trim();
     				if (input_in.startsWith("1")) {
     	    			exit_in = true;
     	    		}
@@ -302,7 +302,7 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("1.  View Profile");
 			System.out.println("2.  Update Profile");
 			System.out.println("3.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				this.displayProfile();
     		}
@@ -338,7 +338,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -355,10 +355,10 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("4. Phone Number");
 			System.out.println("5. Password");
 			System.out.println("6. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(1, input)){
 					System.out.println("Success");
 				}
@@ -368,7 +368,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(2, input)){
 					System.out.println("Success");
 				}
@@ -378,7 +378,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter Email Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(3, input)){
 					System.out.println("Success");
 				}
@@ -388,7 +388,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Phone Number");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(4, input)){
 					System.out.println("Success");
 				}
@@ -398,7 +398,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("5")) {
 				System.out.println("Enter New Password");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(5, input)){
 					System.out.println("Success");
 				}
@@ -508,7 +508,7 @@ class Manager extends Employee implements MonthlyPayable{
     private void customerProfile() {
 
 		System.out.println("Enter Customer Email ID");
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		this.displayCustomerProfile(input);
 		
     }
@@ -568,7 +568,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -581,17 +581,17 @@ class Manager extends Employee implements MonthlyPayable{
     		
     	while (!goback){
     		System.out.println(" Enter  Name");
-    		String name = reader.nextLine();
+    		String name = reader.nextLine().trim();
     		System.out.println(" Enter  Address");
-    		String address= reader.nextLine();
+    		String address= reader.nextLine().trim();
     		System.out.println(" Enter  EmailAddress");
-    		String emailad = reader.nextLine();
+    		String emailad = reader.nextLine().trim();
     		System.out.println("Enter  PhoneNumber");
-    		String phoneno = reader.nextLine();
+    		String phoneno = reader.nextLine().trim();
     		System.out.println("Enter  Role");
-    		String emprole = reader.nextLine();
+    		String emprole = reader.nextLine().trim();
     		System.out.println("Enter  Start Date");
-    		String startdate = reader.nextLine();
+    		String startdate = reader.nextLine().trim();
     		Date date1;
     		java.util.Date date;
     		java.sql.Date sqlStartDate = null;
@@ -606,9 +606,9 @@ class Manager extends Employee implements MonthlyPayable{
     		}
     		
     		System.out.println("Enter  Compensation");
-    		String compesation = reader.nextLine();
+    		String compesation = reader.nextLine().trim();
     		System.out.println("Enter  1 to add 0 to go back");
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     			
     			if (input.startsWith("1")) {
     			
@@ -626,7 +626,7 @@ class Manager extends Employee implements MonthlyPayable{
     					    break;
     					} else {
     						System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    						input = reader.nextLine();
+    						input = reader.nextLine().trim();
     						
     						if(input.startsWith("0")) {
     						
@@ -644,7 +644,7 @@ class Manager extends Employee implements MonthlyPayable{
     					break;
     				} else {
     					System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    					input = reader.nextLine();
+    					input = reader.nextLine().trim();
     					
     					if(input.startsWith("0")) {
     					
@@ -666,7 +666,7 @@ class Manager extends Employee implements MonthlyPayable{
     		
     		do {
     			System.out.println("Enter Employee id");
-    			input = reader.nextLine();
+    			input = reader.nextLine().trim();
     			if (Employee.employeeExists(input, conn)) {	
     			    Employee emp = new Employee(input, conn, Employee.withid);
     			    System.out.println(emp.e_name + " " + emp.my_role);
@@ -687,7 +687,7 @@ class Manager extends Employee implements MonthlyPayable{
     			    exists =true;
     			} else {
     				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
-    				input = reader.nextLine();
+    				input = reader.nextLine().trim();
     				if(input.startsWith("1")) {
     					continue;
     				} else {
@@ -738,7 +738,7 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("1. Order History");
 			System.out.println("2. New Order");
 			System.out.println("3. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if( input.startsWith("1")) {
 				System.out.println("###Order History###");
 				
@@ -747,7 +747,7 @@ class Manager extends Employee implements MonthlyPayable{
 				boolean exit_in = false;
 				while(!exit_in) {
 					System.out.println("1.  Go Back");
-					String input_in = reader.nextLine();
+					String input_in = reader.nextLine().trim();
 					if (input_in.startsWith("1")) {
 		    			exit_in = true;
 		    			}
@@ -756,9 +756,9 @@ class Manager extends Employee implements MonthlyPayable{
 			} else if (input.startsWith("2")) {
 				System.out.println("###New Order###");
 				System.out.println("Enter Part ID");
-				String req_part = reader.nextLine();
+				String req_part = reader.nextLine().trim();
 				System.out.println("Enter Quantity");
-				String req_quantity = reader.nextLine();
+				String req_quantity = reader.nextLine().trim();
 				Order new_order = new Order(this.service_center);
 				
 				//confirm 
@@ -766,7 +766,7 @@ class Manager extends Employee implements MonthlyPayable{
 				while (!exit_in) {
 					System.out.println("1. Place Order");
 					System.out.println("2. Goback");
-					input = reader.nextLine();
+					input = reader.nextLine().trim();
 						
 						if( input.startsWith("1")) {
 							new_order.placeOrder(req_part, req_quantity, conn);
@@ -871,7 +871,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    				"Deliveries");
 	    		System.out.println("10.  Logout");
 	    		
-	    		String input = reader.nextLine();
+	    		String input = reader.nextLine().trim();
 	    		if (input.startsWith("10")) {
 	    			signout();
 	    			exit = true;
@@ -884,13 +884,13 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    		} else if ( input.startsWith("3")){
 	    			CarRegister cr = new CarRegister(Role.RECEPTIONIST, this.conn);
 	    			System.out.println("Enter customer email");
-	    			String cus_email = reader.nextLine();
+	    			String cus_email = reader.nextLine().trim();
 	    			Customer cus = new Customer(cus_email, conn); 
 	    			cus.vehicleList.add(cr.registerCar(cus.getCustomerID()));
 	    			
 	    		} else if ( input.startsWith("4")){
 	    			System.out.println("Enter customer email");
-	    			String cus_email = reader.nextLine();
+	    			String cus_email = reader.nextLine().trim();
 	    			Service.serviceHistory(cus_email, conn);
 	    			
 	    		} else if ( input.startsWith("5")){
@@ -924,7 +924,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 			System.out.println("1.  View Profile");
 			System.out.println("2.  Update Profile");
 			System.out.println("3.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				this.displayProfile();
     		}
@@ -946,10 +946,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 			System.out.println("4. Phone Number");
 			System.out.println("5. Password");
 			System.out.println("6. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(1, input)){
 					System.out.println("Success");
 				}
@@ -959,7 +959,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(2, input)){
 					System.out.println("Success");
 				}
@@ -969,7 +969,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter Email Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(3, input)){
 					System.out.println("Success");
 				}
@@ -979,7 +979,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Phone Number");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(4, input)){
 					System.out.println("Success");
 				}
@@ -989,7 +989,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("5")) {
 				System.out.println("Enter New Password");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(5, input)){
 					System.out.println("Success");
 				}
@@ -1116,7 +1116,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -1127,7 +1127,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     private void customerProfile() {
 
 		System.out.println("Enter Customer Email ID");
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		this.displayCustomerProfile(input);
 		
     }
@@ -1187,7 +1187,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -1202,10 +1202,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 			System.out.println("1  Enter Order ID");
 			System.out.println("2. Go Back");
 			
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if(input.startsWith("1")) {
 				System.out.println("Enter Comma Separated order ids");
-				String orderidS = reader.nextLine();
+				String orderidS = reader.nextLine().trim();
 				orderidS = orderidS.replaceAll("\\s","");
 				String orderidlist[] = orderidS.split(",");
 				Order.updateOrderlist(orderidlist);
