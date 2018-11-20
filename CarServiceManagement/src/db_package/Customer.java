@@ -140,6 +140,26 @@ class Customer extends Person{
     }
     void createCustomer(Connection conn) {
     		// create entry in table.
+    	PreparedStatement pstmt = null;
+		try{
+			pstmt = this.conn.prepareStatement("INSERT INTO CUSTOMER "
+					+ "(C_ID, C_EMAIL, C_ADDR, C_TEL_NO, C_NAME, SC_ID) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?, ?)");			
+			pstmt.setString(1, this.emailID);
+			pstmt.setString(2, this.emailID);
+			pstmt.setString(3, this.c_address);
+			pstmt.setString(4, this.c_tel_no);
+			pstmt.setString(5, this.c_name);
+			pstmt.setString(6, this.service_center);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Employee Create Failed");
+			else
+				System.out.println("Employee created successfully");
+		}catch(SQLException e){
+//			e.printStackTrace();
+		}	
     }
     private void profilePage() {
     	boolean exit = false;
