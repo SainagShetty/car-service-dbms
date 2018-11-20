@@ -117,5 +117,12 @@ class Order {
 //		I. Order Status
 	}
 	
+	static void updateOrderlist(String orderids[]) {
+		 for(String order : orderids) {
+			 // mark status COMPLETED in database
+			 //TODO
+		 }
+	}
+	
 	
 }
