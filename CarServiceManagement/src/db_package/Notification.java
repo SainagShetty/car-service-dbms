@@ -1,5 +1,6 @@
 package db_package;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.util.Scanner;
 
@@ -9,7 +10,6 @@ class Notification {
 	Date notificationDate;
 	String suplierName;
 	Notification(){
-		
 	}
 //	static void addNotification(Order order){
 //		//TODO	
@@ -21,11 +21,11 @@ class Notification {
 		return new String();
 	}
 	
-	static void notificationPage() {
-		printallNotifications();	
+	static void notificationPage(Connection conn) {
+		printallNotifications(conn);	
 	}
 	
-	static void printallNotifications() {
+	static void printallNotifications(Connection conn) {
 		Scanner reader = new Scanner(System.in);
 		System.out.println( "###Notifications ####");
 		
@@ -33,20 +33,18 @@ class Notification {
 	
 		while(true) {
 			System.out.println("Select 1 for Details.  2 to go back");
-			String input= reader.nextLine();
+			String input= reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter order id");
-				String id = reader.nextLine();
-				Order.printOrderById(id);
-			
+				String id = reader.nextLine().trim();
+				Order.printOrderById(id, conn);
 				while(true) {
 					System.out.println("1. Go back");
-					input= reader.nextLine();
+					input= reader.nextLine().trim();
 					if (input.startsWith("1")) {
 						break;
 					}	
 				}
-				
 			} else if (input.startsWith("2")) {
 				break;
 			} else {

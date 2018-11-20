@@ -2,6 +2,9 @@ package db_package;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 
@@ -23,6 +26,7 @@ class Order {
 	String DestSCID;
 	String Quantity;
 	String status;
+	static int iterable=12;
 	
 	Boolean origin_found = false;
 	Order(){
@@ -53,6 +57,27 @@ class Order {
 	
 	void dbCreateOrder(){
 		//set OrderId here
+		PreparedStatement p = null;
+		int r;
+		try {
+			p = this.conn.prepareStatement("INSERT INTO ORDERS(ORDER_PLACEMENT_DATE,EXPECTED_DELIVERY_DATE,ACTUAL_DELIVERY_DATE,O_ID,ORIGIN_D_ID,ORIGIN_SC_ID,P_ID,DESTINATION_SC_ID,QUANTITY,O_STATE) VALUES (?,?,?,?,?,?,?,?,?,?)");
+			p.setDate(1,this.orderDate);
+			p.setDate(2,this.expectedDate);
+			p.setDate(3,this.ActualDelivery);
+			p.setString(4,Integer.toString(iterable));
+			p.setString(5,this.orginDID);
+			p.setString(6,this.orginScID);
+			p.setString(7,this.partID);
+			p.setString(8,this.DestSCID);
+			p.setString(9,this.Quantity);
+			p.setString(10,this.status);
+			r=p.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		iterable+=1;
 	}
 	void markOrderComplete() {
 		this.status = OrderStatus.COMPLETED.toString();
@@ -96,14 +121,84 @@ class Order {
 	private void setExpectedDate() {
 		
 	}
-	static void printOrderHistory(){
+	static void printOrderHistory(Connection conn){
+		PreparedStatement pstmt = null;
+		ResultSet rs=null;
+		ResultSet r2=null;
+		String supplier;
+		float unitprice=0;
+		int quantity;
+		float tp;
+		try{
+			pstmt = conn.prepareStatement("select * from orders order by order_placement_date desc");
+			PreparedStatement pstmt2 = conn.prepareStatement("select UNIT_PRICE from PARTS where P_ID=?");
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				if(rs.getString("ORIGIN_D_ID") != null){
+					supplier=rs.getString("ORIGIN_D_ID");
+				}
+				else{
+					supplier=rs.getString("ORIGIN_SC_ID");
+				}
+				pstmt2.setString(1,rs.getString("P_ID"));
+				r2 = pstmt2.executeQuery();
+				unitprice = Float.parseFloat(r2.getString(1));
+				quantity = Integer.parseInt(rs.getString("QUANTITY"));
+				tp = unitprice*quantity;
+
+
+				System.out.println("Order ID- " + rs.getString("O_ID") + " Date- " + rs.getString("ORDER_PLACEMENT_DATE") + " PartName- " + rs.getString("P_ID") + " SupplierName- "+ supplier + " Quantity- "+ rs.getString("QUANTITY")+ " Unit Price- "+r2.getString(1)+" Total Price- "+Float.toString(tp));
+			}
+		}
+	catch(SQLException e){
+			e.printStackTrace();
+		}
+		//TODO 
+		// 
 		
+	}
+	static void printOrderById(String orderid, Connection conn) {
+	       PreparedStatement pstmt = null;
+		ResultSet rs=null;
+		ResultSet r2=null;
+		String supplier;
+		float unitprice=0;
+		int quantity;
+		float tp;
+		try{
+			pstmt = conn.prepareStatement("select * from orders where O_ID=?");
+			PreparedStatement pstmt2 = conn.prepareStatement("select UNIT_PRICE from PARTS where P_ID=?");
+			pstmt.setString(1,orderid);
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				if(rs.getString("ORIGIN_D_ID") != null){
+					supplier=rs.getString("ORIGIN_D_ID");
+				}
+				else{
+					supplier=rs.getString("ORIGIN_SC_ID");
+				}
+				pstmt2.setString(1,rs.getString("P_ID"));
+				r2 = pstmt2.executeQuery();
+				unitprice = Float.parseFloat(r2.getString(1));
+				quantity = Integer.parseInt(rs.getString("QUANTITY"));
+				tp = unitprice*quantity;
+
+
+
+
+
+				System.out.println("Order ID- " + rs.getString("O_ID") + " Date- " + rs.getString("ORDER_PLACEMENT_DATE") + " PartName- " + rs.getString("P_ID") + " SupplierName- "+ supplier + " Quantity- "+ rs.getString("QUANTITY")+ " Unit Price- "+r2.getString(1)+" Total Price- "+Float.toString(tp));
+			}
 		
 		//TODO 
 		// 
 		
 	}
-	static void printOrderById(String orderid) {
+	catch(SQLException e){
+			e.printStackTrace();
+		}
+	
+	        
 		//TODO
 		
 //		A. OrderID
@@ -117,10 +212,19 @@ class Order {
 //		I. Order Status
 	}
 	
-	static void updateOrderlist(String orderids[]) {
+	static void updateOrderlist(String orderids[], Connection conn) {
+	        int r;
 		 for(String order : orderids) {
-			 // mark status COMPLETED in database
-			 //TODO
+			 PreparedStatement pstmt = null;
+			 try {
+				pstmt = conn.prepareStatement("update ORDERS set O_STATE=\""+OrderStatus.COMPLETED.toString()+"\"where O_ID=?");
+				pstmt.setString(1,order);
+				 r=pstmt.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			 
 		 }
 	}
 	

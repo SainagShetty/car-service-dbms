@@ -1,5 +1,6 @@
 package db_package;
 import java.sql.Connection;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,23 @@ class ServiceCenter {
 		
 		// check if Receptionist for this service center exists in Employee table.
 		//TODO
+		PreparedStatement pstmt = null;
+		ResultSet rs=null;
+		try{
+			pstmt = conn.prepareStatement("SELECT DISTINCT(E_ROLE) from EMPLOYEE where SC_ID=?");
+			pstmt.setString(1, this.sc_id);
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				System.out.println(rs.getString("E_ROLE"));
+				if (rs.getString("E_ROLE").equals("Receptionist")){
+					return true;
+				} 
+			}
+			return false;
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
 		
 		return false;
 	}

@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 class Employee extends Person {
@@ -61,12 +62,66 @@ class Employee extends Person {
 	Employee(String id, Connection conn, int flag){
 		super(conn);
 		if (withid == flag) {
-			//////TODO
+			String roleTmp = "";
+			this.conn = conn;
+			this.eid = id;
+			this.userID = id;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			LoggedIn = true;
+			try{
+				pstmt = conn.prepareStatement("SELECT e_email, e_name, sc_id, e_address, e_tel_no, start_date, compensation, E_ROLE FROM Employee WHERE e_id=?");
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					this.emailID = rs.getString(1);
+					this.e_name = rs.getString(2); 
+					this.service_center = rs.getString(3); 
+					this.e_address = rs.getString(4);
+					this.e_tel_no = rs.getString(5);
+					this.start_date = rs.getDate(6);
+					this.compensation = rs.getInt(7);
+					roleTmp = rs.getString(8);
+				}
+				if(roleTmp.equals("Manager")) {
+					this.my_role = Role.MANAGER;
+				}
+				else if(roleTmp.equals("Receptionist")) {
+					this.my_role = Role.RECEPTIONIST;
+				}
+				else if(roleTmp.equals("Mechanic")) {
+					this.my_role = Role.MECHANIC;
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
 			// Q1 select using employee id from Employee table and update instance variables.
 			// Q2 fetch from persons table and set Persons instance variable 
 			
 		} else if (withemail == flag){
 			 /////TODO
+			this.conn = conn;
+			this.emailID = id;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			LoggedIn = true;
+			try{
+				pstmt = conn.prepareStatement("SELECT e_id, e_name, sc_id, e_address, e_tel_no, start_date, compensation FROM Employee WHERE e_email=?");
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				while(rs.next())  {
+					this.eid = rs.getString(1);
+					this.e_name = rs.getString(2); 
+					this.service_center = rs.getString(3); 
+					this.e_address = rs.getString(4);
+					this.e_tel_no = rs.getString(5);
+					this.start_date = rs.getDate(6);
+					this.compensation = rs.getInt(7);
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+			this.userID = this.eid;
 			// Q1 select using employee email from Employee table and update instance variables.
 			// Q2 fetch from persons table and set Persons instance variable 			
 		}
@@ -123,10 +178,29 @@ class Employee extends Person {
     		personDelete();
     }
     
-    static boolean  employeeExists(String emp_id) {
+    static boolean  employeeExists(String emp_id, Connection con) {
     		//TODO
     		//Check if employee id exists in table
-    	 return true;
+    	PreparedStatement pstmt2 = null;
+		ResultSet rs2 = null;
+		try{
+			pstmt2 = con.prepareStatement("SELECT count(*) FROM Employee WHERE e_id=?");
+			pstmt2.setString(1, emp_id);
+			rs2 = pstmt2.executeQuery();
+			int val = 0;
+			while(rs2.next())  {
+				val = rs2.getInt(1);
+			}
+			if(val == 1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+    	 return false;
     }
 
 
@@ -180,21 +254,21 @@ class Manager extends Employee implements MonthlyPayable{
     		System.out.println("11.  Invoices");
     		System.out.println("12.  Logout");
     		
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     		if (input.startsWith("12")) {
     			signout();
     			exit = true;
     		} 
     		else if (input.startsWith("14")){
-	    		System.out.println("Enter Customer Email id");
-				String temp_email = reader.nextLine();
-				System.out.println("License Plate");
-				String temp_license = reader.nextLine();
-				System.out.println("Current Milage");
-				float temp_milage = Float.parseFloat(reader.nextLine());
-				System.out.println("Mechanic Name");
-				String temp_ename = reader.nextLine();
-				Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
+//	    		System.out.println("Enter Customer Email id");
+//				String temp_email = reader.nextLine();
+//				System.out.println("License Plate");
+//				String temp_license = reader.nextLine();
+//				System.out.println("Current Milage");
+//				float temp_milage = Float.parseFloat(reader.nextLine());
+//				System.out.println("Mechanic Name");
+//				String temp_ename = reader.nextLine();
+//				Maintenance maintenance = new Maintenance(this.service_center, temp_email, temp_license, temp_milage, temp_ename, this.conn);
     		}else if (input.startsWith("11")){
     			this.invoicePage();
     		} else if (input.startsWith("10")){
@@ -214,7 +288,7 @@ class Manager extends Employee implements MonthlyPayable{
     			boolean exit_in = false;
     			while(!exit_in) {
     				System.out.println("1.  Go Back");
-    				String input_in = reader.nextLine();
+    				String input_in = reader.nextLine().trim();
     				if (input_in.startsWith("1")) {
     	    			exit_in = true;
     	    		}
@@ -222,7 +296,7 @@ class Manager extends Employee implements MonthlyPayable{
     		} else if (input.startsWith("6")){
     			ordersPage();
     		} else if (input.startsWith("7")){
-    			notificationsPage();
+    			notificationsPage(this.conn);
     		} else if (input.startsWith("8")){
     			newCarModelPage();
     		} else if (input.startsWith("9")){
@@ -240,7 +314,7 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("1.  View Profile");
 			System.out.println("2.  Update Profile");
 			System.out.println("3.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				this.displayProfile();
     		}
@@ -276,7 +350,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -293,10 +367,10 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("4. Phone Number");
 			System.out.println("5. Password");
 			System.out.println("6. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(1, input)){
 					System.out.println("Success");
 				}
@@ -306,7 +380,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(2, input)){
 					System.out.println("Success");
 				}
@@ -316,7 +390,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter Email Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(3, input)){
 					System.out.println("Success");
 				}
@@ -326,7 +400,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Phone Number");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(4, input)){
 					System.out.println("Success");
 				}
@@ -336,7 +410,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("5")) {
 				System.out.println("Enter New Password");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(5, input)){
 					System.out.println("Success");
 				}
@@ -446,7 +520,7 @@ class Manager extends Employee implements MonthlyPayable{
     private void customerProfile() {
 
 		System.out.println("Enter Customer Email ID");
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		this.displayCustomerProfile(input);
 		
     }
@@ -506,7 +580,7 @@ class Manager extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -519,17 +593,17 @@ class Manager extends Employee implements MonthlyPayable{
     		
     	while (!goback){
     		System.out.println(" Enter  Name");
-    		String name = reader.nextLine();
+    		String name = reader.nextLine().trim();
     		System.out.println(" Enter  Address");
-    		String address= reader.nextLine();
+    		String address= reader.nextLine().trim();
     		System.out.println(" Enter  EmailAddress");
-    		String emailad = reader.nextLine();
+    		String emailad = reader.nextLine().trim();
     		System.out.println("Enter  PhoneNumber");
-    		String phoneno = reader.nextLine();
+    		String phoneno = reader.nextLine().trim();
     		System.out.println("Enter  Role");
-    		String emprole = reader.nextLine();
+    		String emprole = reader.nextLine().trim();
     		System.out.println("Enter  Start Date");
-    		String startdate = reader.nextLine();
+    		String startdate = reader.nextLine().trim();
     		Date date1;
     		java.util.Date date;
     		java.sql.Date sqlStartDate = null;
@@ -544,9 +618,9 @@ class Manager extends Employee implements MonthlyPayable{
     		}
     		
     		System.out.println("Enter  Compensation");
-    		String compesation = reader.nextLine();
+    		String compesation = reader.nextLine().trim();
     		System.out.println("Enter  1 to add 0 to go back");
-    		String input = reader.nextLine();
+    		String input = reader.nextLine().trim();
     			
     			if (input.startsWith("1")) {
     			
@@ -564,7 +638,7 @@ class Manager extends Employee implements MonthlyPayable{
     					    break;
     					} else {
     						System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    						input = reader.nextLine();
+    						input = reader.nextLine().trim();
     						
     						if(input.startsWith("0")) {
     						
@@ -582,7 +656,7 @@ class Manager extends Employee implements MonthlyPayable{
     					break;
     				} else {
     					System.out.println("Wrong role. hit 0 to go back or hit 1 to enter again");
-    					input = reader.nextLine();
+    					input = reader.nextLine().trim();
     					
     					if(input.startsWith("0")) {
     					
@@ -604,24 +678,30 @@ class Manager extends Employee implements MonthlyPayable{
     		
     		do {
     			System.out.println("Enter Employee id");
-    			input = reader.nextLine();
-    			if (Employee.employeeExists(input)) {	
-    			    Employee emp = new Employee(input, conn, Employee.withid);
-    			    if(emp.my_role == Role.RECEPTIONIST) {
-    			    	Receptionist recEmp = new  Receptionist(emp, conn);
-    			    		recEmp.displayPayroll();	
-    			    } else if (emp.my_role == Role.MECHANIC) {
-    			      	Mechanic mecEmp = new  Mechanic(emp, conn);
-    			    		mecEmp.displayPayroll();
-    			    } else if (emp.my_role == Role.MANAGER) {
-    			    		Manager manEmp = new  Manager(emp, conn);
-    			    		manEmp.displayPayroll();
-    			    }
-    			   
+    			input = reader.nextLine().trim();
+    			if (Employee.employeeExists(input, conn)) {	
+    				
+//    			    Employee emp = new Employee(input, conn, Employee.withid);
+//    			    System.out.println(emp.e_name + " " + emp.my_role);
+//    			    if(emp.my_role == Role.RECEPTIONIST) {
+//    			    	System.out.println("R");
+//    			    	Receptionist recEmp = new  Receptionist(emp, conn);
+//    			    		recEmp.displayPayroll();	
+//    			    } else if (emp.my_role == Role.MECHANIC) {
+//    			    	System.out.println("M");
+//    			      	Mechanic mecEmp = new  Mechanic(emp, conn);
+//    			    		mecEmp.displayPayroll();
+//    			    } else if (emp.my_role == Role.MANAGER) {
+//    			    	System.out.println("Mng");
+//    			    		Manager manEmp = new  Manager(emp, conn);
+//    			    		manEmp.displayPayroll();
+//    			    }
+//    			   
+    				viewPayroll(input);
     			    exists =true;
     			} else {
     				System.out.println("Employee id no found hit 1 to enter again, 0 to go back");
-    				input = reader.nextLine();
+    				input = reader.nextLine().trim();
     				if(input.startsWith("1")) {
     					continue;
     				} else {
@@ -630,7 +710,54 @@ class Manager extends Employee implements MonthlyPayable{
     			}	
     		} while (!exists);	
     	}
-    
+    	
+    private void viewPayroll(String id) {
+    	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		LoggedIn = true;
+		try{
+			pstmt = conn.prepareStatement("SELECT Payroll.LASTPAYCHECK, "
+					+ "Payroll.LASTPAYCHECK-15, "
+					+ "Payroll.e_id, "
+					+ "Employee.e_name, "
+					+ "Employee.compensation, "
+					+ "Payroll.E_ROLE, "
+					+ "Payroll.EARNINGSYTD, "
+					+ "Payroll.PREVEARNINGS, "
+					+ "CASE employee.e_role when 'Manager' "
+					+ "then ((payroll.prevearnings/employee.compensation)*30) when 'Receptionist' "
+					+ "then ((payroll.prevearnings/employee.compensation)*30) when 'Mechanic' "
+					+ "then ROUND(((payroll.prevearnings/employee.compensation)), 1) END as unit, "
+					+ "CASE employee.e_role when 'Manager' then 'Monthly' when 'Receptionist' "
+					+ "then 'Monthly' when 'Mechanic' then 'Hourly' END as frequency FROM Payroll, "
+					+ "Employee WHERE Employee.e_id = Payroll.e_id and Payroll.e_id = ?");
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				Date checkDate = rs.getDate(1);
+				System.out.println("A. Paycheckdate: " + checkDate);
+				System.out.println("B. Payperiod: " + rs.getDate(2) + " - " + checkDate);
+				System.out.println("C. EmployeeID: " + rs.getString(3));
+				System.out.println("D. Employee Name: " + rs.getString(4));
+				System.out.println("E. Compensation($): " + rs.getInt(5));
+				System.out.println("F. Compensation Frequency: " + rs.getString(10));
+				System.out.println("G. Units: " + rs.getFloat(9));
+				System.out.println("H. Earnings (Current): " + rs.getFloat(8));
+				System.out.println("I. Earnings (Year-to-date): " + rs.getFloat(7) );
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("\n1. Go Back");
+			String input = reader.nextLine();
+			if(input.startsWith("1")) {
+				exit = true;
+			}
+		}
+    }
+    	
     private void displayInventory() {
     	
     }
@@ -660,8 +787,38 @@ class Manager extends Employee implements MonthlyPayable{
 	}
 	
 	private void invoicePage() {
-		
-		
+		System.out.println("Viewing Invoices: ");
+		Vector<InvoicePage> invoices = new Vector<InvoicePage>(); 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ArrayList<String> srID = new ArrayList<String>();
+		try{
+			String query = "SELECT service.ser_id "
+					+ "FROM service "
+					+ "WHERE service.SC_ID = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, this.service_center);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				srID.add(rs.getString(1));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		for(int i = 0; i < srID.size();i++) {
+			System.out.println("INVOICE NO " + (i+1));
+			invoices.add(new InvoicePage(this.conn, srID.get(i)));
+			invoices.get(i).printInvoices();
+//			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+		}
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("\n1. Go Back");
+			String input = reader.nextLine();
+			if(input.startsWith("1")) {
+				exit = true;
+			}
+		}
 	}
 
 	private void ordersPage() {
@@ -672,16 +829,16 @@ class Manager extends Employee implements MonthlyPayable{
 			System.out.println("1. Order History");
 			System.out.println("2. New Order");
 			System.out.println("3. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if( input.startsWith("1")) {
 				System.out.println("###Order History###");
 				
-				Order.printOrderHistory();
+				Order.printOrderHistory(conn);
 				
 				boolean exit_in = false;
 				while(!exit_in) {
 					System.out.println("1.  Go Back");
-					String input_in = reader.nextLine();
+					String input_in = reader.nextLine().trim();
 					if (input_in.startsWith("1")) {
 		    			exit_in = true;
 		    			}
@@ -690,9 +847,9 @@ class Manager extends Employee implements MonthlyPayable{
 			} else if (input.startsWith("2")) {
 				System.out.println("###New Order###");
 				System.out.println("Enter Part ID");
-				String req_part = reader.nextLine();
+				String req_part = reader.nextLine().trim();
 				System.out.println("Enter Quantity");
-				String req_quantity = reader.nextLine();
+				String req_quantity = reader.nextLine().trim();
 				Order new_order = new Order(this.service_center);
 				
 				//confirm 
@@ -700,7 +857,7 @@ class Manager extends Employee implements MonthlyPayable{
 				while (!exit_in) {
 					System.out.println("1. Place Order");
 					System.out.println("2. Goback");
-					input = reader.nextLine();
+					input = reader.nextLine().trim();
 						
 						if( input.startsWith("1")) {
 							new_order.placeOrder(req_part, req_quantity, conn);
@@ -718,8 +875,8 @@ class Manager extends Employee implements MonthlyPayable{
 			}
 		}	
 	}
-	private void notificationsPage() {
-		Notification.notificationPage();		
+	private void notificationsPage(Connection conn) {
+		Notification.notificationPage(conn);		
 	}
 	private void newCarModelPage() {
 			
@@ -733,6 +890,7 @@ class Manager extends Employee implements MonthlyPayable{
 	@Override
 	public void displayPayroll() {
 		// TODO Auto-generated method stub
+		
 		
 	}
 }
@@ -805,7 +963,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    				"Deliveries");
 	    		System.out.println("10.  Logout");
 	    		
-	    		String input = reader.nextLine();
+	    		String input = reader.nextLine().trim();
 	    		if (input.startsWith("10")) {
 	    			signout();
 	    			exit = true;
@@ -818,18 +976,18 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    		} else if ( input.startsWith("3")){
 	    			CarRegister cr = new CarRegister(Role.RECEPTIONIST, this.conn);
 	    			System.out.println("Enter customer email");
-	    			String cus_email = reader.nextLine();
+	    			String cus_email = reader.nextLine().trim();
 	    			Customer cus = new Customer(cus_email, conn); 
 	    			cus.vehicleList.add(cr.registerCar(cus.getCustomerID()));
 	    			
 	    		} else if ( input.startsWith("4")){
 	    			System.out.println("Enter customer email");
-	    			String cus_email = reader.nextLine();
+	    			String cus_email = reader.nextLine().trim();
 	    			Service.serviceHistory(cus_email, conn);
 	    			
 	    		} else if ( input.startsWith("5")){
 	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
-	    			recp_sp.receptionistScheduleServicePage();
+	    			recp_sp.receptionistScheduleServicePage(this.service_center);
 	    			
 	    		} else if ( input.startsWith("6")){
 	    			ServicePage recp_sp = new ServicePage(Role.RECEPTIONIST, this.conn);
@@ -837,6 +995,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    			
 	    		} else if ( input.startsWith("7")){
 	    			// Invoices Sainag
+	    			this.invoicesDisplay();
 	    		} else if ( input.startsWith("8")){
 	    			dailyTaskUpdateInventory();
 	    			
@@ -852,13 +1011,65 @@ class Receptionist extends Employee implements MonthlyPayable{
 		
 	}
 	
+	private void invoicesDisplay() {
+		System.out.println("\nEnter Customer email ID: ");
+		String custID = "";
+		String custEmail = reader.nextLine();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			String query = "SELECT C_ID "
+					+ "FROM Customer "
+					+ "WHERE C_EMAIL = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, custEmail);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				custID = rs.getString(1);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		Vector<InvoicePage> invoices = new Vector<InvoicePage>(); 
+		pstmt = null;
+		rs = null;
+		ArrayList<String> srID = new ArrayList<String>();
+		try{
+			String query = "SELECT service.ser_id "
+					+ "FROM service "
+					+ "WHERE service.c_id = ?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, custID);
+			rs = pstmt.executeQuery();
+			while(rs.next())  {
+				srID.add(rs.getString(1));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		for(int i = 0; i < srID.size();i++) {
+			System.out.println("INVOICE NO " + (i+1));
+			invoices.add(new InvoicePage(conn, srID.get(i)));
+			invoices.get(i).printInvoices();
+//			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
+		}
+		boolean exit = false;
+		while(!exit) {
+			System.out.println("\n1. Go Back");
+			String input = reader.nextLine();
+			if (input.startsWith("1")) {
+				exit = true;
+			}
+		}
+	}
+	
 	private void profilePage() {
     	boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  View Profile");
 			System.out.println("2.  Update Profile");
 			System.out.println("3.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				this.displayProfile();
     		}
@@ -880,10 +1091,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 			System.out.println("4. Phone Number");
 			System.out.println("5. Password");
 			System.out.println("6. Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
 				System.out.println("Enter New Name");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(1, input)){
 					System.out.println("Success");
 				}
@@ -893,7 +1104,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("2")) {
 				System.out.println("Enter New Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(2, input)){
 					System.out.println("Success");
 				}
@@ -903,7 +1114,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("3")) {
 				System.out.println("Enter Email Address");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(3, input)){
 					System.out.println("Success");
 				}
@@ -913,7 +1124,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("4")) {
 				System.out.println("Enter New Phone Number");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(4, input)){
 					System.out.println("Success");
 				}
@@ -923,7 +1134,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     		}
 			if (input.startsWith("5")) {
 				System.out.println("Enter New Password");
-				input = reader.nextLine();
+				input = reader.nextLine().trim();
 				if(updateEmpInfo(5, input)){
 					System.out.println("Success");
 				}
@@ -1050,7 +1261,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -1061,7 +1272,7 @@ class Receptionist extends Employee implements MonthlyPayable{
     private void customerProfile() {
 
 		System.out.println("Enter Customer Email ID");
-		String input = reader.nextLine();
+		String input = reader.nextLine().trim();
 		this.displayCustomerProfile(input);
 		
     }
@@ -1121,7 +1332,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 		boolean exit = false;
 		while(!exit) {
 			System.out.println("1.  Go Back");
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if (input.startsWith("1")) {
     			exit = true;
     		}
@@ -1136,13 +1347,13 @@ class Receptionist extends Employee implements MonthlyPayable{
 			System.out.println("1  Enter Order ID");
 			System.out.println("2. Go Back");
 			
-			String input = reader.nextLine();
+			String input = reader.nextLine().trim();
 			if(input.startsWith("1")) {
 				System.out.println("Enter Comma Separated order ids");
-				String orderidS = reader.nextLine();
+				String orderidS = reader.nextLine().trim();
 				orderidS = orderidS.replaceAll("\\s","");
 				String orderidlist[] = orderidS.split(",");
-				Order.updateOrderlist(orderidlist);
+				Order.updateOrderlist(orderidlist, conn);
 				
 			}else if (input.startsWith("2")) {
 				exit = true;
