@@ -31,7 +31,7 @@ class Order {
 	String DestSCID;
 	String Quantity;
 	String status;
-	static int iterable=12;
+	static int iterable=15;
 	
 	Boolean origin_found = false;
 	Order(){
@@ -61,9 +61,39 @@ class Order {
 		}
 	}
 	
+	void dbgetid() {
+		PreparedStatement pstmt = null;
+		PreparedStatement pstmt2 = null;
+		ResultSet rs=null;
+		ResultSet r2 = null;
+		int next = 150;
+		try {
+			pstmt = this.conn.prepareStatement("SELECT C FROM COUNT");
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				next = rs.getInt(1);
+				this.orderId = "O" + Integer.toString(next);
+				System.out.println(this.orderId);
+			}
+			next+=1;
+			
+			pstmt2 = this.conn.prepareStatement("UPDATE COUNT SET C=?");
+			pstmt2.setString(1, Integer.toString(next));
+			pstmt2.executeQuery();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	void dbCreateOrder(){
 		iterable+=1;
 		//set OrderId here
+	//	dbgetid();
+		System.out.println(this.orderId);
 		PreparedStatement p = null;
 		int r;
 		try {
@@ -71,8 +101,8 @@ class Order {
 			p.setDate(1,this.orderDate);
 			p.setTimestamp(2,this.expectedDate);
 			p.setDate(3,this.ActualDelivery);
-			p.setString(4,Integer.toString(iterable));
-			p.setString(5,this.orginDID);
+			p.setString(4,this.orginDID);
+			p.setString(5,Integer.toString(iterable));
 			p.setString(6,this.orginScID);
 			p.setString(7,this.partID);
 			p.setString(8,this.DestSCID);
@@ -98,7 +128,7 @@ class Order {
 		System.out.println("In set origin");
 		SimpleDateFormat formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 		calendar  = Calendar.getInstance();
-		
+		try {
 		 for( String scid : DbApplication.ServiceCIDList) {
 			 ServiceCenter sc_instance = new ServiceCenter(scid, this.conn);
 			 if(sc_instance.partAvailableForDelivery(req_part, req_quantity)) {
@@ -119,7 +149,7 @@ class Order {
 					e.printStackTrace();
 				}
 				  //expectedDate = new java.sql.Date(parsedDate.getTime());
-				  System.out.println("Expected Date Sc" +expectedDate.toString() );
+				  //System.out.println("Expected Date Sc" +expectedDate.toString() );
 				  origin_found = true;
 				  break;
 			 }
@@ -164,6 +194,9 @@ class Order {
 					 e.printStackTrace();
 				 }
 		 }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		 
 	}
 	
