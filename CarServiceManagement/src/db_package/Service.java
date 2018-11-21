@@ -22,7 +22,7 @@ abstract class Service {
 	String make;
 	String model;
 	Connection conn;
-	static int service_count = 100;
+	static int service_count = 1000;
 	
 	Service(Connection conn){
 		 this.conn = conn;
@@ -506,8 +506,7 @@ Connection conn;
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt1.setString(1, "SR105");
-							service_count += 1;
+							pstmt1.setString(1, "SR"+(service_count+1));
 							pstmt1.setString(2, emp_id.get(0));
 							pstmt1.setString(3, this.c_id);
 							pstmt1.setString(4, this.sc_id);
@@ -615,8 +614,7 @@ Connection conn;
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt1.setString(1, "SR105");
-							service_count += 1;
+							pstmt1.setString(1, "SR"+(service_count+1));
 							pstmt1.setString(2, emp_id.get(1));
 							pstmt1.setString(3, this.c_id);
 							pstmt1.setString(4, this.sc_id);
@@ -785,7 +783,7 @@ Connection conn;
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt1.setString(1, "SR105");
+							pstmt1.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt1.setString(2, emp_id);
 							pstmt1.setString(3, this.c_id);
@@ -894,7 +892,7 @@ Connection conn;
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt1.setString(1, "SR105");
+							pstmt1.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt1.setString(2, emp_id);
 							pstmt1.setString(3, this.c_id);
@@ -1235,7 +1233,7 @@ class Maintenance extends Service{
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt.setString(1, "SR105");
+							pstmt.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt.setString(2, emp_id.get(0));
 							pstmt.setString(3, this.c_id);
@@ -1347,7 +1345,7 @@ class Maintenance extends Service{
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt.setString(1, "SR105");
+							pstmt.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt.setString(2, emp_id.get(1));
 							pstmt.setString(3, this.c_id);
@@ -1522,7 +1520,7 @@ class Maintenance extends Service{
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt.setString(1, "SR105");
+							pstmt.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt.setString(2, emp_id);
 							pstmt.setString(3, this.c_id);
@@ -1631,7 +1629,7 @@ class Maintenance extends Service{
 									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
 									+ "VALUES "
 									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-							pstmt.setString(1, "SR105");
+							pstmt.setString(1, "SR"+(service_count+1));
 							service_count += 1;
 							pstmt.setString(2, emp_id);
 							pstmt.setString(3, this.c_id);
