@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -14,19 +15,40 @@ class Notification {
 	
 	String notificationID;
 	Date notificationDate;
-	String suplierName;
+	
+	String sc;
+	String message;
 	Notification(){
+		Calendar cal = Calendar.getInstance();
+		notificationDate = new java.sql.Date(cal.getTimeInMillis());
 	}
 //	static void addNotification(Order order){
 //		//TODO	
 //		
 //	}
 	
+	void dbcreatenotification( String order_id) {
+		
+		
+		
+		
+	}
+	
 	String delayedby(){
 		
 		return new String();
 	}
 	
+	void addMessage(String message) {
+		
+		this.message = message;
+	}
+	
+	void setSC(String sc) {
+		this.sc = sc;
+		
+		
+	}
 	static void notificationPage(String sc_id, Connection conn) {
 		printallNotifications(sc_id, conn);	
 	}
@@ -39,8 +61,7 @@ class Notification {
 		
 		printNotificationsFromTable(sc_id, conn);
 		
-		
-		
+	
 	
 		while(true) {
 			System.out.println("Select 1 for Details.  2 to go back");
@@ -141,6 +162,82 @@ class Notification {
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
+		
+		
+	}
+	
+	static void generateNotification(String Service_c, Connection conn) {
+		PreparedStatement pstorders = null;
+		ResultSet rsorderids = null;
+		
+		PreparedStatement pstnotif = null;
+		ResultSet rsnotif = null;
+		
+		
+		try {
+			pstorders =  conn.prepareStatement("SELECT O_ID, EXPECTED_DELIVERY_DATE FROM orders where DESTINATION_SC_ID=? and O_STATE!=?");
+			pstorders.setString(1, Service_c);
+			pstorders.setString(2, OrderStatus.COMPLETED.toString());
+			rsorderids = pstorders.executeQuery();
+		
+			if (rsorderids == null)
+				return;
+				
+			while(rsorderids.next()) {
+				String order_id = rsorderids.getString(1);
+				Timestamp expeteddate = rsorderids.getTimestamp(2);
+				Timestamp currentdate = null;
+				
+				//current
+				try {
+					Calendar calendar  = Calendar.getInstance();
+					SimpleDateFormat formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+					
+					String currentDate = formatter_1.format(calendar.getTime()).toString();
+					
+					java.util.Date parsedDate = null;
+					parsedDate = formatter_1.parse(currentDate);
+					
+					currentdate = new java.sql.Timestamp(parsedDate.getTime());
+					System.out.println("Current date" + currentdate.toString() );
+					
+					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// calculate delay
+				
+				if(currentdate.after(expeteddate)) {
+					long diff = currentdate.getTime() - expeteddate.getTime();
+					long delayed_days = diff / (24 * 60 * 60 * 1000);
+					
+					// create notification
+					if (delayed_days > 0) {
+						Notification notify = new Notification();
+						String message = "Delayed by " + delayed_days + "days";
+						notify.addMessage(message);
+						notify.setSC(Service_c);
+						notify.dbcreatenotification(order_id);
+						
+					}
+
+				}
+				
+			}
+		
+		
+		
+		
+
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		
 	}
