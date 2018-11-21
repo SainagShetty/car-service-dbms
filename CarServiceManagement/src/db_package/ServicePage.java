@@ -121,16 +121,7 @@ public class ServicePage {
 				System.out.println("Mechanic Name");
 				String temp_ename = reader.nextLine();
 				Repair repair = new Repair(this.sc_id, temp_email, temp_license, temp_milage, temp_ename, this.conn);
-				//TODO
-				System.out.println("Enter Customer Email id");
-				String temp_email = reader.nextLine();
-				System.out.println("License Plate");
-				String temp_license = reader.nextLine();
-				System.out.println("Current Milage");
-				float temp_milage = Float.parseFloat(reader.nextLine());
-				System.out.println("Mechanic Name");
-				String temp_ename = reader.nextLine();
-				Repair repair = new Repair(this.sc_id, temp_email, temp_license, temp_milage, temp_ename, this.conn);
+			
 			} else if (input.startsWith("3")){
 				goback =  true;
 			} else {
