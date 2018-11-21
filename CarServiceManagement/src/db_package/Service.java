@@ -276,8 +276,8 @@ Connection conn;
 		this.make = vehicle.getMake();
 		this.model = vehicle.getModel();
 		
-//		Customer customer = new Customer(c_email, this.conn);
-		this.c_id = "1001";
+		Customer customer = new Customer(c_email, this.conn);
+		this.c_id = customer.getCustomerID();
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;

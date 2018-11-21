@@ -1,17 +1,12 @@
 package db_package;
-
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.*;
+import java.sql.*;
+import java.util.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class ServicePage {
 	Scanner reader = new Scanner(System.in);
@@ -226,9 +221,14 @@ public class ServicePage {
 		
 	private void rescheduleServiceForCus(String cus_email, String sc_id_val) {
 		// TODO Auto-generated method stub
-		
-		String e_id;
+		Scanner reader = new Scanner(System.in);
+		String e_id = null;
 		Date start_date = null;
+		float labortime = 0;
+		Calendar calendar;
+		SimpleDateFormat formatter_1;
+		SimpleDateFormat formatter_2;
+		SimpleDateFormat formatter_3;
 //		Display the two identified service dates and mechanic name, followed by the menu.
 		
 		while(true) {
@@ -245,12 +245,13 @@ public class ServicePage {
 		 		ResultSet rs;
 
 		 		try{
-					pstmt = conn.prepareStatement("SELECT e_id, start_date from SERVICE where SER_ID=?");
+					pstmt = conn.prepareStatement("SELECT e_id, start_date, lobortime from SERVICE where SER_ID=?");
 					pstmt.setString(1, sc_id_val);
 					rs = pstmt.executeQuery();
 					while(rs.next()) {
 						e_id = rs.getString(1);
 						start_date = rs.getDate(2);
+						labortime = rs.getFloat(3);
 					}
 					
 					ArrayList<java.sql.Date> currentWeekMap = new ArrayList<java.sql.Date>();
@@ -280,6 +281,214 @@ public class ServicePage {
 							  currentWeekMap.add(sqlStartDate);
 							  count++;
 						  }
+					}
+					
+					ArrayList<java.sql.Date> availableDates = new ArrayList<java.sql.Date>();
+					ArrayList<Float> time_slot = new ArrayList<Float>();
+					for(java.sql.Date date_values: currentWeekMap) {
+						try{
+							pstmt = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORKD_DATE = ?");
+							pstmt.setString(1, e_id);
+							pstmt.setDate(2, date_values);
+							rs = pstmt.executeQuery();
+							rs.next();
+							if(rs.getInt(1) == 0) 
+							{
+								availableDates.add(date_values);
+								time_slot.add((float) 0);
+							}
+							else {
+								pstmt = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORKD_DATE = ?");
+								pstmt.setString(1, e_id);
+								pstmt.setDate(2, date_values);
+								rs = pstmt.executeQuery();
+								rs.next();
+								if(rs.getFloat(1)+labortime <= 8.0)
+								{
+									availableDates.add(date_values);
+									time_slot.add(rs.getFloat(1));
+								}
+							}
+							
+						}catch(SQLException e){
+							e.printStackTrace();
+						}
+						
+					}
+					System.out.println("Select a Date");
+					System.out.println("1. "+availableDates.get(0));
+					System.out.println("2. "+availableDates.get(1));
+					System.out.println("3. Go Back");
+					
+					boolean exit = false;
+					while(!exit) {
+						
+						input = reader.nextLine();
+						if (input.startsWith("1")) {
+							//Update Service Table
+							
+							formatter_2 = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+							formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+							formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+							calendar  = Calendar.getInstance();
+							calendar.setTime(availableDates.get(0));
+							calendar.add(Calendar.HOUR, -2);
+							float timeDiff = time_slot.get(0);
+							System.out.println(timeDiff);
+					        calendar.add(Calendar.HOUR, (int)timeDiff);
+					        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
+					        String start_time_service = formatter_1.format(calendar.getTime()).toString();
+					        calendar.add(Calendar.HOUR, (int)labortime);
+					        calendar.add(Calendar.MINUTE, (int) ((labortime - (int)labortime)*60));
+					        String end_time_service = formatter_1.format(calendar.getTime()).toString();
+					        
+//					        System.out.println(start_time_service+" "+end_time_service);
+					        
+					        try{
+								pstmt = this.conn.prepareStatement("UPDATE SERVICE SET END_TIME = ? and START_TIME = ? WHERE SER_ID = ?");
+								java.util.Date parsedDate = formatter_1.parse(end_time_service);
+								 
+								 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt.setTimestamp(1, timestamp);
+								parsedDate = formatter_1.parse(start_time_service);
+								timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt.setTimestamp(2, timestamp);
+								pstmt.setString(3, sc_id_val);
+								pstmt.executeQuery();
+								if(pstmt.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+					        
+			    			//Update EMployee table
+					        if(time_slot.get(0) == 0) {
+					        	//INSERT
+					        	try{
+									pstmt = this.conn.prepareStatement("INSERT INTO MECHANIC "
+											+ "(E_ID, WORKD_DATE, HOURS) "
+											+ "VALUES "
+											+ "(?, ?, ?)");
+									pstmt.setString(1, e_id);
+									Date parsedDate = formatter_3.parse(end_time_service);
+									 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+									pstmt.setTimestamp(2, timestamp);
+									pstmt.setFloat(3, labortime);
+									pstmt.executeQuery();
+									if(pstmt.executeUpdate() == 0)
+										System.out.println("Service Create Failed");
+									else
+										System.out.println("Service create success");
+								}catch(Exception e){
+//									e.printStackTrace();
+								}
+					        }
+					        else {
+					        	try{
+					        		PreparedStatement pstmt3 = null;
+									
+									pstmt3 = this.conn.prepareStatement("UPDATE MECHANIC SET HOURS = HOURS + ? WHERE E_ID = ? and WORKD_DATE = ?");
+									pstmt3.setFloat(1, labortime);
+									pstmt3.setString(2, e_id);
+									java.util.Date date_temp_s = formatter_1.parse(end_time_service);
+									java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
+//									System.out.println(sqlStartDate_temp_s);
+									pstmt3.setDate(3, sqlStartDate_temp_s);
+									pstmt3.executeQuery();
+									if(pstmt3.executeUpdate() == 0)
+										System.out.println("Service Create Failed");
+									else
+										System.out.println("Service create success");
+								}catch(Exception e){
+									e.printStackTrace();
+								}
+					        }
+					        
+			    			
+			    			
+			    		} else if(input.startsWith("2")) {
+			    			formatter_2 = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+							formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+							formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+							calendar  = Calendar.getInstance();
+							calendar.setTime(availableDates.get(1));
+							calendar.add(Calendar.HOUR, -2);
+							float timeDiff = time_slot.get(1);
+							System.out.println(timeDiff);
+					        calendar.add(Calendar.HOUR, (int)timeDiff);
+					        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
+					        String start_time_service = formatter_1.format(calendar.getTime()).toString();
+					        calendar.add(Calendar.HOUR, (int)labortime);
+					        calendar.add(Calendar.MINUTE, (int) ((labortime - (int)labortime)*60));
+					        String end_time_service = formatter_1.format(calendar.getTime()).toString();
+					        
+//					        System.out.println(start_time_service+" "+end_time_service);
+					        
+					        try{
+								pstmt = this.conn.prepareStatement("UPDATE SERVICE SET END_TIME = ? and START_TIME = ? WHERE SER_ID = ?");
+								java.util.Date parsedDate = formatter_1.parse(end_time_service);
+								 
+								 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt.setTimestamp(1, timestamp);
+								parsedDate = formatter_1.parse(start_time_service);
+								timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt.setTimestamp(2, timestamp);
+								pstmt.setString(3, sc_id_val);
+								pstmt.executeQuery();
+								if(pstmt.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+					        
+			    			//Update EMployee table
+					        if(time_slot.get(0) == 0) {
+					        	//INSERT
+					        	try{
+									pstmt = this.conn.prepareStatement("INSERT INTO MECHANIC "
+											+ "(E_ID, WORKD_DATE, HOURS) "
+											+ "VALUES "
+											+ "(?, ?, ?)");
+									pstmt.setString(1, e_id);
+									Date parsedDate = formatter_3.parse(end_time_service);
+									 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+									pstmt.setTimestamp(2, timestamp);
+									pstmt.setFloat(3, labortime);
+									pstmt.executeQuery();
+									
+								}catch(Exception e){
+//									e.printStackTrace();
+								}
+					        }
+					        else {
+					        	try{
+					        		PreparedStatement pstmt3 = null;
+									
+									pstmt3 = this.conn.prepareStatement("UPDATE MECHANIC SET HOURS = HOURS + ? WHERE E_ID = ? and WORKD_DATE = ?");
+									pstmt3.setFloat(1, labortime);
+									pstmt3.setString(2, e_id);
+									java.util.Date date_temp_s = formatter_1.parse(end_time_service);
+									java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
+//									System.out.println(sqlStartDate_temp_s);
+									pstmt3.setDate(3, sqlStartDate_temp_s);
+									pstmt3.executeQuery();
+									if(pstmt3.executeUpdate() == 0)
+										System.out.println("Service Create Failed");
+									else
+										System.out.println("Service create success");
+								}catch(Exception e){
+									e.printStackTrace();
+								}
+					        }
+					        			    			
+			    		} else if(input.startsWith("3")) {
+			    			exit = true;
+			    		}
+						System.out.println("3.  Go Back");
 					}
 					
 	            }
