@@ -1417,7 +1417,7 @@ class Receptionist extends Employee implements MonthlyPayable{
 		PreparedStatement pstmt = null; 
 		ResultSet rs=null;
 		try {
-			pstmt = this.conn.prepareStatement("select P_ID,MIN_ORDER,(THRESHOLD_QUANTITY - QUANTITY) AS DIFF from INVENTORY where QUANTITY<THRESHOLD_QUANTTIY");
+			pstmt = this.conn.prepareStatement("select P_ID,MIN_ORDER,(THRESHOLD_QUANTITY - QUANTITY) AS DIFF from INVENTORY where QUANTITY<THRESHOLD_QUANTITY");
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
 				String id=rs.getString(1);

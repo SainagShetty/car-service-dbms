@@ -234,6 +234,7 @@ class Notification {
 						String message = "Delayed by " + delayed_days + "days";
 						notify.addMessage(message);
 						notify.setSC(Service_c);
+						System.out.println();
 						notify.dbcreatenotification(order_id);
 						
 					}
