@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -876,14 +877,60 @@ class Manager extends Employee implements MonthlyPayable{
 		}	
 	}
 	private void notificationsPage(Connection conn) {
-		Notification.notificationPage(conn);		
+		Notification.notificationPage(this.service_center,conn);		
 	}
 	private void newCarModelPage() {
-			
+		String n_make, n_model, parts_list;
+		int n_year, n_miles, n_months;
+		System.out.println("Enter the new Car details: ");
+		System.out.println("Make: ");
+		n_make = reader.nextLine();
+		System.out.println("Model: ");
+		n_model = reader.nextLine();
+		System.out.println("Year: ");
+		n_year = Integer.parseInt(reader.nextLine());
+		System.out.println("ServiceA: ");
+		System.out.println("\tMiles: ");
+		n_miles = Integer.parseInt(reader.nextLine());
+		System.out.println("\tMonths: ");
+		n_months = Integer.parseInt(reader.nextLine());
+		System.out.println("\tParts List: ");
+		parts_list = reader.nextLine();
+		PreparedStatement pstmt;
+		try{
+			pstmt = this.conn.prepareStatement("INSERT INTO ALLCARS VALUES(?,?,?)");
+			pstmt.setString(1, n_make);
+			pstmt.setString(2, n_model);
+			pstmt.setInt(3, n_year);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Service Create Failed");
+			else
+				System.out.println("Service create success");
+		}catch(Exception e){
+//			e.printStackTrace();
+		}
+		
+		
 	}
 	private void carServiceDetailsPage() {
 		
-		
+		String query = "select allcars.make, allcars.model, allcars.year, basictask.task_name, maintenance.type, maintenance.mileage from allcars, maintenance FULL OUTER JOIN BASICTASK on (maintenance.basic_taskid = basictask.basic_taskid) WHERE allcars.make = maintenance.make and allcars.model = maintenance.model";
+		try{
+			
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			pstmt = this.conn.prepareStatement(query);
+			rs = pstmt.executeQuery();
+			System.out.println("CAR SERVICE DETAILS");
+			while(rs.next())  {
+				System.out.println("\n" + rs.getString(1) + ", " +  rs.getString(2) + ", "+rs.getInt(3) + ", "+rs.getString(4) + ", "+rs.getString(5) + ", "+rs.getInt(6));
+			}
+			
+//			pstmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -953,14 +1000,12 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    		System.out.println("3.  Register Car");
 	    		System.out.println("4.  Service History");
 	    		System.out.println("5.  Schedule Service");
-	    		System.out.println("6.  Reschedule\n" + 
-	    				"Service");
+
+	    		System.out.println("6.  Reschedule Service");
 	    		System.out.println("7.  Invoices");
-	    		System.out.println("8.   Daily Task-Update\n" + 
-	    				"Inventory");
-	    		System.out.println("9.  Daily\n" + 
-	    				"Task-Record\n" + 
-	    				"Deliveries");
+	    		System.out.println("8.   Daily Task-Update Inventory");
+	    		System.out.println("9.  Daily Task-Record Deliveries");
+
 	    		System.out.println("10.  Logout");
 	    		
 	    		String input = reader.nextLine().trim();
@@ -1361,10 +1406,35 @@ class Receptionist extends Employee implements MonthlyPayable{
 				System.out.println("Invalid Option. Try Again");
 			}
 		}
+		
+		Notification.generateNotification(this.service_center, conn);
+		
+		
 	}
 	
 	void dailyTaskUpdateInventory() {
-		//TODO
+		PreparedStatement pstmt = null; 
+		ResultSet rs=null;
+		try {
+			pstmt = this.conn.prepareStatement("select P_ID,MIN_ORDER,(THRESHOLD_QUANTITY - QUANTITY) AS DIFF from INVENTORY where QUANTITY<THRESHOLD_QUANTTIY");
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				String id=rs.getString(1);
+				int min_ord = rs.getInt(2);
+				Order new_order = new Order(this.service_center);
+				if(rs.getInt(3)>min_ord) {
+				new_order.placeOrder(id, Integer.toString(rs.getInt(3)), conn);
+			    }
+				else {
+				new_order.placeOrder(id, Integer.toString(min_ord), conn);	
+				}
+				
+			}
+				
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 

@@ -112,6 +112,15 @@ public class ServicePage {
 				String temp_ename = reader.nextLine();
 				Maintenance maintenance = new Maintenance(this.sc_id, temp_email, temp_license, temp_milage, temp_ename, this.conn);
 			} else if (input.startsWith("2")){
+				System.out.println("Enter Customer Email id");
+				String temp_email = reader.nextLine();
+				System.out.println("License Plate");
+				String temp_license = reader.nextLine();
+				System.out.println("Current Milage");
+				float temp_milage = Float.parseFloat(reader.nextLine());
+				System.out.println("Mechanic Name");
+				String temp_ename = reader.nextLine();
+				Repair repair = new Repair(this.sc_id, temp_email, temp_license, temp_milage, temp_ename, this.conn);
 				//TODO
 				System.out.println("Enter Customer Email id");
 				String temp_email = reader.nextLine();
@@ -141,7 +150,60 @@ public class ServicePage {
 	}
 	
 	private void printServiceHistory(String c_id) {
+		boolean status = false;
+	 	PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		
+		try {
+			pstmt = conn.prepareStatement("SELECT * FROM Service WHERE c_id=?");
+			pstmt.setString(1, c_id);
+			rs = pstmt.executeQuery();
+
+		while(rs.next())  {
+						
+						System.out.println("Service History for Service Center");
+						String service_id = rs.getString(1);
+						String employee_id = rs.getString(2);
+						String cid = rs.getString(3);
+						String scid = rs.getString(4);
+						String License_no = rs.getString(5);
+						Date endtime = rs.getDate(6);
+						String BasicFaults = rs.getString(7);
+					    String maintnType = rs.getString(8);
+					    Date startDate = rs.getDate(9);
+					    String laborTime = rs.getString(10);
+					    String TotalCost = rs.getString(11);
+					    String ser_status = "PENDING";
+					    
+					    System.out.println(endtime);
+					    Date today = new Date(0);
+					    
+					    if(startDate.after(today) ) {
+					    		ser_status = "ONGOING";	
+					    } else if (endtime ==null || endtime.after(today) ) {
+					    		ser_status = "PENDING";	
+					    } else {
+					    		ser_status = "COMPLETED";	
+					    }
+					    
+					    Mechanic mech = new Mechanic(employee_id,conn,Employee.withid);
+					    
+			    			System.out.println("ServiceID: " + service_id);
+			    			System.out.println("LicensePlate: " + License_no);
+			    			System.out.println("ServiceType: " + maintnType);
+			    			System.out.println("MechanicName: " + mech.e_name);
+			    			System.out.println("ServiceStart " + startDate);
+			    			System.out.println("ServiceEnd " + endtime);
+			    			System.out.println("Service Status " + ser_status);
+			    		
+			    			status = true;
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
 	}
 	
 	private void printServiceHistory(String customer_id, String license_plate) {

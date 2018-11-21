@@ -71,6 +71,29 @@ class ServiceCenter {
 		
 		//TODO check is part available in inventory in given quantity.
 		//Part, inventory for this sc
+		PreparedStatement p =null;
+		ResultSet r= null;
+		try {
+			p=this.conn.prepareStatement("Select QUANTITY,THRESHOLD_QUANTITY from INVENTORY where P_ID=? AND SC_ID=?");
+			p.setString(1, Partid);
+			p.setString(2, this.sc_id);
+			r=p.executeQuery();
+			while(r.next()) {
+				int actual= r.getInt(1);
+			    int threshold = r.getInt(2);
+			    if((actual - Integer.parseInt(Quantity))< threshold) {
+			    	return false;
+			    }
+			    else {
+			    	return true;
+			    }
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		return false;

@@ -5,7 +5,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -20,7 +22,7 @@ class Order {
 	
 	String orderID = null;
 	Date orderDate;
-	Date expectedDate;
+	Timestamp expectedDate;
 	Date ActualDelivery;
 	String orderId;
 	String orginScID;
@@ -60,13 +62,14 @@ class Order {
 	}
 	
 	void dbCreateOrder(){
+		iterable+=1;
 		//set OrderId here
 		PreparedStatement p = null;
 		int r;
 		try {
 			p = this.conn.prepareStatement("INSERT INTO ORDERS(ORDER_PLACEMENT_DATE,EXPECTED_DELIVERY_DATE,ACTUAL_DELIVERY_DATE,O_ID,ORIGIN_D_ID,ORIGIN_SC_ID,P_ID,DESTINATION_SC_ID,QUANTITY,O_STATE) VALUES (?,?,?,?,?,?,?,?,?,?)");
 			p.setDate(1,this.orderDate);
-			p.setDate(2,this.expectedDate);
+			p.setTimestamp(2,this.expectedDate);
 			p.setDate(3,this.ActualDelivery);
 			p.setString(4,Integer.toString(iterable));
 			p.setString(5,this.orginDID);
@@ -76,12 +79,13 @@ class Order {
 			p.setString(9,this.Quantity);
 			p.setString(10,this.status);
 			r=p.executeUpdate();
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		iterable+=1;
+		
 	}
 	void markOrderComplete() {
 		this.status = OrderStatus.COMPLETED.toString();
@@ -101,10 +105,21 @@ class Order {
 				 this.partID = req_part;
 				 this.Quantity = req_quantity;
 				  this.orginScID = scid;
-				  this.orginDID = null;	 
+				  this.orginDID = null;
+				  java.util.Date parsedDate = null;
 				  calendar.add(Calendar.DATE, 1);
-				  this.expectedDate = (Date) calendar.getTime();
-				  System.out.println("Expected Date " +expectedDate.toString() );
+				  SimpleDateFormat formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+				  String expected_Date = formatter_1.format(calendar.getTime()).toString();
+				  try {
+					parsedDate = formatter_1.parse(expected_Date);
+					Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+					System.out.println("   "+timestamp);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				  //expectedDate = new java.sql.Date(parsedDate.getTime());
+				  System.out.println("Expected Date Sc" +expectedDate.toString() );
 				  origin_found = true;
 				  break;
 			 }
@@ -116,15 +131,38 @@ class Order {
 			 
 			 
 			 	distributorId = Part.findDistributor(req_part, req_quantity, conn);
+			 	System.out.println("here again");
 				 this.partID = req_part;
 				 this.Quantity = req_quantity;
 				 this.orginScID = null;
 				 this.orginDID = distributorId[0];
-				 
+				 java.util.Date parsedDate = null;
+				 try {
 				 calendar.add(Calendar.DATE, Integer.parseInt(distributorId[1]));
-				 this.expectedDate = (Date) calendar.getTime();
-				 System.out.println("Expected Date " +expectedDate.toString() );			 
-
+				  SimpleDateFormat formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+				  String expected_Date = formatter_1.format(calendar.getTime()).toString();
+				  
+				 
+				 
+				 System.out.println("here again2");
+			
+				 System.out.println("here again2");
+				 try {
+						parsedDate = formatter_1.parse(expected_Date);
+						Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+						System.out.println("   "+timestamp);
+						this.expectedDate = timestamp;
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					  //expectedDate = new java.sql.Date(parsedDate.getTime());
+					  System.out.println("Expected Date did " +expectedDate.toString() );
+				 
+				 System.out.println(expectedDate);			 
+				 } catch ( Exception e) {
+					 e.printStackTrace();
+				 }
 		 }
 		 
 	}
@@ -183,7 +221,9 @@ class Order {
 			pstmt.setString(1,orderid);
 			rs = pstmt.executeQuery();
 			while(rs.next()){
-				if(rs.getString("ORIGIN_D_ID") != null){
+				String sup_dis = rs.getString("ORIGIN_D_ID") ;
+				
+				if(sup_dis != null){
 					supplier=rs.getString("ORIGIN_D_ID");
 				}
 				else{
@@ -191,13 +231,13 @@ class Order {
 				}
 				pstmt2.setString(1,rs.getString("P_ID"));
 				r2 = pstmt2.executeQuery();
+				r2.next();
 				unitprice = Float.parseFloat(r2.getString(1));
+				//Timestamp expecteddate = r2.getTimestamp(2);
 				quantity = Integer.parseInt(rs.getString("QUANTITY"));
 				tp = unitprice*quantity;
-
-
-
-
+				
+						
 
 				System.out.println("Order ID- " + rs.getString("O_ID") + " Date- " + rs.getString("ORDER_PLACEMENT_DATE") + " PartName- " + rs.getString("P_ID") + " SupplierName- "+ supplier + " Quantity- "+ rs.getString("QUANTITY")+ " Unit Price- "+r2.getString(1)+" Total Price- "+Float.toString(tp));
 			}
@@ -237,6 +277,8 @@ class Order {
 				e.printStackTrace();
 			}
 			 
+			// if notification for order exists
+			 // delete notification 
 		 }
 	}
 	
