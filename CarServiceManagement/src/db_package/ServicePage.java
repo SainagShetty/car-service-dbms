@@ -20,7 +20,9 @@ public class ServicePage {
 		this.conn = conn;
 	}
 	
-	Boolean customerServicePage(Customer cus) {
+	Boolean customerServicePage(String email_id , String cus_c_id) {
+	
+		
 		
 		Boolean goback = false;
 		if (used_by != Role.CUSTOMER) {
@@ -40,7 +42,9 @@ public class ServicePage {
 			String input= reader.nextLine().trim();
 		
 			if (input.equals("1")) {
-				printServiceHistory(cus.c_id);
+			//	printServiceHistory("Coming her "+cus_c_id);
+				Service.serviceHistory(conn, cus_c_id);
+				//printServiceHistory(cus_c_id);
 			} else if (input.equals("2")) {
 				
 				String mechanicName = null;
@@ -58,14 +62,14 @@ public class ServicePage {
 				
 				input= reader.nextLine().trim();
 				if (input.equals("1")) {
-					scheduleMaintenanceService(cus.emailID, licensePlate, currentMileage ,  mechanicName);
+					scheduleMaintenanceService(email_id, licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("2")) {
-					scheduleRepairService(cus.emailID, licensePlate, currentMileage ,  mechanicName);
+					scheduleRepairService(email_id, licensePlate, currentMileage ,  mechanicName);
 				} else if (input.equals("3")) {
 					continue;
 				}
 			} else if (input.equals("3")) {
-				rescheduleService(Integer.parseInt(cus.c_id));
+				rescheduleService(Integer.parseInt(cus_c_id));
 				
 			} else if (input.equals("4")) {
 				goback = true;
