@@ -2,6 +2,7 @@ package db_package;
 import java.util.*;
 import java.sql.*;
 import java.util.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -245,6 +246,10 @@ Connection conn;
 	Repair(String s_id, String emailID, String licensePlate, float temp_milage, String mechanic_name, Connection conn){
 		super(s_id, emailID, licensePlate, temp_milage, mechanic_name, conn);
 		this.conn = conn;	
+		Calendar calendar;
+		SimpleDateFormat formatter_1;
+		SimpleDateFormat formatter_2;
+		SimpleDateFormat formatter_3;
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		map.put(1, "BF001");
 		map.put(2, "BF002");
@@ -271,8 +276,8 @@ Connection conn;
 		this.make = vehicle.getMake();
 		this.model = vehicle.getModel();
 		
-		Customer customer = new Customer(c_email, this.conn);
-		this.c_id = customer.getCustomerID();
+//		Customer customer = new Customer(c_email, this.conn);
+		this.c_id = "1001";
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -442,8 +447,8 @@ Connection conn;
 							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 							 System.out.println("   "+timestamp);
 							pstmt1.setTimestamp(6, timestamp);
-							pstmt1.setString(7, null);
-							pstmt1.setString(8, service_type);
+							pstmt1.setString(7, map.get(repairNo));
+							pstmt1.setString(8, null);
 							parsedDate = formatter_1.parse(start_time_service);
 							timestamp = new java.sql.Timestamp(parsedDate.getTime());
 							pstmt1.setTimestamp(9, timestamp);
@@ -575,7 +580,12 @@ Connection conn;
 			}
 		}
 		else {
-			System.out.println("Parts missing, place an order");
+			System.out.println("Parts missing, Order for part will be placed. Please check again after");
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, 3);
+			System.out.println(dateFormat.format(cal.getTime()));
 		}
 		
 	}
@@ -670,8 +680,9 @@ class Maintenance extends Service{
 		this.make = vehicle.getMake();
 		this.model = vehicle.getModel();
 		
-		Customer customer = new Customer(c_email, this.conn);
-		this.c_id = customer.getCustomerID();
+//		Customer customer = new Customer(c_email, this.conn);
+//		this.c_id = customer.getCustomerID();
+		this.c_id = "1001";
 		
 		String service_type = this.maintnanceType(this.make, this.model, current_mileage);
 		ArrayList<String> basicTasks = this.maintnanceTask(this.make, this.model, service_type);
@@ -801,9 +812,9 @@ class Maintenance extends Service{
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(0));
 						System.out.println(availableDates.get(0));
-						calendar.add(Calendar.HOUR, -3);
+						calendar.add(Calendar.HOUR, -2);
 						float timeDiff = time_slot.get(0);
-						System.out.println(timeDiff);
+//						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
 				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
 				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
@@ -811,7 +822,7 @@ class Maintenance extends Service{
 				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
 				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
 				        
-				        System.out.println(start_time_service+" "+end_time_service);
+//				        System.out.println(start_time_service+" "+end_time_service);
 				        
 				        try{
 							pstmt = this.conn.prepareStatement("INSERT INTO SERVICE "
@@ -827,7 +838,7 @@ class Maintenance extends Service{
 							 java.util.Date parsedDate = formatter_1.parse(end_time_service);
 							 
 							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-							 System.out.println("   "+timestamp);
+//							 System.out.println("   "+timestamp);
 							pstmt.setTimestamp(6, timestamp);
 							pstmt.setString(7, null);
 							pstmt.setString(8, service_type);
@@ -876,7 +887,7 @@ class Maintenance extends Service{
 								pstmt3.setString(2, emp_id.get(0));
 								java.util.Date date_temp_s = formatter_1.parse(end_time_service);
 								java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
-								System.out.println(sqlStartDate_temp_s);
+//								System.out.println(sqlStartDate_temp_s);
 								pstmt3.setDate(3, sqlStartDate_temp_s);
 								pstmt3.executeQuery();
 								if(pstmt3.executeUpdate() == 0)
@@ -892,7 +903,7 @@ class Maintenance extends Service{
 		    			//Update Parts table
 						for(int z = 0; z < partID.size(); z++) {
 							try{
-								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
+//								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
 								pstmt = this.conn.prepareStatement("UPDATE INVENTORY SET QUANTITY = QUANTITY - ? WHERE SC_ID = ? and P_ID = ?");
 								pstmt.setFloat(1, quantity.get(z));
 								pstmt.setString(2, this.sc_id);
@@ -913,9 +924,9 @@ class Maintenance extends Service{
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(1));
-						calendar.add(Calendar.HOUR, -3);
+						calendar.add(Calendar.HOUR, -2);
 						float timeDiff = time_slot.get(1);
-						System.out.println(timeDiff);
+//						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
 				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
 				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
@@ -923,7 +934,7 @@ class Maintenance extends Service{
 				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
 				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
 				        
-				        System.out.println(start_time_service+" "+end_time_service);
+//				        System.out.println(start_time_service+" "+end_time_service);
 				        
 				        try{
 							pstmt = this.conn.prepareStatement("INSERT INTO SERVICE "
@@ -939,7 +950,7 @@ class Maintenance extends Service{
 							 java.util.Date parsedDate = formatter_1.parse(end_time_service);
 							 
 							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-							 System.out.println("   "+timestamp);
+//							 System.out.println("   "+timestamp);
 							pstmt.setTimestamp(6, timestamp);
 							pstmt.setString(7, null);
 							pstmt.setString(8, service_type);
@@ -1305,7 +1316,12 @@ class Maintenance extends Service{
 			}
 		}
 		else {
-			System.out.println("Parts missing, place an order");
+			System.out.println("Parts missing, Order for part will be placed. Please check again after");
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, 3);
+			System.out.println(dateFormat.format(cal.getTime()));
 		}
 		
 	}
