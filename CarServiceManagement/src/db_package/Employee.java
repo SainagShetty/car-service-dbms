@@ -876,7 +876,7 @@ class Manager extends Employee implements MonthlyPayable{
 		}	
 	}
 	private void notificationsPage(Connection conn) {
-		Notification.notificationPage(conn);		
+		Notification.notificationPage(this.service_center,conn);		
 	}
 	private void newCarModelPage() {
 			
