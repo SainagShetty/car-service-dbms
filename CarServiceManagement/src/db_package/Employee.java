@@ -953,10 +953,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    		System.out.println("3.  Register Car");
 	    		System.out.println("4.  Service History");
 	    		System.out.println("5.  Schedule Service");
-	    		System.out.println("6.  Reschedule\n" + 
+	    		System.out.println("6.  Reschedule " + 
 	    				"Service");
 	    		System.out.println("7.  Invoices");
-	    		System.out.println("8.   Daily Task-Update\n" + 
+	    		System.out.println("8.   Daily Task-Update " + 
 	    				"Inventory");
 	    		System.out.println("9.  Daily\n" + 
 	    				"Task-Record\n" + 
@@ -1361,6 +1361,10 @@ class Receptionist extends Employee implements MonthlyPayable{
 				System.out.println("Invalid Option. Try Again");
 			}
 		}
+		
+		Notification.generateNotification(this.service_center, conn);
+		
+		
 	}
 	
 	void dailyTaskUpdateInventory() {

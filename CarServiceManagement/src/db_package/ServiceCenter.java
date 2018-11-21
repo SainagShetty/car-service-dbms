@@ -82,10 +82,10 @@ class ServiceCenter {
 				int actual= r.getInt(1);
 			    int threshold = r.getInt(2);
 			    if((actual - Integer.parseInt(Quantity))< threshold) {
-			    	return true;
+			    	return false;
 			    }
 			    else {
-			    	return false;
+			    	return true;
 			    }
 			}
 			

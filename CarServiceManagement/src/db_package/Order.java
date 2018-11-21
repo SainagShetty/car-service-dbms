@@ -277,6 +277,8 @@ class Order {
 				e.printStackTrace();
 			}
 			 
+			// if notification for order exists
+			 // delete notification 
 		 }
 	}
 	
