@@ -1364,7 +1364,28 @@ class Receptionist extends Employee implements MonthlyPayable{
 	}
 	
 	void dailyTaskUpdateInventory() {
-		//TODO
+		PreparedStatement pstmt = null; 
+		ResultSet rs=null;
+		try {
+			pstmt = this.conn.prepareStatement("select P_ID,MIN_ORDER,(THRESHOLD_QUANTITY - QUANTITY) AS DIFF from INVENTORY where QUANTITY<THRESHOLD_QUANTTIY");
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				String id=rs.getString(1);
+				int min_ord = rs.getInt(2);
+				Order new_order = new Order(this.service_center);
+				if(rs.getInt(3)>min_ord) {
+				new_order.placeOrder(id, Integer.toString(rs.getInt(3)), conn);
+			    }
+				else {
+				new_order.placeOrder(id, Integer.toString(min_ord), conn);	
+				}
+				
+			}
+				
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 
