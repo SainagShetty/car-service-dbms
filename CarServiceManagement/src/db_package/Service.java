@@ -230,6 +230,76 @@ abstract class Service {
 //		Date/Time (expected or actual)
 //		H. ServiceStatus (Pending,
 //		Ongoing, or Complete)
+//		Customer cus = new Customer(cus_email, conn);
+//		String cus_id = cus.getCustomerID();
+//		System.out.println("CustomerID " + cus_id);
+		
+	 	boolean status = false;
+	 	PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			pstmt = conn.prepareStatement("SELECT * FROM Service WHERE sc_id=?");
+			pstmt.setString(1, sc_id);
+			rs = pstmt.executeQuery();
+
+		while(rs.next())  {
+						
+						System.out.println("Service History for Service Center");
+						String service_id = rs.getString(1);
+						String employee_id = rs.getString(2);
+						String c_id = rs.getString(3);
+						String scid = rs.getString(4);
+						String License_no = rs.getString(5);
+						Date endtime = rs.getDate(6);
+						String BasicFaults = rs.getString(7);
+					    String maintnType = rs.getString(8);
+					    Date startDate = rs.getDate(9);
+					    String laborTime = rs.getString(10);
+					    String TotalCost = rs.getString(11);
+					    String ser_status = "PENDING";
+					    
+					    System.out.println(endtime);
+					    Date today = new Date(0);
+					    
+					    if(startDate.after(today) ) {
+					    		ser_status = "ONGOING";	
+					    } else if (endtime ==null || endtime.after(today) ) {
+					    		ser_status = "PENDING";	
+					    } else {
+					    		ser_status = "COMPLETED";	
+					    }
+					    
+					    Mechanic mech = new Mechanic(employee_id,conn,Employee.withid);
+					    
+			    			System.out.println("ServiceID: " + service_id);
+			    			System.out.println("LicensePlate: " + License_no);
+			    			System.out.println("ServiceType: " + maintnType);
+			    			System.out.println("MechanicName: " + mech.e_name);
+			    			System.out.println("ServiceStart " + startDate);
+			    			System.out.println("ServiceEnd " + endtime);
+			    			System.out.println("Service Status " + ser_status);
+			    		
+			    			status = true;
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
+		//TODO print service history for the cus_email.
+//		A. ServiceID
+//		B. LicensePlate
+//		C. ServiceType
+//		D. MechanicName
+//		E. ServiceStart
+//		Date/Time
+//		F. Service End
+//		Date/Time (expected or actual)
+//		G. Service Status (Pending,
+//		Ongoing, or Complete)
 	}
 	
 	static void getServiceType() {
@@ -244,6 +314,10 @@ class Repair extends Service{
 Connection conn;
 	Repair(String s_id, String emailID, String licensePlate, float temp_milage, String mechanic_name, Connection conn){
 		super(s_id, emailID, licensePlate, temp_milage, mechanic_name, conn);
+		Calendar calendar;
+		SimpleDateFormat formatter_1;
+		SimpleDateFormat formatter_2;
+		SimpleDateFormat formatter_3;
 		this.conn = conn;	
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		map.put(1, "BF001");
