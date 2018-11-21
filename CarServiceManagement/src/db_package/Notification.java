@@ -17,9 +17,11 @@ class Notification {
 	Date notificationDate;
 	static int iter=4;
 	
+	Connection con;
 	String sc;
 	String message;
-	Notification(){
+	Notification(Connection conn){
+		this.con = conn;
 		Calendar cal = Calendar.getInstance();
 		notificationDate = new java.sql.Date(cal.getTimeInMillis());
 	}
@@ -32,7 +34,7 @@ class Notification {
 		int r;
 		iter=iter+1;
 		try {
-			PreparedStatement p = conn.prepareStatement("INSERT INTO NOTIFICATION(N_ID,SC_ID,NOTIF_DATE,MESSAGE,O_ID) VALUES (?,?,?,?,?)");
+			PreparedStatement p = this.con.prepareStatement("INSERT INTO NOTIFICATION(N_ID,SC_ID,NOTIF_DATE,MESSAGE,O_ID) VALUES (?,?,?,?,?)");
 			p.setString(1, Integer.toString(iter));
 			p.setString(2, this.sc);
 			p.setDate(3,this.notificationDate);
@@ -228,7 +230,7 @@ class Notification {
 					
 					// create notification
 					if (delayed_days > 0) {
-						Notification notify = new Notification();
+						Notification notify = new Notification(conn);
 						String message = "Delayed by " + delayed_days + "days";
 						notify.addMessage(message);
 						notify.setSC(Service_c);
