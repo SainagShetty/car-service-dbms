@@ -75,7 +75,7 @@ public class DbApplication {
 		
 		if (signup == true) signUpPage();
 		// old user
-		System.out.println(p.my_role);
+//		System.out.println(p.my_role);
 		switch (p.my_role) {
 		case Role.MANAGER: 
 			Manager manLogIn = new Manager(p, con);
