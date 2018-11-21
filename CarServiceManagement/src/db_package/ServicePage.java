@@ -1,6 +1,14 @@
 package db_package;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -219,7 +227,8 @@ public class ServicePage {
 	private void rescheduleServiceForCus(String cus_email, String sc_id_val) {
 		// TODO Auto-generated method stub
 		
-		
+		String e_id;
+		Date start_date = null;
 //		Display the two identified service dates and mechanic name, followed by the menu.
 		
 		while(true) {
@@ -232,6 +241,51 @@ public class ServicePage {
 		
 			if(input.equals("1")){
 				System.out.println("### Pick two dates ###");
+				PreparedStatement pstmt = null;
+		 		ResultSet rs;
+
+		 		try{
+					pstmt = conn.prepareStatement("SELECT e_id, start_date from SERVICE where SER_ID=?");
+					pstmt.setString(1, sc_id_val);
+					rs = pstmt.executeQuery();
+					while(rs.next()) {
+						e_id = rs.getString(1);
+						start_date = rs.getDate(2);
+					}
+					
+					ArrayList<java.sql.Date> currentWeekMap = new ArrayList<java.sql.Date>();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					LocalDate today = LocalDate.now();
+					int count = 0;
+					for (int i=1; count < 7; i++) {
+					    LocalDate newDay = today.plusDays(i);
+					    String dayOfWeek = newDay.getDayOfWeek().toString();
+//					    System.out.println("Day of the week" +dayOfWeek);
+					    if(dayOfWeek.equals("SATURDAY") || dayOfWeek.equals("SUNDAY")) {
+					    	continue;
+					    }
+					    String formattedDate = newDay.format(formatter);
+					    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+						  java.util.Date date = null;
+						try {
+							date = dateFormat.parse(formattedDate);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						  java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
+//						  System.out.println(sqlStartDate);
+					    
+						  if(sqlStartDate.compareTo(start_date) == 1) {
+							  currentWeekMap.add(sqlStartDate);
+							  count++;
+						  }
+					}
+					
+	            }
+	            catch(SQLException e){
+					e.printStackTrace();
+				}
 				
 			} else if (input.equals("2")) {
 				break;

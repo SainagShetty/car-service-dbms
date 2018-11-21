@@ -419,9 +419,9 @@ Connection conn;
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(0));
-						calendar.add(Calendar.HOUR, -3);
+						calendar.add(Calendar.HOUR, -2);
 						float timeDiff = time_slot.get(0);
-						System.out.println(timeDiff);
+//						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
 				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
 				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
@@ -429,7 +429,7 @@ Connection conn;
 				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
 				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
 				        
-				        System.out.println(start_time_service+" "+end_time_service);
+//				        System.out.println(start_time_service+" "+end_time_service);
 				        
 				        try{
 							pstmt1 = this.conn.prepareStatement("INSERT INTO SERVICE "
@@ -494,7 +494,7 @@ Connection conn;
 								pstmt3.setString(2, emp_id.get(0));
 								java.util.Date date_temp_s = formatter_1.parse(end_time_service);
 								java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
-								System.out.println(sqlStartDate_temp_s);
+//								System.out.println(sqlStartDate_temp_s);
 								pstmt3.setDate(3, sqlStartDate_temp_s);
 								pstmt3.executeQuery();
 								if(pstmt3.executeUpdate() == 0)
@@ -510,11 +510,81 @@ Connection conn;
 		    			//Update Parts table
 						for(int z = 0; z < partID.size(); z++) {
 							try{
-								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
+//								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
 								pstmt1 = this.conn.prepareStatement("UPDATE INVENTORY SET QUANTITY = QUANTITY - ? WHERE SC_ID = ? and P_ID = ?");
 								pstmt1.setFloat(1, quantity.get(z));
 								pstmt1.setString(2, this.sc_id);
 								pstmt1.setString(3, partID.get(z));
+								pstmt1.executeQuery();
+							
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+						}
+				        
+		    		} else if(input.startsWith("2")) {
+		    			formatter_2 = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+						formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+						calendar  = Calendar.getInstance();
+						calendar.setTime(availableDates.get(1));
+						calendar.add(Calendar.HOUR, -2);
+						float timeDiff = time_slot.get(1);
+//						System.out.println(timeDiff);
+				        calendar.add(Calendar.HOUR, (int)timeDiff);
+				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
+				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
+				        calendar.add(Calendar.HOUR, (int)totalTime);
+				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
+				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
+				        
+//				        System.out.println(start_time_service+" "+end_time_service);
+				        
+				        try{
+							pstmt1 = this.conn.prepareStatement("INSERT INTO SERVICE "
+									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
+									+ "VALUES "
+									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+							pstmt1.setString(1, "SR105");
+							service_count += 1;
+							pstmt1.setString(2, emp_id.get(1));
+							pstmt1.setString(3, this.c_id);
+							pstmt1.setString(4, this.sc_id);
+							pstmt1.setString(5, this.vehicle_license);
+							 java.util.Date parsedDate = formatter_1.parse(end_time_service);
+							 
+							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+							 System.out.println("   "+timestamp);
+							pstmt1.setTimestamp(6, timestamp);
+							pstmt1.setString(7, map.get(repairNo));
+							pstmt1.setString(8, null);
+							parsedDate = formatter_1.parse(start_time_service);
+							timestamp = new java.sql.Timestamp(parsedDate.getTime());
+							pstmt1.setTimestamp(9, timestamp);
+							pstmt1.setFloat(10, totalTime);
+							pstmt1.setFloat(11, totalCost);
+							pstmt1.executeQuery();
+							if(pstmt1.executeUpdate() == 0)
+								System.out.println("Service Create Failed");
+							else
+								System.out.println("Service create success");
+						}catch(Exception e){
+//							e.printStackTrace();
+						}
+				        
+		    			//Update EMployee table
+				        if(time_slot.get(1) == 0) {
+				        	//INSERT
+				        	try{
+								pstmt1 = this.conn.prepareStatement("INSERT INTO MECHANIC "
+										+ "(E_ID, WORKD_DATE, HOURS) "
+										+ "VALUES "
+										+ "(?, ?, ?)");
+								pstmt1.setString(1, emp_id.get(1));
+								Date parsedDate = formatter_3.parse(end_time_service);
+								 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt1.setTimestamp(2, timestamp);
+								pstmt1.setFloat(3, totalTime);
 								pstmt1.executeQuery();
 								if(pstmt1.executeUpdate() == 0)
 									System.out.println("Service Create Failed");
@@ -523,10 +593,42 @@ Connection conn;
 							}catch(Exception e){
 //								e.printStackTrace();
 							}
-						}
+				        }
+				        else {
+				        	try{
+				        		PreparedStatement pstmt3 = null;
+								
+								pstmt3 = this.conn.prepareStatement("UPDATE MECHANIC SET HOURS = HOURS + ? WHERE E_ID = ? and WORKD_DATE = ?");
+								pstmt3.setFloat(1, totalTime);
+								pstmt3.setString(2, emp_id.get(1));
+								java.util.Date date_temp_s = formatter_1.parse(end_time_service);
+								java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
+//								System.out.println(sqlStartDate_temp_s);
+								pstmt3.setDate(3, sqlStartDate_temp_s);
+								pstmt3.executeQuery();
+								if(pstmt3.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+				        }
 				        
-		    		} else if(input.startsWith("2")) {
-		    			//Update
+		    			
+		    			//Update Parts table
+						for(int z = 0; z < partID.size(); z++) {
+							try{
+//								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
+								pstmt1 = this.conn.prepareStatement("UPDATE INVENTORY SET QUANTITY = QUANTITY - ? WHERE SC_ID = ? and P_ID = ?");
+								pstmt1.setFloat(1, quantity.get(z));
+								pstmt1.setString(2, this.sc_id);
+								pstmt1.setString(3, partID.get(z));
+								pstmt1.executeQuery();
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+						}
 		    		} else if(input.startsWith("3")) {
 		    			exit = true;
 		    		}
@@ -549,6 +651,7 @@ Connection conn;
 					e.printStackTrace();
 				}
 				ArrayList<java.sql.Date> availableDates = new ArrayList<java.sql.Date>();
+				ArrayList<Float> time_slot = new ArrayList<Float>();
 				for(java.sql.Date date_values: currentWeekMap) {
 					try{
 						pstmt1 = conn.prepareStatement("SELECT COUNT(*) from MECHANIC where e_id = ? and WORKD_DATE = ?");
@@ -556,8 +659,10 @@ Connection conn;
 						pstmt1.setDate(2, date_values);
 						rs1 = pstmt1.executeQuery();
 						rs1.next();
-						if(rs1.getInt(1) == 0) 
+						if(rs1.getInt(1) == 0) {
 							availableDates.add(date_values);
+							time_slot.add((float) 0);
+						}
 						else {
 							pstmt1 = conn.prepareStatement("SELECT HOURS from MECHANIC where e_id = ? and WORKD_DATE = ?");
 							pstmt1.setString(1, emp_id);
@@ -565,7 +670,10 @@ Connection conn;
 							rs1 = pstmt1.executeQuery();
 							rs1.next();
 							if(rs1.getFloat(1)+totalTime <= 8.0)
+							{
 								availableDates.add(date_values);
+								time_slot.add(rs.getFloat(1));
+							}
 						}
 						
 					}catch(SQLException e){
@@ -577,6 +685,234 @@ Connection conn;
 				System.out.println("1. "+availableDates.get(0));
 				System.out.println("2. "+availableDates.get(1));
 				System.out.println("3. Go Back");
+				
+				boolean exit = false;
+				while(!exit) {
+					
+					String input = reader.nextLine();
+					if (input.startsWith("1")) {
+						//Update Service Table
+						
+						formatter_2 = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+						formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+						calendar  = Calendar.getInstance();
+						calendar.setTime(availableDates.get(0));
+						calendar.add(Calendar.HOUR, -2);
+						float timeDiff = time_slot.get(0);
+//						System.out.println(timeDiff);
+				        calendar.add(Calendar.HOUR, (int)timeDiff);
+				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
+				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
+				        calendar.add(Calendar.HOUR, (int)totalTime);
+				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
+				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
+				        
+//				        System.out.println(start_time_service+" "+end_time_service);
+				        
+				        try{
+							pstmt1 = this.conn.prepareStatement("INSERT INTO SERVICE "
+									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
+									+ "VALUES "
+									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+							pstmt1.setString(1, "SR105");
+							service_count += 1;
+							pstmt1.setString(2, emp_id);
+							pstmt1.setString(3, this.c_id);
+							pstmt1.setString(4, this.sc_id);
+							pstmt1.setString(5, this.vehicle_license);
+							 java.util.Date parsedDate = formatter_1.parse(end_time_service);
+							 
+							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+//							 System.out.println("   "+timestamp);
+							pstmt1.setTimestamp(6, timestamp);
+							pstmt1.setString(7, map.get(repairNo));
+							pstmt1.setString(8, null);
+							parsedDate = formatter_1.parse(start_time_service);
+							timestamp = new java.sql.Timestamp(parsedDate.getTime());
+							pstmt1.setTimestamp(9, timestamp);
+							pstmt1.setFloat(10, totalTime);
+							pstmt1.setFloat(11, totalCost);
+							pstmt1.executeQuery();
+							if(pstmt1.executeUpdate() == 0)
+								System.out.println("Service Create Failed");
+							else
+								System.out.println("Service create success");
+						}catch(Exception e){
+//							e.printStackTrace();
+						}
+				        
+		    			//Update EMployee table
+				        if(time_slot.get(0) == 0) {
+				        	//INSERT
+				        	try{
+								pstmt1 = this.conn.prepareStatement("INSERT INTO MECHANIC "
+										+ "(E_ID, WORKD_DATE, HOURS) "
+										+ "VALUES "
+										+ "(?, ?, ?)");
+								pstmt1.setString(1, emp_id);
+								Date parsedDate = formatter_3.parse(end_time_service);
+								 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt1.setTimestamp(2, timestamp);
+								pstmt1.setFloat(3, totalTime);
+								pstmt1.executeQuery();
+								if(pstmt1.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+				        }
+				        else {
+				        	try{
+				        		PreparedStatement pstmt3 = null;
+								
+								pstmt3 = this.conn.prepareStatement("UPDATE MECHANIC SET HOURS = HOURS + ? WHERE E_ID = ? and WORKD_DATE = ?");
+								pstmt3.setFloat(1, totalTime);
+								pstmt3.setString(2, emp_id);
+								java.util.Date date_temp_s = formatter_1.parse(end_time_service);
+								java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
+								System.out.println(sqlStartDate_temp_s);
+								pstmt3.setDate(3, sqlStartDate_temp_s);
+								pstmt3.executeQuery();
+								if(pstmt3.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+				        }
+				        
+		    			
+		    			//Update Parts table
+						for(int z = 0; z < partID.size(); z++) {
+							try{
+//								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
+								pstmt1 = this.conn.prepareStatement("UPDATE INVENTORY SET QUANTITY = QUANTITY - ? WHERE SC_ID = ? and P_ID = ?");
+								pstmt1.setFloat(1, quantity.get(z));
+								pstmt1.setString(2, this.sc_id);
+								pstmt1.setString(3, partID.get(z));
+								pstmt1.executeQuery();
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+						}
+				        
+		    		} else if(input.startsWith("2")) {
+		    									
+						formatter_2 = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+						formatter_1 = new SimpleDateFormat("dd-MMM-yy hh:mm:ss");
+						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
+						calendar  = Calendar.getInstance();
+						calendar.setTime(availableDates.get(1));
+						calendar.add(Calendar.HOUR, -2);
+						float timeDiff = time_slot.get(1);
+//						System.out.println(timeDiff);
+				        calendar.add(Calendar.HOUR, (int)timeDiff);
+				        calendar.add(Calendar.MINUTE, (int) ((timeDiff - (int)timeDiff)*60));
+				        String start_time_service = formatter_1.format(calendar.getTime()).toString();
+				        calendar.add(Calendar.HOUR, (int)totalTime);
+				        calendar.add(Calendar.MINUTE, (int) ((totalTime - (int)totalTime)*60));
+				        String end_time_service = formatter_1.format(calendar.getTime()).toString();
+				        
+//				        System.out.println(start_time_service+" "+end_time_service);
+				        
+				        try{
+							pstmt1 = this.conn.prepareStatement("INSERT INTO SERVICE "
+									+ "(SER_ID, E_ID, C_ID, SC_ID, LICENSE_NO, END_TIME, BASIC_FID, MAINTENANCE_TYPE, START_DATE, LABORTIME, TOTALCOST) "
+									+ "VALUES "
+									+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+							pstmt1.setString(1, "SR105");
+							service_count += 1;
+							pstmt1.setString(2, emp_id);
+							pstmt1.setString(3, this.c_id);
+							pstmt1.setString(4, this.sc_id);
+							pstmt1.setString(5, this.vehicle_license);
+							 java.util.Date parsedDate = formatter_1.parse(end_time_service);
+							 
+							 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+//							 System.out.println("   "+timestamp);
+							pstmt1.setTimestamp(6, timestamp);
+							pstmt1.setString(7, map.get(repairNo));
+							pstmt1.setString(8, null);
+							parsedDate = formatter_1.parse(start_time_service);
+							timestamp = new java.sql.Timestamp(parsedDate.getTime());
+							pstmt1.setTimestamp(9, timestamp);
+							pstmt1.setFloat(10, totalTime);
+							pstmt1.setFloat(11, totalCost);
+							pstmt1.executeQuery();
+							if(pstmt1.executeUpdate() == 0)
+								System.out.println("Service Create Failed");
+							else
+								System.out.println("Service create success");
+						}catch(Exception e){
+//							e.printStackTrace();
+						}
+				        
+		    			//Update EMployee table
+				        if(time_slot.get(1) == 0) {
+				        	//INSERT
+				        	try{
+								pstmt1 = this.conn.prepareStatement("INSERT INTO MECHANIC "
+										+ "(E_ID, WORKD_DATE, HOURS) "
+										+ "VALUES "
+										+ "(?, ?, ?)");
+								pstmt1.setString(1, emp_id);
+								Date parsedDate = formatter_3.parse(end_time_service);
+								 Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+								pstmt1.setTimestamp(2, timestamp);
+								pstmt1.setFloat(3, totalTime);
+								pstmt1.executeQuery();
+								if(pstmt1.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+				        }
+				        else {
+				        	try{
+				        		PreparedStatement pstmt3 = null;
+								
+								pstmt3 = this.conn.prepareStatement("UPDATE MECHANIC SET HOURS = HOURS + ? WHERE E_ID = ? and WORKD_DATE = ?");
+								pstmt3.setFloat(1, totalTime);
+								pstmt3.setString(2, emp_id);
+								java.util.Date date_temp_s = formatter_1.parse(end_time_service);
+								java.sql.Date sqlStartDate_temp_s = new java.sql.Date(date_temp_s.getTime());
+								System.out.println(sqlStartDate_temp_s);
+								pstmt3.setDate(3, sqlStartDate_temp_s);
+								pstmt3.executeQuery();
+								if(pstmt3.executeUpdate() == 0)
+									System.out.println("Service Create Failed");
+								else
+									System.out.println("Service create success");
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+				        }
+				        
+		    			
+		    			//Update Parts table
+						for(int z = 0; z < partID.size(); z++) {
+							try{
+//								System.out.println(" "+quantity.get(z)+" "+sc_id+" "+partID.get(z));
+								pstmt1 = this.conn.prepareStatement("UPDATE INVENTORY SET QUANTITY = QUANTITY - ? WHERE SC_ID = ? and P_ID = ?");
+								pstmt1.setFloat(1, quantity.get(z));
+								pstmt1.setString(2, this.sc_id);
+								pstmt1.setString(3, partID.get(z));
+								pstmt1.executeQuery();
+							}catch(Exception e){
+//								e.printStackTrace();
+							}
+						}
+		    		} else if(input.startsWith("3")) {
+		    			exit = true;
+		    		}
+					System.out.println("3.  Go Back");
+				}
 			}
 		}
 		else {
@@ -1099,7 +1435,7 @@ class Maintenance extends Service{
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(0));
-						calendar.add(Calendar.HOUR, -3);
+						calendar.add(Calendar.HOUR, -2);
 						float timeDiff = time_slot.get(0);
 						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
@@ -1208,7 +1544,7 @@ class Maintenance extends Service{
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(1));
-						calendar.add(Calendar.HOUR, -3);
+						calendar.add(Calendar.HOUR, -2);
 						float timeDiff = time_slot.get(1);
 						System.out.println(timeDiff);
 				        calendar.add(Calendar.HOUR, (int)timeDiff);
