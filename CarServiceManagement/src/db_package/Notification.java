@@ -15,6 +15,7 @@ class Notification {
 	
 	String notificationID;
 	Date notificationDate;
+	static int iter=4;
 	
 	String sc;
 	String message;
