@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -879,7 +880,38 @@ class Manager extends Employee implements MonthlyPayable{
 		Notification.notificationPage(conn);		
 	}
 	private void newCarModelPage() {
-			
+		String n_make, n_model, parts_list;
+		int n_year, n_miles, n_months;
+		System.out.println("Enter the new Car details: ");
+		System.out.println("Make: ");
+		n_make = reader.nextLine();
+		System.out.println("Model: ");
+		n_model = reader.nextLine();
+		System.out.println("Year: ");
+		n_year = Integer.parseInt(reader.nextLine());
+		System.out.println("ServiceA: ");
+		System.out.println("\tMiles: ");
+		n_miles = Integer.parseInt(reader.nextLine());
+		System.out.println("\tMonths: ");
+		n_months = Integer.parseInt(reader.nextLine());
+		System.out.println("\tParts List: ");
+		parts_list = reader.nextLine();
+		PreparedStatement pstmt;
+		try{
+			pstmt = this.conn.prepareStatement("INSERT INTO ALLCARS VALUES(?,?,?)");
+			pstmt.setString(1, n_make);
+			pstmt.setString(2, n_model);
+			pstmt.setInt(3, n_year);
+			pstmt.executeQuery();
+			if(pstmt.executeUpdate() == 0)
+				System.out.println("Service Create Failed");
+			else
+				System.out.println("Service create success");
+		}catch(Exception e){
+//			e.printStackTrace();
+		}
+		
+		
 	}
 	private void carServiceDetailsPage() {
 		
