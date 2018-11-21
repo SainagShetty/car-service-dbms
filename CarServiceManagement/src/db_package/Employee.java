@@ -883,7 +883,22 @@ class Manager extends Employee implements MonthlyPayable{
 	}
 	private void carServiceDetailsPage() {
 		
-		
+		String query = "select allcars.make, allcars.model, allcars.year, basictask.task_name, maintenance.type, maintenance.mileage from allcars, maintenance FULL OUTER JOIN BASICTASK on (maintenance.basic_taskid = basictask.basic_taskid) WHERE allcars.make = maintenance.make and allcars.model = maintenance.model";
+		try{
+			
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			pstmt = this.conn.prepareStatement(query);
+			rs = pstmt.executeQuery();
+			System.out.println("CAR SERVICE DETAILS");
+			while(rs.next())  {
+				System.out.println("\n" + rs.getString(1) + ", " +  rs.getString(2) + ", "+rs.getInt(3) + ", "+rs.getString(4) + ", "+rs.getString(5) + ", "+rs.getInt(6));
+			}
+			
+//			pstmt.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -953,14 +968,12 @@ class Receptionist extends Employee implements MonthlyPayable{
 	    		System.out.println("3.  Register Car");
 	    		System.out.println("4.  Service History");
 	    		System.out.println("5.  Schedule Service");
-	    		System.out.println("6.  Reschedule " + 
-	    				"Service");
+
+	    		System.out.println("6.  Reschedule Service");
 	    		System.out.println("7.  Invoices");
-	    		System.out.println("8.   Daily Task-Update " + 
-	    				"Inventory");
-	    		System.out.println("9.  Daily\n" + 
-	    				"Task-Record\n" + 
-	    				"Deliveries");
+	    		System.out.println("8.   Daily Task-Update Inventory");
+	    		System.out.println("9.  Daily Task-Record Deliveries");
+
 	    		System.out.println("10.  Logout");
 	    		
 	    		String input = reader.nextLine().trim();

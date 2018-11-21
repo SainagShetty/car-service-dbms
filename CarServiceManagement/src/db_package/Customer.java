@@ -65,6 +65,7 @@ class Customer extends Person{
 		super(conn); //just updates connection
 		this.con = conn;
 		this.emailID = email;
+		System.out.println(email);
 		PreparedStatement pstmt = null;
 		vehicleList = new Vector<Vehicle>();
 		ResultSet rs = null;
@@ -79,6 +80,7 @@ class Customer extends Person{
 				this.service_center = rs.getString(3); 
 				this.c_address = rs.getString(4);
 				this.c_tel_no = rs.getString(5);
+				
 			}
 		}catch(SQLException e){
 			e.printStackTrace();
