@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 class Employee extends Person {
+	static int employee_counter = 2000;
 	String eid;
 	String e_name;
 	String service_center; 
@@ -155,7 +156,7 @@ class Employee extends Person {
 					+ "(E_ID, E_NAME, E_EMAIL, SC_ID, E_ADDRESS, E_TEL_NO, E_ROLE, START_DATE, COMPENSATION) "
 					+ "VALUES "
 					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			pstmt.setString(1, this.emailID);
+			pstmt.setString(1, Integer.toString(employee_counter+1));
 			pstmt.setString(2, this.e_name);
 			pstmt.setString(3, this.emailID);
 			pstmt.setString(4, this.service_center);

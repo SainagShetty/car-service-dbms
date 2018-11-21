@@ -15,10 +15,13 @@ class Notification {
 	
 	String notificationID;
 	Date notificationDate;
+	static int iter=4;
 	
+	Connection con;
 	String sc;
 	String message;
-	Notification(){
+	Notification(Connection conn){
+		this.con = conn;
 		Calendar cal = Calendar.getInstance();
 		notificationDate = new java.sql.Date(cal.getTimeInMillis());
 	}
@@ -28,7 +31,19 @@ class Notification {
 //	}
 	
 	void dbcreatenotification( String order_id) {
-		
+		int r;
+		iter=iter+1;
+		try {
+			PreparedStatement p = this.con.prepareStatement("INSERT INTO NOTIFICATION(N_ID,SC_ID,NOTIF_DATE,MESSAGE,O_ID) VALUES (?,?,?,?,?)");
+			p.setString(1, Integer.toString(iter));
+			p.setString(2, this.sc);
+			p.setDate(3,this.notificationDate);
+			p.setString(4, this.message);
+			p.setString(5, order_id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
@@ -215,7 +230,7 @@ class Notification {
 					
 					// create notification
 					if (delayed_days > 0) {
-						Notification notify = new Notification();
+						Notification notify = new Notification(conn);
 						String message = "Delayed by " + delayed_days + "days";
 						notify.addMessage(message);
 						notify.setSC(Service_c);
@@ -241,4 +256,38 @@ class Notification {
 		
 		
 	}
+	
+	static boolean ifNotificationExists(String order_id, Connection conn) {
+		ResultSet rs=null;
+		try {
+			PreparedStatement p= conn.prepareStatement("select O_ID from NOTIFICATION");
+			rs=p.executeQuery();
+			while(rs.next()) {
+				if (rs.getString("O_ID").equals(order_id)){
+					return true;
+				} 
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+	return false;
+}
+
+   static void deleteNotification(String order_id, Connection conn) {
+		    int r;
+		    try {
+				PreparedStatement p = conn.prepareStatement("DELETE FROM NOTIFICATION WHERE O_ID=?");
+				p.setString(1,order_id);
+				r=p.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+	}
+   
 }
