@@ -415,6 +415,7 @@ class Maintenance extends Service{
 						formatter_3 = new SimpleDateFormat("dd-MMM-yy");
 						calendar  = Calendar.getInstance();
 						calendar.setTime(availableDates.get(0));
+						System.out.println(availableDates.get(0));
 						calendar.add(Calendar.HOUR, -3);
 						float timeDiff = time_slot.get(0);
 						System.out.println(timeDiff);
