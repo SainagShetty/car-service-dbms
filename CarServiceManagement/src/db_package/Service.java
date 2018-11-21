@@ -134,6 +134,91 @@ abstract class Service {
 //		Ongoing, or Complete)
 	}
 	
+	
+	// Called only by Customer
+		static void serviceHistory( Connection new_con, String cus_id) {
+			
+			System.out.println("CustomerID " + cus_id);
+			
+		 	boolean status = false;
+		 	PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			if (new_con == null) {
+				System.out.println("null conn");
+			}
+			
+			try {
+				pstmt = new_con.prepareStatement("SELECT * FROM Service WHERE c_id=?");
+				pstmt.setString(1, cus_id);
+				rs = pstmt.executeQuery();
+
+			while(rs.next())  {
+							
+							System.out.println("Service History for Customer");
+							String service_id = rs.getString(1);
+							String employee_id = rs.getString(2);
+							String c_id = rs.getString(3);
+							String sc_id = rs.getString(4);
+							String License_no = rs.getString(5);
+							Date endtime = rs.getDate(6);
+							String BasicFaults = rs.getString(7);
+						    String maintnType = rs.getString(8);
+						    Date startDate = rs.getDate(9);
+						    String laborTime = rs.getString(10);
+						    String TotalCost = rs.getString(11);
+						    String ser_status = "PENDING";
+						    
+						    System.out.println(endtime);
+						    Date today = new Date(0);
+						    
+						    if(startDate.after(today) ) {
+						    		ser_status = "ONGOING";	
+						    } else if (endtime ==null || endtime.after(today) ) {
+						    		ser_status = "PENDING";	
+						    } else {
+						    		ser_status = "COMPLETED";	
+						    }
+						    
+						    Mechanic mech = new Mechanic(employee_id,new_con,Employee.withid);
+						    
+				    			System.out.println("ServiceID: " + service_id);
+				    			System.out.println("LicensePlate: " + License_no);
+				    			System.out.println("ServiceType: " + maintnType);
+				    			System.out.println("MechanicName: " + mech.emailID);
+				    			System.out.println("ServiceStart " + startDate);
+				    			System.out.println("ServiceEnd " + endtime);
+				    			System.out.println("Service Status " + ser_status);
+				    		
+				    			status = true;
+				}
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			}
+			
+			if(!status)
+			{
+				System.out.println("Entered email has no service history");
+			}
+			
+			//TODO print service history for the cus_email.
+//			A. ServiceID
+//			B. LicensePlate
+//			C. ServiceType
+//			D. MechanicName
+//			E. ServiceStart
+//			Date/Time
+//			F. Service End
+//			Date/Time (expected or actual)
+//			G. Service Status (Pending,
+//			Ongoing, or Complete)
+		}
+		
+	
+	
 	static ArrayList<String> serviceHistory(String cus_email, boolean flag,  Connection conn) {
 		Customer cus = new Customer(cus_email, conn);
 		String cus_id = cus.getCustomerID();
@@ -217,7 +302,10 @@ abstract class Service {
 	}
 	
 	// Called only by Manager
-	static void serviceHistory(Connection conn, String sc_id) {
+	static void serviceHistory(Connection conn, String sc_id, int byManager) {
+		
+		if (byManager == 1);
+		
 //		Display the following details for all cars that were serviced at this service center followed by the menu.
 //		A. ServiceID
 //		B. CustomerName
@@ -517,7 +605,7 @@ Connection conn;
 							 System.out.println("   "+timestamp);
 							pstmt1.setTimestamp(6, timestamp);
 							pstmt1.setString(7, null);
-							pstmt1.setString(8, service_type);
+							pstmt1.setString(8, null);
 							parsedDate = formatter_1.parse(start_time_service);
 							timestamp = new java.sql.Timestamp(parsedDate.getTime());
 							pstmt1.setTimestamp(9, timestamp);

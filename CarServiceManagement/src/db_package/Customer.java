@@ -22,7 +22,7 @@ class Customer extends Person{
 	ArrayList<String> srID;
 	
 	Customer(Person p, Connection conn){
-		super(p);
+		super(p, conn);
 		con = conn;
 		reader = new Scanner(System.in);
 		vehicleList = new Vector<Vehicle>();
@@ -34,6 +34,7 @@ class Customer extends Person{
 			pstmt.setString(1, p.emailID);
 			rs = pstmt.executeQuery();
 			while(rs.next())  {
+				System.out.println("fill from daba");
 				this.c_id = rs.getString(1);
 				this.c_name = rs.getString(2); 
 				this.service_center = rs.getString(3); 
@@ -63,7 +64,7 @@ class Customer extends Person{
 	
 	Customer(String email, Connection conn){		
 		super(conn); //just updates connection
-		this.con = conn;
+		//this.conn = conn;
 		this.emailID = email;
 		System.out.println(email);
 		PreparedStatement pstmt = null;
@@ -133,7 +134,7 @@ class Customer extends Person{
     		if (input.startsWith("1")) {
     			this.profilePage();
     		} else if (input.startsWith("2")) {
-    			CarRegister cr = new CarRegister(Role.CUSTOMER, this.con);
+    			CarRegister cr = new CarRegister(Role.CUSTOMER, this.conn);
 			this.vehicleList.add(cr.registerCar(this.c_id));
     		} else if (input.startsWith("3")){
     			this.servicePage();
@@ -221,8 +222,10 @@ class Customer extends Person{
 //    }
     private void servicePage() {
     		System.out.println("Start a service");
+    		System.out.println(this.conn);
     		ServicePage sp = new ServicePage(Role.CUSTOMER, this.conn);
-    		sp.customerServicePage(this);
+    		System.out.println("Cus id" + this.c_id);
+    		sp.customerServicePage(this.emailID,this.c_id);
     }
     
     private void invoicePage() {
@@ -245,7 +248,7 @@ class Customer extends Person{
     		}
     		for(int i = 0; i < srID.size();i++) {
     			System.out.println("INVOICE NO " + (i+1));
-    			invoices.add(new InvoicePage(this.con, srID.get(i)));
+    			invoices.add(new InvoicePage(this.conn, srID.get(i)));
     			invoices.get(i).printInvoices();
 //    			System.out.println(srID.get(i) + invoices.get(i).mechanicName + invoices.get(i).make);
     		}

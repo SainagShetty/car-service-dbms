@@ -82,6 +82,7 @@ public class DbApplication {
 			manLogIn.managerMenu();	
 			break;
 		case Role.CUSTOMER:
+			System.out.println("Customer object created\n");
 			Customer cusLogIn = new Customer(p, con);
 			cusLogIn.customerMenu();
 			break;

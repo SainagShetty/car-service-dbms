@@ -18,12 +18,13 @@ class Person implements Loginable {
 	}
 	
 	// when logged in 
-	Person(Person p){
+	Person(Person p, Connection conn){
 		this.userID = p.userID;
 		this.emailID = p.emailID;
 		this.password = p.password;
 		this.my_role = p.my_role; 
 		this.LoggedIn = true;
+		this.conn = conn;
 	}
 	
 	Person(String emailID, Connection conn){

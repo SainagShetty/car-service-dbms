@@ -25,7 +25,7 @@ class Employee extends Person {
 	static final int withemail = 2;
 	
 	Employee(Person p, Connection conn){
-		super(p);
+		super(p, conn);
 		this.conn = conn;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -273,7 +273,7 @@ class Manager extends Employee implements MonthlyPayable{
     		}else if (input.startsWith("11")){
     			this.invoicePage();
     		} else if (input.startsWith("10")){
-    			Service.serviceHistory(conn, this.service_center);
+    			Service.serviceHistory(conn, this.service_center, 1);
     			
     		} else if (input.startsWith("1")){
     			this.profilePage();
